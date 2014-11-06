@@ -17,7 +17,7 @@ public class DBUtil {
 	private static Context getInitialContext() throws NamingException {
     	if (CTX == null) {
     		CTX = new InitialContext();
-    	}
+    	} 
     	return CTX;
     }
 	   
