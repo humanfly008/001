@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+   	<bean id="itemDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT 	ITEM_ID 											AS VALUE, 
+					    	CONCAT(ITEM_NAME_TH,' ',ITEM_SUPPLIER_CODE) 		AS LABEL 
+					FROM 	M_ITEM 
+              		WHERE	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+    </bean>
+    
+    <bean id="itemTypeDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT 	ITEM_TYPE_ID 			AS VALUE, 
+					    	ITEM_TYPE_NAME_TH 		AS LABEL 
+					FROM 	M_ITEM_TYPE 
+              		WHERE	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+    </bean>
+    
+    <bean id="unitDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT 	UNIT_ID 			AS VALUE, 
+					    	UNIT_NAME_TH 		AS LABEL 
+					FROM 	M_UNIT  
+              		WHERE	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+    </bean>
+    
+   	<bean id="supplierDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT 	SUPPLIER_ID 			AS VALUE, 
+					    	SUPPLIER_NAME_TH 		AS LABEL 
+					FROM 	M_SUPPLIER  
+              		WHERE	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+    </bean>  
+    
+    <bean id="supplierTypeDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT 	SUPPLIER_TYPE_ID 			AS VALUE, 
+					    	SUPPLIER_TYPE_NAME_TH 		AS LABEL 
+					FROM 	M_SUPPLIER_TYPE 
+              		WHERE	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+    </bean>  
+
+   	<bean id="productDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT 	PRODUCT_ID 												AS VALUE, 
+					    	CONCAT(PRODUCT_NAME_TH,' ',PRODUCT_SUPPLIER_CODE) 		AS LABEL 
+					FROM 	M_PRODUCT 
+              		WHERE	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+    </bean>    
+    
+    <bean id="functionMenuDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+  					SELECT	FUNC_ID AS VALUE,
+  							FUNC_NAME AS LABEL 
+  						
+					FROM FUNCTIONS 
+                    WHERE   1=1   
+                    
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+ 	</bean>
+ 	
+ 	<bean id="menuDropdownInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+  					SELECT	MENU_ID AS VALUE,
+  							MENU_NAME AS LABEL 
+  						
+					FROM 	MENU  
+                    WHERE   1=1   
+                    
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.Dropdown</value>
+        </property>
+ 	</bean>
+</beans>

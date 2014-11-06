@@ -1,0 +1,105 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+	  			xmlns:p="http://primefaces.org/ui"
+				template="/WEB-INF/layout/layout.xhtml">
+			<ui:param name="transaction" value="Menu" />
+           	<ui:define name="content">
+                
+                <h:form styleClass="form" id="listForm">					
+ 					
+ 					<h:outputLabel id="displayMessage">
+						<p:growl life="1500" rendered="#{menuAction.searchForm.resultBO.errorMessage==''}"/> 
+						<p:messages  rendered="#{menuAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
+					</h:outputLabel>
+					
+					
+					<h:panelGrid columns="3">
+						<h:panelGrid columns="2">
+							<h:outputText value="Menu Id :"/>
+						   	<p:inputText  value="#{menuAction.searchForm.menuId}" />                    		
+						</h:panelGrid>	
+						
+						<h:panelGrid columns="2">
+							<h:outputText value="Menu Name :"/>
+							<p:inputText  value="#{menuAction.searchForm.menuName}" /> 
+						</h:panelGrid>  
+						            
+						<p:commandButton value="Search" actionListener="#{menuAction.doListMenu}" update="listForm" icon="ui-icon-search" />	             
+					</h:panelGrid>
+
+					<br/><br/>
+					
+					<div align="left">
+               	    	 <h:panelGrid columns="2">
+	                   		<p:commandButton value="Add" 	action="#{menuAction.addPage}" icon="ui-icon-circle-plus"/>
+	                   		<p:commandButton value="Delete" update="listForm" onclick="return doValidateDelete('checkDelete');" type="button" icon="ui-icon-circle-minus" />
+	                     </h:panelGrid>
+                    </div>
+                    
+					<p:dataTable id="dataList" var="dataList" value="#{menuAction.dataList}" styleClass="dataTable" >
+                    	<p:column style="text-align: left;vertical-align: text-top;width: 1%" >
+	                    	<f:facet name="header">
+	                    		<input type="checkbox" id="checkDeleteAll" onclick="checkList('checkDeleteAll','checkDelete')"/>
+	                       	</f:facet>	
+	                       		<input type="checkbox" id="checkDelete" name="checkDelete" value="#{dataList.menuId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+	                   	</p:column>	   
+	               		
+	               		<p:column style="text-align: left;vertical-align: text-top" >
+	                		<f:facet name="header">
+	                    		<h:outputText value="No"/>
+	                  		</f:facet>
+	                        	<h:outputText value="#{dataList.no}"/> 
+	                   	</p:column>
+	               		            
+	                	<p:column style="text-align: left;vertical-align: text-top">
+		                	<f:facet name="header">
+		                    	<h:outputText value="Menu Id"/>
+		                   	</f:facet>
+		                    <p:commandLink action="#{menuAction.editPage}" >
+	                        	<h:outputText value="#{dataList.menuId}"/>
+	                        	<f:param name="menuId" value="#{dataList.menuId}"/>        	                       	
+	    	               	</p:commandLink>
+	              		</p:column>
+	              		
+	                	<p:column style="text-align: left;vertical-align: text-top" >
+	                		<f:facet name="header">
+	                    		<h:outputText value="Menu Name"/>
+	                  		</f:facet>
+	                        	<h:outputText value="#{dataList.menuName}"/> 
+	                   	</p:column>
+	                   	
+	                   	<p:column style="text-align: left;vertical-align: text-top" >
+	                    	<f:facet name="header">
+	                        	<h:outputText value="Sub Menu Source"/>
+	                       	</f:facet>
+	                  		<h:outputText value="#{dataList.menuSourceDesc}"/>
+	                  	</p:column>
+	                    
+                    </p:dataTable> 
+                    
+                    <h:outputLabel id="pagnavigator" for="listForm">
+	                    	<ui:include src="/resources/component/pagnavigator.xhtml">
+							<ui:param name="action" 		value="#{menuAction}"></ui:param>
+		 					<ui:param name="searchBean"		value="#{menuAction.searchForm}" />
+		 					<ui:param name="method" 		value="doListMenu"></ui:param> 					
+		 					<ui:param name="dataList"		value="#{menuAction.dataList}" />
+		 					<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+						</ui:include>
+					</h:outputLabel>                   	
+               	    
+               	    <!-- ********* dialog  ********* -->
+               	    <p:dialog id="checkDeleteDialog" widgetVar="checkDeleteDialog" header="#{errorMessage['check.delete']}" resizable="false" />
+					
+               	    <p:dialog id="confirmDialog" widgetVar="confirmDialog" header="Confirm Delete" rendered="true" >  
+                  		#{errorMessage['confirm.delete']}
+                  		<p:commandButton id="confirm" value="Yes" actionListener="#{menuAction.doDeleteMenu}" update="listForm" onstart="confirmation.hide();" />  
+				        <p:commandButton id="decline" value="No" onclick="confirmDialog.hide()" type="button" />   
+                  	</p:dialog>
+               	    
+                </h:form>
+           	</ui:define>
+     	</ui:composition>                

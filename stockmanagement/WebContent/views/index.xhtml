@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+           	<ui:param name="transaction" value="Home" />
+          	<ui:define name="content">
+				<h:form>
+					
+					<!-- 
+					<p:dataScroller value="#{feedInformationAction.ordersTransaction}" var="orders" chunkSize="10" mode="inline" scrollHeight="500">
+				        <f:facet name="header">
+				            Scroll Down to Load More Cars
+				        </f:facet>
+				 
+				        <h:panelGrid columns="2" style="width:100%" columnClasses="logo,detail">
+				            
+				            <p:outputPanel>
+				                <h:panelGrid columns="2" cellpadding="5">
+				                    <h:outputText value="Id:" />
+				                    <h:outputText value="#{orders.orderId}" style="font-weight: bold"/>
+				                   
+				                </h:panelGrid>
+				            </p:outputPanel>
+				        </h:panelGrid>
+				    </p:dataScroller>
+					
+					<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+					<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+							 -->		
+				
+				</h:form>
+        	</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

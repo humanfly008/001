@@ -1,0 +1,472 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+        	<ui:param name="transaction" value="ทะเบียนเงินเดือน" />
+           	<ui:define name="content">
+	       		<h:form id="listForm">
+					<h:outputLabel id="displayMessage">
+						<p:growl life="1500" rendered="#{salaryManagementAction.searchFormBO.resultBO.errorMessage==''}" />
+						<p:messages rendered="#{salaryManagementAction.searchFormBO.resultBO.errorMessage!=''}" closable="true"/>
+					</h:outputLabel>
+						
+					<h:panelGrid columns="4" cellpadding="7">
+						<h:panelGrid columns="2">
+							<h:outputText value="ชื่อพนักงาน"/>
+					  		<p:inputText id="userName" value="#{salaryManagementAction.searchFormBO.userName}"/>
+					    </h:panelGrid>
+					      	 				
+					    <h:panelGrid columns="2">	
+							<h:outputText value="ปี"/>
+	                   		<p:selectOneMenu  id="year" value="#{salaryManagementAction.searchFormBO.year}">
+								<f:selectItems value="#{salaryManagementAction.yearDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}"/>
+								<p:ajax update="dataList,year" event="change" listener="#{salaryManagementAction.doListTransaction}"/>
+							</p:selectOneMenu>
+			          	</h:panelGrid>      
+			            
+			            <h:panelGrid columns="2">
+							<h:outputText value="เดือน"/>
+		                   	<p:selectOneMenu  id="month" value="#{salaryManagementAction.searchFormBO.month}">
+								<f:selectItems value="#{salaryManagementAction.monthDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}"/>
+					      		<p:ajax update="dataList,month" event="change" listener="#{salaryManagementAction.doListTransaction}"/>
+							</p:selectOneMenu>
+				      	</h:panelGrid>
+				      	
+					   	<p:commandButton id="searchBtn" value="ค้นหา" update="listForm" actionListener="#{salaryManagementAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+					</h:panelGrid>
+					<br></br>
+					
+					<div style="width:100%; white-space: nowrap;overflow-x: scroll;overflow: auto;">
+					<p:dataTable id="dataList" var="dataList" value="#{salaryManagementAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="No." />
+						  	</f:facet>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="#{dataList.no}"/>
+							</div>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ชื่อ" />
+						  	</f:facet>
+							<p:commandLink actionListener="#{salaryManagementAction.printSalaryIncomePage}" update=":printFormIncome:printFormDialogIncome" oncomplete="printFormDialogIncome.show();">
+								<div style="text-align:center;vertical-align: text-top">
+									<h:outputText value="#{dataList.firstName}"/>
+									<h:outputText value="&nbsp;"/>
+									<h:outputText value="#{dataList.lastName}"/>
+								</div>
+								<f:param name="userId" 			value="#{dataList.userId}"/>
+								<f:param name="id" 				value="#{dataList.id}"/>
+						      	
+							</p:commandLink>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ตำแหน่ง" />
+						  	</f:facet>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="#{dataList.position}"/>
+							</div>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ประเภทรายได้" />
+						  	</f:facet>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="รายวัน" rendered="#{dataList.payType=='DAY'}"/>
+								<h:outputText value="รายเดือน" rendered="#{dataList.payType=='MONTH'}"/>
+							</div>
+							<!-- summary -->
+					      	<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					            	<div style="text-align:center;vertical-align: text-top">
+					                	<b><h:outputText value="รวม"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="เงินเดือน/ค่าแรง" />
+						  	</f:facet>
+							<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.salary}">
+									<f:convertNumber type="currency"  currencySymbol=""/>
+								</h:outputText>
+							</div>
+							<!-- summary -->
+					      	<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalary}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="รายวัน" />
+						  	</f:facet>
+						  	<div style="text-align:center;vertical-align: text-top">
+							  	<h:outputText value="-" rendered="#{dataList.payType=='MONTH'}"/>
+						  	</div>
+							<p:commandLink rendered="#{dataList.payType=='DAY'}" actionListener="#{salaryManagementAction.addDailySalaryPage}" update=":addFormDaily:addFormDialogDaily" oncomplete="addFormDialogDaily.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.dailyStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.salary}"/>
+							  	<f:param name="incomeType" 		value="daily"/>
+						      	<f:param name="incomeTypeDesc" 	value="รายวัน"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <!-- summary -->
+					      	<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalDaily}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ค่าพาหนะ" />
+						  	</f:facet>
+							
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.fareStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.fare}"/>
+							  	<f:param name="incomeType" 		value="fare"/>
+						      	<f:param name="incomeTypeDesc" 	value="ค่าพาหนะ"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalFare}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ค่าเบี้ยขยัน" />
+						  	</f:facet>
+							
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.diligenceStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.diligence}"/>
+							  	<f:param name="incomeType" 		value="diligence"/>
+						      	<f:param name="incomeTypeDesc" 	value="ค่าเบี้ยขยัน"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalDiligence}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="โบนัส" />
+						  	</f:facet>
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.bonusStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.bonus}"/>
+							  	<f:param name="incomeType" 		value="bonus"/>
+						      	<f:param name="incomeTypeDesc" 	value="โบนัส"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalBonus}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="รายได้อื่นๆ" />
+						  	</f:facet>
+							
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.otherIncomeStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.fare}"/>
+							  	<f:param name="incomeType" 		value="otherIncome"/>
+						      	<f:param name="incomeTypeDesc" 	value="รายได้อื่นๆ"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtherIncome}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="OT จำนวนวัน" />
+						  	</f:facet>
+						  	<p:commandLink actionListener="#{salaryManagementAction.addOTPage}" update=":addFormOT:addFormDialogOT" oncomplete="addFormDialogOT.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.otDate}" />
+							  	</div>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtDate}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="OT จำนวนชม." />
+						  	</f:facet>
+							<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.otHourStr}" />
+							</div>
+							<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtHour}"/></b>
+									</div>
+								</f:facet>
+							</c:if> 	
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="OT รวม" />
+						  	</f:facet>
+						  	<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.otSummaryStr}" />
+							</div> 
+							<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtSummary}"/></b>
+									</div>
+								</f:facet>
+							</c:if> 	
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="รายได้รวม" />
+						  	</f:facet>
+						  	<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.totalSalaryIncome}" >
+									<f:convertNumber type="currency"  currencySymbol=""/>
+								</h:outputText>
+							</div> 
+							<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalaryIncome}"/></b>
+									</div>
+								</f:facet>
+							</c:if> 
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หัก ปกส" />
+						  	</f:facet>
+						  	<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.subtractSocialStr} "/>
+								<b><h:outputText value="(#{dataList.socialInsurance}%)"/></b>
+							</div>
+							<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractSocial}"/></b>
+									</div>
+								</f:facet>
+							</c:if>  
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หัก ภาษี" />
+						  	</f:facet>
+							<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.subtractTaxStr} "/>
+								<h:outputText value="(#{dataList.tax}%)"/>
+							</div>
+							<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractTax}"/></b>
+									</div>
+								</f:facet>
+							</c:if>  
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หักอื่นๆ" />
+						  	</f:facet>
+							
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.otherSubtractStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.otherSubtract}"/>
+							  	<f:param name="incomeType" 		value="subtractOther"/>
+						      	<f:param name="incomeTypeDesc" 	value="หักอื่นๆ"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractOther}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="คงเหลือ" />
+						  	</f:facet>
+						  	
+						  	<div style="text-align:right;vertical-align: text-top">
+								<b>
+								<h:outputText value="#{dataList.totalSalaryIncomeNet}" >
+									<f:convertNumber type="currency"  currencySymbol=""/>
+								</h:outputText>
+								</b>
+							</div>
+							<c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalaryIncomeNet}"/></b>
+									</div>
+								</f:facet>
+							</c:if>  
+						</p:column>
+					</p:dataTable>
+					</div>				
+					
+					<h:outputLabel id="pagnavigator" for="listForm">
+						<ui:include src="/resources/component/pagnavigator.xhtml">
+							<ui:param name="action" 		value="#{salaryManagementAction}"></ui:param>
+							<ui:param name="searchBean"		value="#{salaryManagementAction.searchFormBO}" />
+							<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+							<ui:param name="dataList"		value="#{salaryManagementAction.transactionList}" />
+							<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+							</ui:include>
+					</h:outputLabel>
+									
+					<br/><br/><br/>
+				   					    	
+				</h:form>
+					
+				<h:form id="addFormOT">		
+					<p:dialog id="addFormDialogOT" widgetVar="addFormDialogOT" header="เพิ่ม OT" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
+						<ui:include src="/views/transactions/salary/salary-ot.xhtml" />
+					</p:dialog>		
+				</h:form>
+				
+				<h:form id="addFormDaily">		
+					<p:dialog id="addFormDialogDaily" widgetVar="addFormDialogDaily" header="เพิ่มรายได้รายวัน" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
+						<ui:include src="/views/transactions/salary/salary-daily.xhtml" />
+					</p:dialog>		
+				</h:form>
+				
+				<h:form id="addFormIncome">		
+					<p:dialog id="addFormDialogIncome" widgetVar="addFormDialogIncome" header="เพิ่มรายได้/รายจ่าย" draggable="false" resizable="false" showEffect="fade" width="300" height="150">
+						<ui:include src="/views/transactions/salary/salary-income.xhtml" />
+					</p:dialog>
+				</h:form>
+				
+				<h:form id="printFormIncome">		
+					<p:dialog id="printFormDialogIncome" widgetVar="printFormDialogIncome" header="พิมพ์รายการรายได้" draggable="false" resizable="false" showEffect="fade" width="700" height="490">
+						<ui:include src="/views/transactions/salary/salary-print.xhtml" />
+					</p:dialog>
+				</h:form>
+				
+       		</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>         

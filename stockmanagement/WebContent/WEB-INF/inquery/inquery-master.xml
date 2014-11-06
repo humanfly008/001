@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">    
+
+	 
+	<bean id="supplierTransactionInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+               		SELECT 	SP.SUPPLIER_ID,
+               				SP.SUPPLIER_CODE,
+							SP.SUPPLIER_NAME_TH AS SUPPLIER_NAME,
+							SP.SUPPLIER_CONTRACT AS CONTRACT,
+							SP.SUPPLIER_PHONE AS PHONE,
+							SP.SUPPLIER_DETAILS AS DETAILS,
+							
+							SP.CREATE_DATE,
+							SP.CREATE_BY,
+							SP.UPPDATE_DATE,
+							SP.UPDATE_BY 
+					
+					FROM 	M_SUPPLIER SP  
+					WHERE 	1=1 
+                    
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SupplierInquiry</value>
+        </property>
+    </bean> 
+    
+	
+	<bean id="itemTransactionInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+               		SELECT 	I.ITEM_ID,
+               				I.ITEM_CODE,
+							I.ITEM_NAME_TH AS ITEM_NAME,
+							I.ITEM_UNIT_PRICE,
+							I.ITEM_QTY,
+							I.ITEM_TYPE,
+							I.UNIT,
+							S.SUPPLIER_NAME_TH AS SUPPLIER 
+					
+					FROM    M_ITEM I LEFT JOIN M_SUPPLIER S ON(S.SUPPLIER_ID = I.SUPPLIER_ID) 
+					WHERE   1=1    
+                    
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.ItemInquiry</value>
+        </property>
+    </bean> 
+
+	<bean id="productTransactionInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+               		SELECT 	I.PRODUCT_ID,
+               				I.PRODUCT_CODE,
+							I.PRODUCT_NAME_TH AS PRODUCT_NAME,
+							I.PRODUCT_UNIT_PRICE,
+							I.PRODUCT_QTY,
+							I.PRODUCT_TYPE,
+							I.UNIT,
+							S.SUPPLIER_NAME_TH AS SUPPLIER 
+					
+					FROM    M_PRODUCT I LEFT JOIN M_SUPPLIER S ON(S.SUPPLIER_ID = I.SUPPLIER_ID) 
+					WHERE   1=1    
+                    
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.ProductInquiry</value>
+        </property>
+    </bean> 
+	
+	<bean id="menuMasterInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT menu_id,
+                           menu_name,
+                           menu_source_id,
+                           menu_source_desc 
+                           
+                    FROM   menu 
+                    WHERE  1=1                        
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.MenuInquery</value>
+        </property>
+    </bean> 
+    
+    <bean id="functionMasterInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                    SELECT  func_id,
+                  	 	  	func_name,
+                  	 	  	func_url 
+                  	 	  
+                    FROM  	functions 
+                    WHERE 	1=1                        
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.FunctionsInquery</value>
+        </property>
+    </bean> 
+    
+   	<bean id="functionRanderMenuInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                	SELECT  M.MENU_NAME,
+	                	 	M.MENU_SOURCE_ID,
+	                	 	M.MENU_ID, 
+	                	 	G.G_ID  
+                	 FROM 	MENU_GROUP_MAPPING G ,MENU M 
+                	 WHERE 	G.MENU_ID = M.MENU_ID 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.GroupMenuInquiry</value>
+        </property>
+    </bean> 
+    
+	<bean id="functionRanderSubMenuInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                	  SELECT F.FUNC_ID,F.FUNC_NAME,F.FUNC_URL 
+                	  FROM 	FUNCTIONS F 
+                	  WHERE 1=1
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SubMenuInquiry</value>
+        </property>
+    </bean> 
+    
+    <bean id="userProfileInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                	SELECT  ID,
+                			USER_ID, 
+							FIRST_NAME,
+							LAST_NAME,
+							DEPARTMENT,
+							PHONE,
+							STATUS,
+							LAST_LOGIN 
+							
+					FROM 	USERS_PROFILE 
+					WHERE 	1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.UserProfileInquiry</value>
+        </property>
+    </bean> 
+    
+    <bean id="productItemGroupInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                	SELECT 	ITEM_ID,
+							ITEM_NAME_TH,
+							ITEM_SUPPLIER_CODE,
+							ITEM_QTY,
+							SET_PER_USE 
+					FROM 	M_ITEM 
+					WHERE 	ITEM_ID IN( 
+							SELECT ITEM_ID  
+							FROM M_PRODUCT_ITEM_GROUP 
+							WHERE PRODUCT_ID = ? 
+					)
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.domain.MItem</value>
+        </property>
+    </bean> 
+</beans>

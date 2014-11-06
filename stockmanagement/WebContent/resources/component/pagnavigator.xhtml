@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	>
+	
+	<h:body>    	
+    	<ui:composition>    	
+    		<script type="text/javascript">             	
+	           	function firstPage(){	             		
+	             	document.getElementById("listForm:pageNo").value = 1;     
+	         		return true;  			
+	         	}
+	             	
+	           	function lastPage(){	             		
+		           	var totalPage = document.getElementById("listForm:totalPage").value;
+	
+		            document.getElementById("listForm:pageNo").value = (totalPage*1);           			
+	         		return true;  				         			
+	         	}
+             	
+	           	function previewPage(){
+    	        	var currentPage = document.getElementById("listForm:pageNo").value;
+
+    	            document.getElementById("listForm:pageNo").value = (currentPage*1)-1;           			
+             		return true;  			
+             	}
+             		
+             	function nextPage(){
+             		var currentPage = document.getElementById("listForm:pageNo").value;
+
+             		document.getElementById("listForm:pageNo").value = (currentPage*1)+1;           			
+             		return true;
+             	}
+             	
+      		</script>
+	        	<h:outputLabel id="paggingForm"  rendered="#{not empty dataList}">
+	        		<div class="page-navigator">
+	        			<h:panelGrid columns="14">
+	        				<h:outputText value="Total #{searchBean.paggingBean.totalRowStr} record"/>
+		            		<p:spacer width="10" height="20" />
+		            		<h:outputText value="Page"/>
+		            		<h:inputHidden id="pageNo" value="#{searchBean.paggingBean.pageNo}" />
+		            		<h:inputHidden id="totalPage" value="#{searchBean.paggingBean.totalPage}" />
+		            	
+		            		<h:outputText value="#{searchBean.paggingBean.pageNoStr} / #{searchBean.paggingBean.totalPageStr}"/>	                    	
+		            		<p:spacer width="20" height="20" />
+		            	 
+			            	<p:commandButton icon="ui-icon-seek-first"  onclick="return firstPage();"  	action="#{action[method]}" update="#{update}" disabled="#{searchBean.paggingBean.pageNo == 1}"/>
+		            		<p:commandButton icon="ui-icon-seek-prev"  onclick="return previewPage();" 	action="#{action[method]}" update="#{update}" disabled="#{searchBean.paggingBean.pageNo == 1}"/>
+		            		<p:commandButton icon="ui-icon-seek-next"  onclick="return nextPage();" 	action="#{action[method]}" update="#{update}" disabled="#{searchBean.paggingBean.pageNo == searchBean.paggingBean.totalPage}"/>
+							<p:commandButton icon="ui-icon-seek-end"  onclick="return lastPage();" 	action="#{action[method]}" update="#{update}" disabled="#{searchBean.paggingBean.pageNo == searchBean.paggingBean.totalPage}"/>
+						
+							<p:spacer width="20" height="20" />
+							<p:selectOneMenu  id="rowsPerPage" value="#{searchBean.paggingBean.rowsPerPage}" style="text-align: left;">
+		               			<f:selectItems value="#{searchBean.paggingBean.rowsPerPageOption}" var="select" />
+		               			<p:ajax event="change" listener="#{action[method]}" update="#{update},paggingForm" />                           		
+		              		</p:selectOneMenu> 
+	              	    </h:panelGrid>            	
+	            	</div>
+		    	
+		    	</h:outputLabel>         
+    	</ui:composition>    	
+  	</h:body>  	
+</html>

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+      	<meta http-equiv="Cache-control" content="no-cache" />
+		<!-- <link href="#{request.contextPath}/resources/bootstrap/bootstrap/css/bootstrap.css" rel="stylesheet" /> -->
+                  
+		<script src="#{request.contextPath}/resources/js/common.js" type="text/javascript" />
+        <script src="#{request.contextPath}/resources/js/validate.js" type="text/javascript" />
+        <script src="#{request.contextPath}/resources/js/validateForm.js" type="text/javascript" />
+        
+        <script src="#{request.contextPath}/resources/js/validateError.js" type="text/javascript" charset="utf-8"/>
+        <script src="#{request.contextPath}/resources/js/setcheckObj.js" type="text/javascript" charset="utf-8"/>
+                
+        <link href="#{request.contextPath}/resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="#{request.contextPath}/resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+         
+        <!-- <link rel="icon" href="#{request.contextPath}/resources/images/favicon.png"/> -->
+        
+        <title>NR.Autoseats Stock Management Ver. 0.2</title>
+    </h:head>
+
+    <h:body>
+		<p:layout fullPage="true">
+	       	<p:layoutUnit position="north" size="47" collapsed="0" height="47" gutter="-1" style="height: 100%" collapsible="true" styleClass="myLayoutHeaderStyleClass">
+		        <div id="top" >
+		            <ui:insert name="top">
+		                <ui:include src="/WEB-INF/layout/header.xhtml"/>
+		            </ui:insert>
+		       	</div>
+		    </p:layoutUnit>
+	       	
+	       	<p:layoutUnit position="west" header="&nbsp;" resizable="true" size="220" minSize="200" maxSize="220" gutter="-1" collapsible="true">
+	    	   	<h:form>
+	    	   		<p:menu id="menuBar" model="#{authenficationAction.menuBarModel}" style="border: none;width: 220px;"/>			
+	    	   	</h:form>
+		    </p:layoutUnit>
+	       	
+	       	<p:layoutUnit position="center" gutter="-1" collapsible="true" styleClass="myLayoutContentStyleClass" >
+				<p:panel id="pnl" header="#{transaction}" style="margin-bottom:10px;">
+					<ui:include src="/resources/component/validate.xhtml"/>
+		        	<div id="content" class="center_content" align="center">
+		           		<ui:insert name="content">
+					        <div id="content" align="center" style="background-color: #ffffff;width: 90%" />
+						</ui:insert>                                        
+		           	</div>
+	           	</p:panel>
+	      	</p:layoutUnit>
+        </p:layout>
+    </h:body>
+</html>

@@ -1,0 +1,127 @@
+<pretty-config xmlns="http://ocpsoft.org/prettyfaces/3.3.3" 
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+               xsi:schemaLocation="http://ocpsoft.org/prettyfaces/3.3.3
+               http://ocpsoft.org/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.3.3.xsd">
+
+	<rewrite match="(?i)^(.*);jsessionid=w+(.*)" substitute="$1$2" redirect="chain" />
+
+	<url-mapping id="login">
+		<pattern value="/login" />
+		<view-id value="/views/login.xhtml" />
+	</url-mapping>
+	
+    <url-mapping id="home">
+		<pattern value="/" />
+		<view-id value="/views/index.xhtml" />
+	</url-mapping>
+    
+    <url-mapping id="logout">
+		<pattern value="/" />
+		<view-id value="/views/logout.xhtml" />
+	</url-mapping>
+
+	<!-- USER -->
+	<url-mapping id="change.password">
+		<pattern value="/changepassword" />
+		<view-id value="/views/setting/user/change-password.xhtml" />
+	</url-mapping>
+	<url-mapping id="user-list">
+		<pattern value="/userprofile" />
+		<view-id value="/views/setting/user/user.xhtml" />
+	</url-mapping>
+
+
+	<!-- FUNCTION -->
+	<url-mapping id="functions-list">
+		<pattern value="/setting/function" />
+		<view-id value="/views/setting/function/functions-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="functions-add">
+		<pattern value="/setting/function.add" />
+		<view-id value="/views/setting/function/functions-add.xhtml" />
+	</url-mapping>
+	<url-mapping id="functions-edit">
+		<pattern value="/setting/function.edit" />
+		<view-id value="/views/setting/function/functions-edit.xhtml" />
+	</url-mapping>
+	
+	<!-- MENU -->
+	<url-mapping id="menu-list">
+		<pattern value="/setting/menu" />
+		<view-id value="/views/setting/menu/menu-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="menu-add">
+		<pattern value="/setting/menu.add" />
+		<view-id value="/views/setting/menu/menu-add.xhtml" />
+	</url-mapping>
+	<url-mapping id="menu-edit">
+		<pattern value="/setting/menu.edit" />
+		<view-id value="/views/setting/menu/menu-edit.xhtml" />
+	</url-mapping>
+
+	<!-- SUPPLIER -->
+	<url-mapping id="supplier">
+		<pattern value="/supplier" />
+		<view-id value="/views/setting/supplier/supplier-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="supplier.add">
+		<pattern value="/supplier.add" />
+		<view-id value="/views/setting/supplier/supplier-add.xhtml" />
+	</url-mapping>
+	<url-mapping id="supplier.edit">
+		<pattern value="/supplier.edit" />
+		<view-id value="/views/setting/supplier/supplier-edit.xhtml" />
+	</url-mapping>
+	
+	<!-- ITEM -->
+	<url-mapping id="item">
+		<pattern value="/item" />
+		<view-id value="/views/setting/item/item-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="item.add">
+		<pattern value="/item.add" />
+		<view-id value="/views/setting/item/item-add.xhtml" />
+	</url-mapping>
+	<url-mapping id="item.edit">
+		<pattern value="/item.edit" />
+		<view-id value="/views/setting/item/item-edit.xhtml" />
+	</url-mapping>
+	
+
+	<!-- PRODUCT -->
+	<url-mapping id="product.list">
+		<pattern value="/product" />
+		<view-id value="/views/setting/product/product-list.xhtml" />
+	</url-mapping>
+
+
+	<!-- TRANSACTION STOCK -->
+	<url-mapping id="stock.item.list">
+		<pattern value="/stockitem" />
+		<view-id value="/views/transactions/item/stock-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="stock.item.add">
+		<pattern value="/stockitem.add" />
+		<view-id value="/views/transactions/item/stock-add.xhtml" />
+	</url-mapping>
+
+	<url-mapping id="stock.product.list">
+		<pattern value="/stockproduct" />
+		<view-id value="/views/transactions/product/stock-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="stock.product.add">
+		<pattern value="/stockproduct.add" />
+		<view-id value="/views/transactions/product/stock-add.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="stock.exhausted.list">
+		<pattern value="/exhausted" />
+		<view-id value="/views/transactions/exhausted/exhausted.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="salary.list">
+		<pattern value="/salary" />
+		<view-id value="/views/transactions/salary/salary-list.xhtml" />
+	</url-mapping>
+	
+</pretty-config>

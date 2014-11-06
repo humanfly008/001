@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+             <ui:param name="transaction" value="วัตถุดิบ/สินค้าใกล้หมด" />
+             <ui:define name="content">
+				<h:form id="listForm">
+					    <h:outputLabel id="displayMessage">
+							<p:growl life="1500" rendered="#{stockExhaustedAction.searchForm.resultBO.errorMessage==''}"/> 
+							<p:messages rendered="#{stockExhaustedAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
+						</h:outputLabel>
+					    
+					    <h:panelGrid columns="5">
+					   		<h:panelGrid columns="2">
+					   			<h:outputText value="ประเภทรายการ"/>
+									
+						       	<p:selectOneMenu id="transactionType" value="#{stockExhaustedAction.searchForm.transactionType}" filter="true" filterMatchMode="contains">
+									<f:selectItem itemValue="" itemLabel="ทั้งหมด" />
+									<f:selectItem itemValue="สินค้า " itemLabel="สินค้า " />
+									<f:selectItem itemValue="วัตถุดิบ" itemLabel="วัตถุดิบ" />
+									<p:ajax event="change" update="listForm" listener="#{stockExhaustedAction.doListTransaction}"/>							
+								</p:selectOneMenu>
+					   		</h:panelGrid>
+					   		
+					   		<h:panelGrid columns="2">
+					   			<h:outputText value="วัตถุดิบ"/>
+					   			<p:selectOneMenu id="item" value="#{stockExhaustedAction.searchForm.itemId}" filter="true" filterMatchMode="contains">
+									<f:selectItem itemValue="" itemLabel="ทั้งหมด" />
+									<f:selectItems value="#{stockExhaustedAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+									<p:ajax event="change" update="listForm" listener="#{stockExhaustedAction.doListTransaction}"/>							
+								</p:selectOneMenu>
+					   		</h:panelGrid>
+					   		
+					   		<h:panelGrid columns="2">
+						   		<h:outputText value="สินค้า"/>
+						   		<p:selectOneMenu id="product" value="#{stockExhaustedAction.searchForm.productId}" filter="true" filterMatchMode="contains">
+									<f:selectItem itemValue="" itemLabel="ทั้งหมด" />
+									<f:selectItems value="#{stockExhaustedAction.productDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+									<p:ajax event="change" update="listForm" listener="#{stockExhaustedAction.doListTransaction}"/>							
+								</p:selectOneMenu>
+					   		</h:panelGrid>
+					   		
+					   		<h:panelGrid columns="2">
+							   	<h:outputText value="ตัวแทนจำหน่าย"/>
+						   		<p:selectOneMenu id="supplier" value="#{stockExhaustedAction.searchForm.supplier}" filter="true" filterMatchMode="contains">
+									<f:selectItem itemValue="" itemLabel="ทั้งหมด" />
+									<f:selectItems value="#{stockExhaustedAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+									<p:ajax event="change" update="listForm" listener="#{stockExhaustedAction.doListTransaction}"/>							
+								</p:selectOneMenu>
+					   		</h:panelGrid>
+					   		
+					   		<h:panelGrid columns="1">
+								<p:commandButton id="saveBtn" value="ค้นหา" update="listForm" actionListener="#{stockExhaustedAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+							</h:panelGrid>
+				   		</h:panelGrid>
+				   		<br></br>
+				   		
+						<p:dataTable id="dataList" var="dataList" value="#{stockExhaustedAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+							<p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="No." />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.no}" />
+							  	</div>
+						    </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="ประเภทรายการ" />
+					            </f:facet>
+								<div style="text-align:center;vertical-align: text-top">
+						        	<h:outputText value="#{dataList.transactionType}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="รหัสสินค้าตัวแทนจำหน่่าย" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+									<h:outputText value="#{dataList.objectCode}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="ชื่อรายการ" />
+					            </f:facet>
+					          	<div style="text-align:center;vertical-align: text-top">
+									<h:outputText value="#{dataList.objectName}" rendered="#{dataList.transactionType=='วัตถุดิบ'}" />
+							   	</div>
+							    
+					            <p:commandLink actionListener="#{stockExhaustedAction.doFindItemProductGroup}" update=":listForm:itemGroupDataList" rendered="#{dataList.transactionType=='สินค้า'}" oncomplete="itemGroupDialog.show();">
+						            <div style="text-align:center;vertical-align: text-top">
+										<h:outputText value="#{dataList.objectName}" />
+							       	</div>
+							       	<f:param name="productId" value="#{dataList.objectId}"/>
+					        	</p:commandLink>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="จำนวนคงเหลือ" />
+					            </f:facet>
+					            <div style="text-align:right;vertical-align: text-top">
+						            <h:outputText value="#{dataList.qty}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="ตัวแทนจำหน่าย" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						            <h:outputText value="#{dataList.supplier}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="สถานะ" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						            <h:outputText value="น้อยมาก&nbsp;" rendered="#{dataList.status=='LEVEL1'}"/>
+						            <h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" rendered="#{dataList.status=='LEVEL1'}" style="background-color: red"/>
+						            
+						            
+						            <h:outputText value="น้อย&nbsp;" rendered="#{dataList.status=='LEVEL2'}"/>
+						            <h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" rendered="#{dataList.status=='LEVEL2'}" style="background-color: yellow"/>
+						            
+						            <h:outputText value="ปานกลาง&nbsp;" rendered="#{dataList.status=='LEVEL3'}"/>
+						            <h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" rendered="#{dataList.status=='LEVEL3'}" style="background-color: green"/>
+						            
+						        </div>
+					        </p:column>
+				        </p:dataTable>
+				        <h:panelGrid columns="2">
+					        <h:outputLabel id="pagnavigator" for="listForm">
+								<ui:include src="/resources/component/pagnavigator.xhtml">
+									<ui:param name="action" 		value="#{stockExhaustedAction}"></ui:param>
+						 			<ui:param name="searchBean"		value="#{stockExhaustedAction.searchForm}" />
+						 			<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+						 			<ui:param name="dataList"		value="#{stockExhaustedAction.transactionList}" />
+						 			<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+								</ui:include>
+							</h:outputLabel>
+						
+							<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{not empty stockExhaustedAction.transactionList}">
+		                    	<p:selectOneMenu id="reportType" style="text-align: left;">
+									<f:selectItem itemValue="PDF" itemLabel="PDF" />
+									<f:selectItem itemValue="XLS" itemLabel="XLS" />
+								</p:selectOneMenu>
+		
+			                   	<p:commandButton value="Print" icon="ui-icon-print" ajax="none" actionListener="#{stockExhaustedAction.doExportReport}" onclick="PrimeFaces.monitorDownload(showLoadingDialog, hideLoadingDialog); return validateSubmit();" style="vertical-align: top;">
+			                    	<p:fileDownload value="#{stockExhaustedAction.fileTransactionsDataExport}" contentDisposition="attachment" />
+			                  	</p:commandButton>      
+		                  	</h:panelGrid>  	
+						</h:panelGrid>		
+				    	<br/><br/><br/><br/><br/><br/>
+
+						<p:dialog id="itemGroupDialog" widgetVar="itemGroupDialog" header="ส่วนประกอบสินค้า" draggable="false" resizable="false" showEffect="fade" width="900" height="450">
+							<p:dataTable id="itemGroupDataList" var="dataList" value="#{stockExhaustedAction.productItemGroupList}" rowIndexVar="no" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="No." />
+									</f:facet>
+									<div style="text-align:center;vertical-align: text-top">
+										<h:outputText value="#{no+1}" />
+									</div>
+								</p:column>
+										<p:column>
+									    	<f:facet name="header">
+									        	<h:outputText value="ชื่อวัตถุดิบ" />
+									      	</f:facet>
+									      	<div style="text-align:center;vertical-align: text-top">
+										    	<h:outputText value="#{dataList.itemNameTh}" />
+										    	<h:outputText value="-"/>
+										    	<h:outputText value="#{dataList.itemSupplierCode}" />
+										    </div>
+									 	</p:column>
+									 	<p:column>
+									    	<f:facet name="header">
+									        	<h:outputText value="จำนวนคงเหลือ" />
+									      	</f:facet>
+									      	<div style="text-align:right;vertical-align: text-top">
+										    	<h:outputText value="#{dataList.itemQty}" />
+										    </div>
+									 	</p:column>
+									 	<p:column>
+									    	<f:facet name="header">
+									        	<h:outputText value="จำนวนที่ใช้ต่อชุด" />
+									      	</f:facet>
+									      	<div style="text-align:right;vertical-align: text-top">
+										    	<h:outputText value="#{dataList.setPerUse}" />
+										    </div>
+									 	</p:column>
+						</p:dataTable>
+					</p:dialog>		
+				</h:form>
+			</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

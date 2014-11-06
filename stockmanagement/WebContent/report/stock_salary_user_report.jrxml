@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="25"/>
+	<parameter name="sql" class="java.lang.String"/>
+	<parameter name="month" class="java.lang.String"/>
+	<parameter name="year" class="java.lang.String"/>
+	<parameter name="month_th" class="java.lang.String"/>
+	<parameter name="year_th" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 	USER_ID,
+	FIRST_NAME,
+	LAST_NAME,
+	ID_CARD,
+	POSITION,
+	PAY_TYPE,
+	SALARY,
+
+	SOCIAL_INSURANCE,
+	TAX,
+	DAILY_DAY,
+	DAILY,
+	FARE,
+	DILIGENCE,
+	BONUS,
+
+	OT_PER_HOUR,
+	OT_DATE,
+	OT_HOUR,
+	OT_RATE,
+	OT_SUMMARY,
+	(CASE
+		WHEN PAY_TYPE = 'MONTH' THEN SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY
+		ELSE DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY
+	END)TOTAL_SALARY_INCOME,
+
+	(CASE
+		WHEN PAY_TYPE = 'MONTH' THEN SALARY*SOCIAL_INSURANCE/100
+		ELSE DAILY*SOCIAL_INSURANCE/100
+	END)SUBTRACT_SOCIAL,
+
+	(CASE
+		WHEN PAY_TYPE = 'MONTH' THEN SALARY*TAX/100
+		ELSE DAILY*TAX/100
+	END)SUBTRACT_TAX,
+
+	(CASE
+		WHEN PAY_TYPE = 'MONTH' THEN (SALARY*SOCIAL_INSURANCE/100)+(SALARY*TAX/100)
+		ELSE (DAILY*SOCIAL_INSURANCE/100)+(DAILY*TAX/100)
+	END)TOTAL_SUBTRACT,
+
+	(CASE
+		WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY)-(SALARY*SOCIAL_INSURANCE/100)-(SALARY*TAX/100)
+		ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY)-(DAILY*SOCIAL_INSURANCE/100)-(DAILY*TAX/100)
+	END)TOTAL_SALARY_INCOME_NET
+
+
+
+FROM (
+	SELECT 	U.USER_ID AS USER_ID,
+		U.FIRST_NAME,
+		U.LAST_NAME,
+		U.DEPARTMENT AS POSITION,
+		U.ID_CARD,
+		U.PAY_TYPE,
+		U.SALARY,
+		U.SOCIAL_INSURANCE,
+		U.TAX,
+		IFNULL((SELECT COUNT(S.DAILY)	 						FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY_DAY,
+		IFNULL((SELECT SUM(S.DAILY)	 						FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY,
+		IFNULL((SELECT DISTINCT S.FARE 						FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'fare'),0) AS FARE,
+		IFNULL((SELECT DISTINCT S.DILIGENCE 				FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = 10 AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'diligence'),0) AS DILIGENCE,
+		IFNULL((SELECT DISTINCT S.BONUS 					FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'bonus'),0) AS BONUS,
+		IFNULL((SELECT DISTINCT(U.SALARY/30/8) 				FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_PER_HOUR,
+		IFNULL((SELECT DISTINCT COUNT(S.OT_HOUR)			FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_DATE,
+		IFNULL((SELECT DISTINCT SUM(S.OT_HOUR)				FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_HOUR,
+		IFNULL((SELECT DISTINCT S.OT_RATE 					FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = 10 AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_RATE,
+		IFNULL((SELECT DISTINCT ((U.SALARY/30/8)*SUM(S.OT_HOUR)*OT_RATE) 	FROM SALARY_TRANSACTION S WHERE U.ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_SUMMARY
+
+
+	FROM 	USERS_PROFILE U
+	WHERE 	1=1
+
+)AS SUB_QUERY
+WHERE 1=1
+$P!{sql}]]>
+	</queryString>
+	<field name="USER_ID" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="FIRST_NAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="LAST_NAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="POSITION" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ID_CARD" class="java.lang.String"/>
+	<field name="PAY_TYPE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SALARY" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SOCIAL_INSURANCE" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TAX" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DAILY_DAY" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DAILY" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="FARE" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DILIGENCE" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="BONUS" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="OT_PER_HOUR" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="OT_DATE" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="OT_HOUR" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="OT_RATE" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="OT_SUMMARY" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TOTAL_SALARY_INCOME" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUBTRACT_SOCIAL" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="SUBTRACT_TAX" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TOTAL_SALARY_INCOME_NET" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TOTAL_SUBTRACT" class="java.lang.Double"/>
+	<columnHeader>
+		<band height="133" splitType="Stretch">
+			<staticText>
+				<reportElement x="130" y="0" width="270" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[บริษัท เอ็น.อาร์.ออโต้ซีทส์ จำกัด]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="10" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ใบแจ้งรายได้]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="20" width="393" height="32"/>
+				<textElement textAlignment="Center">
+					<font size="11" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[30/3 ซอยอนามัยงามเจริญ 31 แขวงท่าข้าม เขตบางขุนเทียน กทม 10150
+Bangkok, Thailand 10150]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="65" width="60" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ชื่อพนักงาน]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="60" y="65" width="52" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FIRST_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="112" y="65" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{LAST_NAME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="315" y="65" width="58" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ประจำเดือน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="85" width="60" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ตำแหน่ง]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="105" width="90" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เลขที่บัตรประชาชน]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="60" y="85" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{POSITION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="373" y="65" width="83" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{month_th}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="456" y="65" width="59" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{year_th}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="90" y="105" width="195" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_CARD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="315" y="85" width="71" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ประเภทรายได้]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="386" y="85" width="100" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "MONTH" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เงินเดือน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="386" y="85" width="100" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "DAY" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รายวัน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="105" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[อัตราเงินเดือน/ค่าแรง]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="415" y="105" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{SALARY}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="666" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="515" height="278"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="304" height="32"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="304" y="0" width="211" height="32"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="32" width="304" height="246"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="304" y="32" width="211" height="246"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="102" y="12" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เงินได้]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="12" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เงินหัก]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="32" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[เงินเดือน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="32" width="48" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "MONTH" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[30 วัน]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="32" width="15" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "DAY" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{DAILY_DAY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="145" y="32" width="33" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "DAY" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[วัน]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="32" width="83" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "DAY" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{DAILY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="52" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ค่าพาหนะ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="52" width="83" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{FARE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="72" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ค่าเบี้ยขยัน]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="92" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[โบนัส]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="112" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[OT]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="112" width="24" height="20"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$F{OT_HOUR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="154" y="112" width="18" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ชม.]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="72" width="83" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{DILIGENCE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="92" width="83" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{BONUS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="112" width="83" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{OT_SUMMARY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="238" width="100" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รวมเงินได้]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="238" width="83" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{TOTAL_SALARY_INCOME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="204" y="32" width="81" height="20">
+					<printWhenExpression><![CDATA[new Boolean($F{PAY_TYPE}.equals( "MONTH" ))]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{SALARY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="315" y="32" width="85" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หักประกันสังคม]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="52" width="85" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[ภาษี]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="32" width="71" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{SUBTRACT_SOCIAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="52" width="71" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{SUBTRACT_TAX}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="404" y="238" width="95" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{TOTAL_SUBTRACT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="311" y="238" width="89" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รวมเงินหัก]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="32" y="316" width="368" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[* ข้อมูลเงินเดือนและค่าจ้างเป็นข้อมูลลับเฉพาะตัว ห้ามบอกกล่าวหรือเปิดเผยแก่ผู้ใด]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-40" y="439" width="590" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="311" y="258" width="89" height="20"/>
+				<textElement>
+					<font isBold="true" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[รวมเงินได้สุทธิ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="404" y="258" width="95" height="20"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{TOTAL_SALARY_INCOME_NET}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="-40" y="132" width="40" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="515" y="131" width="40" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="111" y="474" width="270" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[บริษัท เอ็น.อาร์.ออโต้ซีทส์ จำกัด]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="60" y="494" width="393" height="32"/>
+				<textElement textAlignment="Center">
+					<font size="11" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[30/3 ซอยอนามัยงามเจริญ 31 แขวงท่าข้าม เขตบางขุนเทียน กทม 10150
+Bangkok, Thailand 10150]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="554" width="78" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{LAST_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="554" width="52" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FIRST_NAME}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="223" y="554" width="81" height="20"/>
+				<textElement textAlignment="Right">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[งวดจ่ายเงินเดือน]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="554" width="49" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{month_th}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="356" y="554" width="59" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{year_th}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="49" y="554" width="30" height="20"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[คุณ]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

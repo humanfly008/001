@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+             <ui:param name="transaction" value="สรุป รายการเข้า/ออก วัตถุดิบ" />
+             <ui:define name="content">
+				<h:form id="listForm">
+					
+					    <h:outputLabel id="displayMessage">
+							<p:growl life="1500" rendered="#{stockItemAction.searchForm.resultBO.errorMessage==''}"/> 
+							<p:messages rendered="#{stockItemAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
+						</h:outputLabel>
+					    
+					    <table width="100%">
+						    <tr>
+						    	<td align="right">
+						    		<h:outputText value="รหัสรายการ"/>
+								</td>
+					            <td width="20%"> 
+								    <p:inputText id="stockCode" value="#{stockItemAction.searchForm.stockCode}"/>
+							    </td>
+					            <td align="right">	
+							    	<h:outputText value="ประเภทรายการ"/>
+								</td>
+					            <td width="15%">	
+									<p:selectOneMenu id="stockType" value="#{stockItemAction.searchForm.stockType}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
+										<f:selectItem itemValue="In" itemLabel="เข้า" />
+										<f:selectItem itemValue="Out" itemLabel="ออก" />							
+										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+									</p:selectOneMenu>
+							    </td>
+						    	<td align="right">		
+								   	<h:outputText value="วันที่ทำรายการ"/>
+								</td>
+					            <td>	
+					            	<p:calendar id="fromTransactionDate" value="#{stockItemAction.searchForm.stockFromDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
+									    <f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
+									</p:calendar>
+									<h:outputText value="-"/>
+							       	<p:calendar id="toTransactionDate" value="#{stockItemAction.searchForm.stockToDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
+							           	<f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
+							      	</p:calendar>
+								</td>
+							</tr>
+							<tr>
+								<td align="right"> 
+									<h:outputText value="ตัวแทนจำหน่าย"/>
+							   	</td>
+								<td>	
+							   		<p:selectOneMenu id="supplier" value="#{stockItemAction.searchForm.supplierId}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
+										<f:selectItems value="#{stockItemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="item" listener="#{stockItemAction.doSelectSupplier}"/>
+										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+									</p:selectOneMenu>
+						   	   	</td>
+								<td align="right">
+									<h:outputText value="วัตถุดิบ"/>
+							   	</td>
+								<td>
+							   		<p:selectOneMenu id="item" value="#{stockItemAction.searchForm.itemId}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
+										<f:selectItems value="#{stockItemAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="supplier" listener="#{stockItemAction.doSelectItem}"/>
+										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+									</p:selectOneMenu>
+						   		</td>
+						   		<td></td>
+						   		<td></td>
+						   	</tr>
+						   	<tr>
+								<td colspan="6" align="right">
+									<h:panelGrid columns="1">
+								   		<p:commandButton id="saveBtn" value="ค้นหา" update="listForm" actionListener="#{stockItemAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+									</h:panelGrid>
+								</td>
+							</tr>
+						</table>
+					    
+						<br></br>
+				   		
+						<p:dataTable id="dataList" var="dataList" value="#{stockItemAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+							<p:column>
+					            <f:facet name="header">
+					                <h:outputText value="No." />
+					            </f:facet>
+								<div style="text-align:center;vertical-align: text-top">
+						        	<h:outputText value="#{dataList.no}" />
+						       	</div>
+					        </p:column>	
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="ประเภทรายการ" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+									<h:outputText value="เข้า" rendered="#{dataList.stockType=='In'}"/>
+									<h:outputText value="ออก" rendered="#{dataList.stockType=='Out'}"/>
+								</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="วันที่บันทึกข้อมูล" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						            <h:outputText value="#{dataList.stockDate}" >
+						            	<f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
+						            </h:outputText>
+						            <h:outputText value=" "/>
+						            <h:outputText value="#{dataList.stockDate}" >
+						            	<f:convertDateTime type="date" dateStyle="short" pattern="HH:mm" />
+						            </h:outputText>
+						        </div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="จำนวน" />
+					            </f:facet>
+					            <div style="text-align:right;vertical-align: text-top">
+						            <h:outputText value="#{dataList.stockQtyStr}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="รหัสวัตถุดิบ" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						            <h:outputText value="#{dataList.itemCode}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="ชื่อวัตถุดิบ" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						            <h:outputText value="#{dataList.itemName}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="ตัวแทนจำหน่าย" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						            <h:outputText value="#{dataList.supplierName}" />
+						       	</div>
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="คนสร้างรายการ" />
+					            </f:facet>
+					            <div style="text-align:center;vertical-align: text-top">
+						        	<h:outputText value="#{dataList.createBy}" />
+					        	</div>
+					        </p:column>
+					    </p:dataTable>
+						<h:panelGrid columns="2">
+					        <h:outputLabel id="pagnavigator" for="listForm">
+								<ui:include src="/resources/component/pagnavigator.xhtml">
+									<ui:param name="action" 		value="#{stockItemAction}"></ui:param>
+						 			<ui:param name="searchBean"		value="#{stockItemAction.searchForm}" />
+						 			<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+						 			<ui:param name="dataList"		value="#{stockItemAction.transactionList}" />
+						 			<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+								</ui:include>
+							</h:outputLabel>
+									
+							<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{not empty stockItemAction.transactionList}">
+			                    <p:selectOneMenu id="reportType" style="text-align: left;">
+									<f:selectItem itemValue="PDF" itemLabel="PDF" />
+									<f:selectItem itemValue="XLS" itemLabel="XLS" />
+								</p:selectOneMenu>
+			
+				              	<p:commandButton value="Print" icon="ui-icon-print" ajax="none" actionListener="#{stockItemAction.doExportReport}" onclick="PrimeFaces.monitorDownload(showLoadingDialog, hideLoadingDialog); return validateSubmit();" style="vertical-align: top;">
+				                	<p:fileDownload value="#{stockItemAction.fileTransactionsDataExport}" contentDisposition="attachment" />
+				               	</p:commandButton>      
+			            	</h:panelGrid>					
+			          	</h:panelGrid>			
+				    	<br/><br/>
+				    	
+				</h:form>				
+          	</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

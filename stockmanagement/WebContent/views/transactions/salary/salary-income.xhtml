@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    
+    			<script type="text/javascript"> 
+	         		/* <![CDATA[ */
+	         	  	function validateAddSubmit(){	
+	         	  		validateNotNull("addFormIncome:income",			"Income");
+	         			
+	         			return displayErrorMessage('errorMessageDialogAdd');   
+					} 
+	         		/* ]]> */
+				</script>	
+						<h:outputLabel>	
+	    					<div id="errorMessageDialogAdd" class="ui-messages ui-widget" />					
+    					</h:outputLabel>
+    					
+    					<table width="100%">
+						    <tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">ข้อมูล</span>
+									</div>
+					        	</td>	
+					        </tr>
+					        <tr>
+					    		<td align="right"><h:outputText value="ประเภทรายการ"/></td>
+					    		<td>
+					    			<h:outputText id="incomeTypeDesc" value="#{salaryManagementAction.salaryIncomeForm.incomeTypeDesc}" size="10" readonly="true" style="background-color:#d7d7d7;"/>
+					    		</td>	
+					    	</tr>
+					        <tr>
+					    		<td align="right"><h:outputText value="จำนวนเงิน"/></td>
+					    		<td>
+					    			<p:inputText id="income" value="#{salaryManagementAction.salaryIncomeForm.income}" size="10" maxlength="10" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td>&nbsp;</td>
+					    	</tr>
+					    	<tr>
+					    		<td align="left" colspan="2">
+						    		<p:commandButton value="บันทึก" action="#{salaryManagementAction.doUpdateInCome}" onclick="return validateAddSubmit();" oncomplete="otAddFormDialog.hide()" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+						    		<p:commandButton value="ลบรายการรายได้" process="@this" action="#{salaryManagementAction.doDeleteInCome}" onclick="otAddFormDialog.hide()" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+					    		</td>
+					    	</tr>
+					    </table>
+					
+		
+	</h:body>
+</html>
+                

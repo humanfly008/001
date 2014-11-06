@@ -1,0 +1,67 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+	  			xmlns:p="http://primefaces.org/ui"
+				template="/WEB-INF/layout/layout.xhtml">
+
+    <ui:define name="content">
+	    <script type="text/javascript"> 
+			function doValidate(){
+				validateNotNull("editForm:funcName","Function Name");
+				validateNotNull("editForm:funcUrl","Function URL");
+				return displayErrorMessage();
+			}
+		</script>
+		<h:form styleClass="form" id="editForm">
+			<h:outputLabel id="displayMessage">
+		        <p:messages  closable="true" autoUpdate="true"/>
+			</h:outputLabel>
+				<div align="left">
+					<h:outputText value="Update Function" styleClass="text-header-function"/>
+				</div>
+				
+				<div class="entryForm">
+				<table width="100%">	
+	            	<tr style="background-color:#DDDDDD;height: 25px;"> 
+				        <td align="left" colspan="4"><h:outputText styleClass="text-header-criteria" value="Input data"/></td>
+				    </tr>	
+				    	<tr>
+				    	<td class="header2B" width="15%"><div align="right">*Function ID : </div></td>
+					    <td class="header2B" align="left">
+					    	<p:inputText value="#{functionsAction.functionsForm.funcId}" id="funcId" readonly="true" style="background-color:#d7d7d7;"/>
+					    </td>
+				  	</tr>
+				  	<tr>
+				    	<td class="header2B" width="15%"><div align="right">*Function Name : </div></td>
+					    <td class="header2B" align="left" >
+					    	<p:inputText value="#{functionsAction.functionsForm.funcName}" id="funcName"  maxlength="250" size="150" >
+					    		<p:ajax event="change" listener="#{functionsAction.checkDupFnName}" update="displayMessage,funcName" onstart="loadingDialog.show();" onsuccess="loadingDialog.hide();"/>
+							</p:inputText>
+					    </td>
+				  	</tr>
+				  	<tr>
+				    	<td class="header2B" width="15%"><div align="right">*Function Mapping : </div></td>
+					    <td class="header2B" align="left" >
+					    	<p:inputText size="150" maxlength="300" value="#{functionsAction.functionsForm.funcUrl}" id="funcUrl" onkeypress="isString(event)"/>
+					    </td>
+				  	</tr>
+				  	<tr>
+				    	<td colspan="4">
+				      			<div align="center">
+				      				<h:panelGrid columns="2">
+				        			<p:commandButton value="Submit" type="submit" action="#{functionsAction.doUpdateFunction}" onclick="loadingDialog.show();return doValidate();" />
+				        			<p:commandButton value="Back" action="#{functionsAction.listPage}" />
+				        			</h:panelGrid>
+				      			</div>
+				      		<div align="justify"></div>
+				      	</td>
+				  	</tr>
+				</table>
+				</div>
+                 
+      	</h:form>
+	</ui:define>
+</ui:composition>

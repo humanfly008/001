@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+ 	
+    <!-- 
+    <render-kit>
+	    <renderer>
+	        <component-family>javax.faces.Output</component-family>
+	        <renderer-type>javax.faces.Head</renderer-type>
+	        <renderer-class>com.stream.it.ss.view.jsf.base.HeadRenderer</renderer-class>
+	    </renderer>
+	</render-kit>
+     -->
+     
+    <!-- Integrate Spring Context -->
+ 	<application>
+  		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+ 	</application>
+ 	
+	<lifecycle>
+        <phase-listener>com.stream.it.ss.view.jsf.base.SessionPhaseListener</phase-listener>
+	</lifecycle>
+ 	
+ 	<!-- Resource Bundle -->
+  	<application>
+ 		<resource-bundle>
+ 		    <base-name>validate-message</base-name>
+ 		    <var>errorMessage</var>
+ 		</resource-bundle>
+ 		<resource-bundle>
+ 		    <base-name>messageResources</base-name>
+ 		    <var>message</var>
+ 		</resource-bundle>
+   	</application>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+   		<from-outcome>login</from-outcome>
+   		<to-view-id>/views/login.xhtml</to-view-id>
+   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+  	<navigation-rule>
+  		<navigation-case>
+   		<from-outcome>logout</from-outcome>
+   		<to-view-id>/views/logout.xhtml</to-view-id>
+   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+  	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>index</from-outcome>
+	   		<to-view-id>/views/index.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+  		
+  		<navigation-case>
+	   		<from-outcome>change.password</from-outcome>
+	   		<to-view-id>/views/setting/user/change-password.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+  		
+ 	</navigation-rule>
+ 	
+ 	
+ 	
+ 	
+ 	<!-- MENU -->
+ 	<navigation-rule>
+  		<navigation-case>
+   		<from-outcome>menu-list</from-outcome>
+   		<to-view-id>/views/setting/menu/menu-list.xhtml</to-view-id>
+   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>menu-add</from-outcome>
+	   		<to-view-id>/views/setting/menu/menu-add.xhtml</to-view-id>
+	   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule>
+    <navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>menu-edit</from-outcome>
+	   		<to-view-id>/views/setting/menu/menu-edit.xhtml</to-view-id>
+	   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule> 
+ 	
+ 	<!-- FUNCTIONS -->
+ 	<navigation-rule>
+  		<navigation-case>
+   		<from-outcome>functions-list</from-outcome>
+   		<to-view-id>/views/setting/function/functions-list.xhtml</to-view-id>
+   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>functions-add</from-outcome>
+	   		<to-view-id>/views/setting/function/functions-add.xhtml</to-view-id>
+	   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>functions-edit</from-outcome>
+	   		<to-view-id>/views/setting/function/functions-edit.xhtml</to-view-id>
+	   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<!-- USER PROFILE -->
+ 	<navigation-rule>
+  		<navigation-case>
+   		<from-outcome>user-list</from-outcome>
+   		<to-view-id>/views/setting/user/user.xhtml</to-view-id>
+   		<redirect></redirect>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	
+ 	<!-- SUPPLIER -->
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>supplier.list</from-outcome>
+	   		<to-view-id>/views/setting/supplier/supplier-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>supplier.add</from-outcome>
+	   		<to-view-id>/views/setting/supplier/supplier-add.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>supplier.edit</from-outcome>
+	   		<to-view-id>/views/setting/supplier/supplier-edit.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+    <!-- ITEM -->
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>item.list</from-outcome>
+	   		<to-view-id>/views/setting/item/item-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>item.add</from-outcome>
+	   		<to-view-id>/views/setting/item/item-add.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>item.edit</from-outcome>
+	   		<to-view-id>/views/setting/item/item-edit.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+	<!-- PRODUCT -->
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>product.list</from-outcome>
+	   		<to-view-id>/views/setting/product/product-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	
+ 	<!-- TRANSACTION -->
+ 	<!-- STOCK -->
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>stock.item.list</from-outcome>
+	   		<to-view-id>/views/transactions/item/stock-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>stock.item.add</from-outcome>
+	   		<to-view-id>/views/transactions/item/stock-add.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>stock.product.list</from-outcome>
+	   		<to-view-id>/views/transactions/product/stock-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>stock.product.add</from-outcome>
+	   		<to-view-id>/views/transactions/product/stock-add.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>stock.exhausted.list</from-outcome>
+	   		<to-view-id>/views/transactions/exhausted/exhausted.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>salary.list</from-outcome>
+	   		<to-view-id>/views/transactions/salary/salary-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
+ 	
+ 	
+ 	<managed-bean>
+	  	<managed-bean-name>currentDate</managed-bean-name>
+	  	<managed-bean-class>java.util.Date</managed-bean-class>
+	  	<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+ 	
+</faces-config>

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    	
+				<script type="text/javascript"> 
+	         		/* <![CDATA[ */
+	         	  	function validateEditSubmit(){	
+	         	  		validateNotNull("editForm:supplierName",		"Supplier Name");
+	         			
+	         			return displayErrorMessage('errorMessageDialogEdit');   
+					} 
+	         	  	/* ]]> */
+				</script>	
+					   	<h:outputLabel>	
+	    					<div id="errorMessageDialogEdit" class="ui-messages ui-widget" />					
+    					</h:outputLabel>
+    					<table width="100%">
+						    <tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">ข้อมูล</span>
+									</div>
+					        	</td>	
+					        </tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="* ชื่อตัวแทนจำหน่าย"/></td>
+					    		<td><p:inputText id="supplierName" value="#{supplierAction.supplierForm.supplierName}" size="30" maxlength="45"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="ประเภทตัวแทนจำหน่าย"/></td>
+					    		<td>
+					    			<p:inputText id="supplierType" value="#{supplierAction.supplierForm.supplierType}" size="30" maxlength="45"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" valign="top"><h:outputText value="รายละเอียด"/></td>
+					    		<td>
+					    			<p:inputTextarea id="details" value="#{supplierAction.supplierForm.details}" cols="50" rows="4"/>
+					    		</td>	
+					    	</tr>
+					    	<tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">การติดต่อ</span>
+									</div>
+					        	</td>	
+					        </tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="ชื่อคนติดต่อ"/></td>
+					    		<td>
+					    			<p:inputText id="contract" value="#{supplierAction.supplierForm.contract}" size="50" maxlength="100"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="เบอร์ติดต่อ"/></td>
+					    		<td>
+					    			<p:inputText id="phone" value="#{supplierAction.supplierForm.phone}" size="50" maxlength="200"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="Fax"/></td>
+					    		<td>
+					    			<p:inputText id="fax" value="#{supplierAction.supplierForm.fax}" size="50" maxlength="200"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="Email"/></td>
+					    		<td>
+					    			<p:inputText id="email" value="#{supplierAction.supplierForm.email}" size="50" maxlength="200"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" valign="top"><h:outputText value="ที่อยู่"/></td>
+					    		<td>
+					    			<p:inputTextarea id="address" value="#{supplierAction.supplierForm.address}" cols="50" rows="4"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="left" colspan="2">
+					    			<p:commandButton value="บันทึก" action="#{supplierAction.doEditSupplier}" onclick="return validateEditSubmit();" oncomplete="addFormDialog.hide()" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+					    		</td>
+					    	</tr>
+					    </table>
+					    
+				    	<br/><br/><br/>
+				
+	</h:body>
+</html>
+                

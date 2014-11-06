@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+			<ui:param name="transaction" value="บันทึก วัตถุดิบเข้า/ออก" />
+           	<ui:define name="content">
+				<script type="text/javascript"> 
+	         		/* <![CDATA[ */
+	         	  	function validateSubmit(){	
+	         			validateNotNull("formData:stockType_input",		"ประเภทนำสินค้าเข้า/ออก");
+	         			validateNotNull("formData:item_input",			"วัตถุดิบ");
+	         			validateNotNull("formData:qultity",				"จำนวน");
+	         			
+			          	return displayErrorMessage('errorMessageAddForm');   
+					} 
+					/* ]]> */
+				</script>	
+				<h:form id="formData">
+					<h:outputLabel id="displayMessage">
+						<p:growl life="1500" rendered="#{stockItemAction.dataFormBO.resultBO.errorMessage==''}"/> 
+						<p:messages rendered="#{stockItemAction.dataFormBO.resultBO.errorMessage!=''}" closable="true"/>
+					</h:outputLabel>
+				
+					<table width="90%" >
+						<tr>
+							<td colspan="2">
+								<h:outputLabel>	
+				    				<div id="errorMessageAddForm" class="ui-messages ui-widget"/>					
+			    				</h:outputLabel>
+							</td>
+						</tr>
+						<tr> 
+							<td align="left" colspan="2">
+								<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+									<span class="ui-panel-title">รายละเอียดนำวัตถุดิบเข้า/ออก</span>
+								</div>
+					        </td>	
+					  	</tr>
+					  	<tr>
+					    	<td align="right"><h:outputText value="* ประเภท"/></td>
+					    	<td>
+					    		<p:selectOneMenu id="stockType" value="#{stockItemAction.dataFormBO.stockType}" filter="true" filterMatchMode="contains">
+									<f:selectItem itemValue="" itemLabel="" />
+									<f:selectItem itemValue="In" itemLabel="เข้า" />
+									<f:selectItem itemValue="Out" itemLabel="ออก" />							
+								</p:selectOneMenu>
+				   			</td>	
+					  	</tr>
+					    <tr>
+					    	<td align="right"><h:outputText value="* วัตถุดิบ"/></td>
+					    	<td>
+					    		<h:panelGrid columns="5">
+						    		<p:selectOneMenu id="item" value="#{stockItemAction.dataFormBO.itemId}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="" />
+									   	<f:selectItems value="#{stockItemAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="supplier,itemDetailDisp" listener="#{stockItemAction.doFindItemDetail}"/>
+									</p:selectOneMenu>
+									&nbsp;
+									<h:outputText value="ตัวแทนจำหน่าย"/>
+									<p:selectOneMenu id="supplier" value="#{stockItemAction.dataFormBO.supplierId}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="" />
+										<f:selectItems value="#{stockItemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="item,itemDetailDisp" listener="#{stockItemAction.doSelectSupplierAddForm}"/>
+									</p:selectOneMenu>
+								</h:panelGrid>
+					    	</td>	
+					    </tr>
+					    <tr>
+					   		<td align="right">
+					   			<h:outputText value="* จำนวน"/>
+					   		</td>
+					   		<td>
+					   			
+					   			<p:inputText id="qultity" value="#{stockItemAction.dataFormBO.stockQty}" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+				    		</td>
+				    	</tr>
+				    	<tr>
+				    		<td>&nbsp;</td>
+				    	</tr>
+				   	</table> 	
+				   	
+				   	<!-- ITEM DETAILS DISPLAY -->
+				   	<h:panelGroup id="itemDetailDisp" >
+						<c:if test="#{stockItemAction.itemDataFormBO.itemCode!=null}">
+							<table width="90%" >
+								<tr>
+									<td colspan="3">
+										<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+											<span class="ui-panel-title">รายละเอียดวัตถุดิบ</span>
+										</div>
+							    	</td>
+							 	</tr>
+							 	<tr>
+							 		<td width="20%" align="right">
+							 			<h:outputText value="รหัสวัตถุดิบ  "/>
+							 		</td>
+							 		<td>
+							 			<p:inputText id="itemCode" value="#{stockItemAction.itemDataFormBO.itemCode}" readonly="true" style="background-color:#d7d7d7;"/>
+							 		</td>
+							 		<td width="60%" rowspan="6" align="left">
+							 			<h:graphicImage id="pic" value="/DownloadFileServlet?fileName=#{stockItemAction.itemDataFormBO.picName}" width="200" height="200"/>
+									</td>
+							 	</tr>
+							 	<tr>
+							 		<td align="right">
+							 			<h:outputText value="ประเภท"/>
+							 		</td>
+							 		<td>	
+							 			<p:inputText id="itemType" value="#{stockItemAction.itemDataFormBO.itemType}" readonly="true" style="background-color:#d7d7d7;"/>
+							 		</td>
+							 	</tr>
+							 	<tr>
+						    		<td align="right">
+						    			<h:outputText value="หน่วย "/>
+						    		</td>
+							 		<td>
+						    			<p:inputText id="unit" value="#{stockItemAction.itemDataFormBO.unit}" readonly="true" style="background-color:#d7d7d7;"/>
+						    		</td>	
+						    	</tr>
+						    	<tr>
+						    		<td align="right">
+						    			<h:outputText value="จำนวนที่ใช้ต่อชุด "/>
+						    		</td>
+							 		<td>
+						    			<p:inputText id="setPerUse" value="#{stockItemAction.itemDataFormBO.setPerUse}" readonly="true" style="background-color:#d7d7d7;"/>
+						    		</td>	
+						    	</tr>
+						    	<tr>
+						    		<td align="right">
+						    			<h:outputText value="รหัสวัตถุดิบตัวแทนจำหน่าย "/>
+						    		</td>
+							 		<td>
+						    			<p:inputText id="itemSupplierCode" value="#{stockItemAction.itemDataFormBO.itemSupplierCode}" readonly="true" style="background-color:#d7d7d7;"/>
+						    		</td>	
+						    	</tr>
+						    	<tr>
+						    		<td align="right">
+						    			<h:outputText value="จำนวนคงเหลือ "/>
+						    		</td>
+							 		<td>
+						    			<p:inputText id="qty" value="#{stockItemAction.itemDataFormBO.qty}" readonly="true" style="background-color:#d7d7d7;"/>
+						    		</td>	
+						    	</tr>
+							</table>
+						</c:if>
+					</h:panelGroup>
+					
+				   	<table width="90%"> 	
+				    	<tr>
+				    		<td>&nbsp;</td>
+				    	</tr>
+				    	<tr>
+				    		<td colspan="2">
+					    		<div align="left">
+			    					<p:commandButton value="บันทึก" actionListener="#{stockItemAction.doCreateStock}" onclick="return validateSubmit();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+								</div>	
+				    		</td>
+				    	</tr>
+					</table>
+				</h:form>
+			</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

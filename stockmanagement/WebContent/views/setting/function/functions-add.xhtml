@@ -1,0 +1,57 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+	  			xmlns:p="http://primefaces.org/ui"
+				template="/WEB-INF/layout/layout.xhtml">
+	<ui:param name="transaction" value="Function/Create" />
+    <ui:define name="content">
+	    <script type="text/javascript"> 
+			function doValidate(){
+				validateNotNull("addForm:funcId","Function ID");
+				validateNotNull("addForm:funcName","Function Name");
+				validateNotNull("addForm:funcUrl","Function URL");
+				return displayErrorMessage();
+			}
+		</script>
+		<h:form styleClass="form" id="addForm">
+			<h:outputLabel id="displayMessage">
+		        <p:messages  closable="true" autoUpdate="true"/>
+			</h:outputLabel>
+			<div class="entryForm">
+				<table width="100%">	
+	            	<tr>
+				    	<td class="header2B" width="15%"><div align="right">*Function ID : </div></td>
+					    <td class="header2B" align="left">
+					    	<p:inputText value="#{functionsAction.functionsForm.funcId}" id="funcId" maxlength="10" readonly="true" style="background-color:#d7d7d7;"/>
+					    </td>
+				  	</tr>
+				  	<tr>
+				    	<td class="header2B" width="15%"><div align="right">*Function Name : </div></td>
+					    <td class="header2B" align="left" >
+					    	<p:inputText value="#{functionsAction.functionsForm.funcName}" id="funcName"  maxlength="200" size="30" />
+						</td>
+				  	</tr>
+				  	<tr>
+				    	<td class="header2B" width="15%"><div align="right">*Function Mapping : </div></td>
+					    <td class="header2B" align="left" >
+					    	<p:inputText size="30" maxlength="200" value="#{functionsAction.functionsForm.funcUrl}" id="funcUrl"/>
+					    </td>
+				  	</tr>
+				  	<tr>
+				    	<td colspan="4">
+				      			<div align="center">
+				      				<h:panelGrid columns="2">
+				        			<p:commandButton value="Submit" type="submit" action="#{functionsAction.doCreateFunction}" onclick="return doValidate();" />
+				        			<p:commandButton value="Back" action="#{functionsAction.listPage}" />
+				        			</h:panelGrid>
+				      			</div>
+				      	</td>
+				  	</tr>
+				</table>
+			</div>
+        </h:form>
+	</ui:define>
+</ui:composition>

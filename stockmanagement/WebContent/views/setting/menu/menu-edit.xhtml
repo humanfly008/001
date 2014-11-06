@@ -1,0 +1,89 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	    		xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:c="http://java.sun.com/jsp/jstl/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:f="http://java.sun.com/jsf/core"
+	  			xmlns:p="http://primefaces.org/ui"
+				template="/WEB-INF/layout/layout.xhtml">
+	<ui:param name="transaction" value="Menu/update" />
+	<ui:define name="content">
+		<script type="text/javascript"> 
+			function validateSubmit(){			
+		       	validateNotNull("editForm:menuName","menu name");
+		       	validateNotNull("editForm:pickList_target","function");
+		      	return displayErrorMessage();                        
+	   		}
+		</script>
+		<h:form styleClass="form" id="editForm" name="editForm" >
+	            <h:outputLabel id="displayMessage">
+					<p:messages  autoUpdate="true" closable="true"/>
+				</h:outputLabel>
+				<div class="entryForm" >	
+				<table width="100%" align="center"   >
+					<tr>
+						<td width="30%" valign="top">
+							<p:panel id="panel2" header="Preview Menu" style="margin-bottom:10px;text-align: left;" >
+						    	<p:menubar model="#{menuAction.menu}" style="border:none;background: none;" />
+							</p:panel>
+						</td>
+						<td width="70%">
+							<p:panel id="panel3" header="Edit Menu" style="margin-bottom:10px;text-align: left;">
+								<table>
+									<tr>
+										<td align="right"><h:outputLabel value="Menu Id : "  /></td>
+										<td><p:inputText value="#{menuAction.formBean.menuId}" readonly="true" style="background-color:#d7d7d7;"/></td>
+									</tr>
+									<tr>
+										<td align="right"><h:outputLabel value="*Menu Name : "/></td>
+										<td>
+										<p:inputText maxlength="200" value="#{menuAction.formBean.menuName}"  size="80"  id="menuName"   >	
+					    					<f:ajax event="blur"  update="menuName" listener="#{menuAction.menuNameValidator}" />
+					    				</p:inputText>
+											
+										</td>
+									</tr>
+							  		<tr>
+							  			<td align="right"><h:outputLabel value="*Function : "/></td>
+							  			<td align="left">
+							  				<p:selectOneMenu id="addFunc" value="#{menuAction.formBean.eventFunc}" >
+							  					<f:selectItem  itemValue="none" itemLabel="select sub menu"/>
+							  					<f:selectItems value="#{menuAction.comboFunctionMenu}" var="function" itemValue="#{function.value},#{function.label}" itemLabel="#{function.label}" itemLabelEscaped="true"/>
+							  					<p:ajax event="change" update="panel3"/>
+							  				</p:selectOneMenu>
+							  			</td>
+							  		</tr>
+							  		<c:if test="#{menuAction.formBean.eventFunc =='none'}" >
+							  		<tr><td></td></tr>
+								  	<tr>
+								  		<td></td>
+								  		<td align="left"><b><h:outputLabel value="Function To Submenu" style="color: red;" /></b></td>
+								  	</tr>
+								  	
+								    <tr>
+								    	<td></td>
+									    <td class="header2B" colspan="4">
+									    	<p:pickList id="pickList" value="#{menuAction.functions}" 
+									    	 var="func" itemValue="#{func.funcId},#{func.funcName}" itemLabel="#{func.funcName}" >
+				                			 	<f:facet name="sourceCaption">AllFunction</f:facet>  
+		        							 	<f:facet name="targetCaption">Select</f:facet>
+				                			</p:pickList>
+									    </td>
+								  	</tr>
+								  	</c:if>
+								</table>
+							</p:panel>
+							<div align="center">
+								<h:panelGrid columns="3">
+									<p:commandButton value="Preview" actionListener="#{menuAction.processMenu}" onclick="validateSubmit();" update="panel2" />
+									<p:commandButton value="Submit" type="submit" action="#{menuAction.doEditMenu}" onclick="return validateSubmit();"   />
+									<p:commandButton value="Back" action="menu-list" />
+								</h:panelGrid>
+							</div>
+						</td>
+					</tr>
+				</table>
+                </div>
+      	</h:form>
+	</ui:define>
+</ui:composition>

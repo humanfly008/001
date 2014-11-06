@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//src/com/stream/it/ss/hibernate/inquiry/StockExhaustedInquiry.java=UTF-8
+encoding//src/com/stream/it/ss/hibernate/inquiry/StockItemInquiry.java=UTF-8
+encoding//src/com/stream/it/ss/hibernate/inquiry/StockProductInquiry.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/setting/item/ItemAction.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/setting/product/ProductAction.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/transaction/exhausted/StockExhaustedAction.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/transaction/stock/StockItemManageAction.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/transaction/stock/StockProductManageAction.java=UTF-8

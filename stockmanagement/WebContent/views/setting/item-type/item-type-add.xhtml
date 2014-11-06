@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+             <ui:param name="transaction" value="Supplier/Add" />
+             <ui:define name="content">
+				<script type="text/javascript"> 
+	         		/* <![CDATA[ */
+	         	  	function validateSubmit(){	
+	         			validateNotNull("formData:supplierCode",			"Supplier Code");
+	         			validateNotNull("formData:supplierName",			"Supplier Name");
+	         			validateNotNull("formData:supplierType_input",	"Supplier Type");
+	         			
+			          	return displayErrorMessage();   
+					} 
+					/* ]]> */
+				</script>	
+				<h:form id="formData">
+					    <table width="90%">
+						    <tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">Input Data</span>
+									</div>
+					        	</td>	
+					        </tr>
+					        <tr>
+					    		<td width="20%" align="right"><h:outputText value="Supplier Code * "/></td>
+					    		<td><p:inputText id="supplierCode" value="#{supplierAction.supplierForm.supplierCode}"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="Supplier Name * "/></td>
+					    		<td><p:inputText id="supplierName" value="#{supplierAction.supplierForm.supplierName}"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="Supplier Type * "/></td>
+					    		<td>
+					    			<p:selectOneMenu id="supplierType" value="#{supplierAction.supplierForm.supplierType}" filter="true" filterMatchMode="contains">
+					    				<f:selectItem itemValue="" itemLabel="-" />
+					    				<f:selectItems value="#{supplierAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+					    			</p:selectOneMenu>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" valign="top"><h:outputText value="Address 1 * "/></td>
+					    		<td><p:inputTextarea id="supplierAddress1" value="#{supplierAction.supplierForm.address1}" cols="100" rows="4"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right" valign="top"><h:outputText value="Address 2 * "/></td>
+					    		<td><p:inputTextarea id="supplierAddress2" value="#{supplierAction.supplierForm.address2}" cols="100" rows="4"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right" valign="top"><h:outputText value="Address 3 * "/></td>
+					    		<td><p:inputTextarea id="supplierAddress3" value="#{supplierAction.supplierForm.address3}" cols="100" rows="4"/></td>
+					    	</tr>
+					    	
+					    	<tr>
+					    		<td colspan="2">
+						    		<div align="left">
+				    					<p:commandButton value="Back" action="supplier.list" icon="ui-icon-arrowreturn-1-w"/>
+										<p:commandButton value="Save" action="#{supplierAction.doCreateSupplier}" onclick="return validateSubmit();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+									</div>	
+					    		</td>
+					    	</tr>
+					    </table>
+					    
+				    	<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+				    	
+				</h:form>
+					
+          	</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

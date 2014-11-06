@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+        	<ui:param name="transaction" value="ผู้ใช้งานระบบ" />
+           	<ui:define name="content">
+	       		<h:form id="listForm">
+					<h:outputLabel id="displayMessage">
+					<p:growl life="1500"
+						rendered="#{userProfileAction.searchFormBO.resultBO.errorMessage==''}" />
+					<p:messages rendered="#{userProfileAction.searchFormBO.resultBO.errorMessage!=''}" closable="true"/>
+					</h:outputLabel>
+						    
+						<h:panelGrid columns="5" cellpadding="5">
+					    	<h:outputText value="รหัสเข้าใช้ระบบ"/>
+					       	<p:inputText id="supplierName" value="#{userProfileAction.searchFormBO.userId}"/>
+					   		
+					   		<h:outputText value="ชื่อพนักงาน"/>
+					       	<p:inputText id="supplierContract" value="#{userProfileAction.searchFormBO.firstName}"/>
+					      	 
+					   		<p:commandButton id="searchBtn" value="ค้าหา" update="listForm" actionListener="#{userProfileAction.doListUserProfile}" icon="ui-icon-search" style="margin:0" />
+						</h:panelGrid>
+						<br></br>
+					   		
+					   	<div align="left">
+					   		<p:commandButton value="เพื่ม" actionListener="#{userProfileAction.addPage}" update=":addForm" oncomplete="addFormDialog.show();" icon="ui-icon-circle-plus"/>
+					   		<p:commandButton value="ลบ" onclick="return doValidateDelete('checkDelete');" icon="ui-icon-circle-minus" type="button"/>
+					   	</div>	
+							
+						<p:dataTable id="dataList" var="dataList" value="#{userProfileAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+							<p:column style="text-align: left;vertical-align: text-top" width="10">
+					        	<f:facet name="header">
+					            	<input type="checkbox" id="checkdeleteAll" name="checkdeleteAll" onclick="checkList('checkdeleteAll','checkDelete')"/>
+					          	</f:facet>	
+					          	<input type="checkbox" id="checkDelete" name="checkDelete" value="#{dataList.userId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+					        </p:column>
+					        <p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="No." />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.no}" />
+							  	</div>
+						    </p:column>
+					        <p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="ชื่อ" />
+						      	</f:facet>
+						      	<p:commandLink actionListener="#{userProfileAction.editPage}" update=":editForm:editFormDialog" oncomplete="editFormDialog.show();">
+									<div style="text-align:center;vertical-align: text-top">
+							        	<h:outputText value="#{dataList.firstName}" />
+							       	</div>
+							       	<f:param name="id" value="#{dataList.id}"/>
+						           	<f:param name="userId" value="#{dataList.userId}"/>
+						      	</p:commandLink>    	
+						    </p:column>
+						   	<p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="นามสกุล" />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.lastName}" />
+							  	</div>
+						    </p:column>
+						    <p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="เบอร์โทรติดต่อ" />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.phone}" />
+							  	</div>
+						    </p:column>
+						   	<p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="ตำแหน่ง" />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.department}" />
+							  	</div>
+						    </p:column>
+						    <p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="รหัสเข้าใช้ระบบ" />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.userId}" />
+							  	</div>
+						    </p:column>
+						    <p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="สถานะ" />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.status}" />
+							  	</div>
+						    </p:column>
+						    <p:column>
+						    	<f:facet name="header">
+						        	<h:outputText value="เข้าใช้ระบบล่าสุด" />
+						      	</f:facet>
+						       	<div style="text-align:center;vertical-align: text-top">
+							       	<h:outputText value="#{dataList.lastLogin}" >
+						            	<f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
+						            </h:outputText>
+						            <h:outputText value=" "/>
+						            <h:outputText value="#{dataList.lastLogin}" >
+						            	<f:convertDateTime type="date" dateStyle="short" pattern="HH:mm" />
+						            </h:outputText>
+							  	</div>
+						    </p:column>
+						</p:dataTable>
+					   	<h:outputLabel id="pagnavigator" for="listForm">
+							<ui:include src="/resources/component/pagnavigator.xhtml">
+							<ui:param name="action" 		value="#{userProfileAction}"></ui:param>
+						 	<ui:param name="searchBean"		value="#{userProfileAction.searchFormBO}" />
+						 	<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+						 	<ui:param name="dataList"		value="#{userProfileAction.transactionList}" />
+						 	<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+						</ui:include>
+					</h:outputLabel>
+									
+					<br/><br/><br/>
+					    	
+					<!-- ********* delete dialog  ********* -->
+		           	<p:dialog id="checkDeleteDialog" widgetVar="checkDeleteDialog" header="ยังไม่ได้เลือกรายการที่จะลบ" resizable="false" />
+					        
+	           		<p:dialog id="confirmDialog" widgetVar="confirmDialog" header="ยินยันลบข้อมูล" rendered="true">
+	            	   	ยืนยันต้องการลบข้อทูลที่เลือก
+	               		<p:commandButton id="confirm" value="ลบ" actionListener="#{userProfileAction.doDeleteUserProfile}" update="listForm" onstart="confirmation.hide();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>  
+					   	<p:commandButton id="decline" value="ยกเลิก" onclick="confirmDialog.hide()" type="button" />   
+	              	</p:dialog>				    	
+				</h:form>
+					
+				<h:form id="addForm">		
+					<p:dialog id="addFormDialog" widgetVar="addFormDialog" header="เพิ่มผู้ใช้งานระบบ" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
+						<ui:include src="/views/setting/user/user-add.xhtml" />
+					</p:dialog>		
+				</h:form>
+					
+				<h:form id="editForm">					
+					<p:dialog id="editFormDialog" widgetVar="editFormDialog" header="แก้ไขผู้ใช้งานระบบ" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
+						<ui:include src="/views/setting/user/user-edit.xhtml" />
+					</p:dialog>
+				</h:form>
+       		</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>         

@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+             <ui:param name="transaction" value="Supplier" />
+             <ui:define name="content">
+				<h:form id="listForm">
+					
+					    <h:outputLabel id="displayMessage">
+							<p:growl life="1500" rendered="#{supplierAction.searchForm.resultBO.errorMessage==''}"/> 
+							<p:messages rendered="#{supplierAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
+						</h:outputLabel>
+					    
+					    <h:panelGrid columns="5" cellpadding="5">
+				        	<h:outputText value="Supplier Code"/>
+				            <p:inputText id="supplierCode" value="#{supplierAction.searchForm.supplierCode}"/>
+				            <h:outputText value="Supplier Name"/>
+				            <p:inputText id="supplierName" value="#{supplierAction.searchForm.supplierName}"/>
+				   		   
+				   		   	<p:commandButton id="saveBtn" value="Search" update="listForm" actionListener="#{supplierAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+						</h:panelGrid>
+						<br></br>
+				   		
+				   		<div align="left">
+				   			<p:commandButton value="Create" action="#{supplierAction.addPage}" icon="ui-icon-circle-plus"/>
+				   			<p:commandButton value="Delete" action="#{supplierAction.doDeleteSupplier}" icon="ui-icon-circle-minus"/>
+				   		</div>	
+						
+						<p:dataTable id="dataList" var="dataList" value="#{supplierAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+
+					        <p:column style="text-align: left;vertical-align: text-top" width="10">
+				            	<f:facet name="header">
+				                	<input type="checkbox" id="checkdeleteAll" name="checkdeleteAll" onclick="checkList('checkdeleteAll','checkDelete')"/>
+				             	</f:facet>	
+				                <input type="checkbox" id="checkDelete" name="checkDelete" value="#{dataList.supplierId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+				             	
+							</p:column>
+				        	
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="Supplier Id" />
+					            </f:facet>
+					            <p:commandLink action="#{supplierAction.editPage}">
+									<div style="text-align:center;vertical-align: text-top">
+						            	<h:outputText value="#{dataList.supplierCode}" />
+						          	</div>
+					           		<f:param name="supplierId" value="#{dataList.supplierId}"/>
+					           	</p:commandLink>    	
+					            
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="Supplier Name" />
+					            </f:facet>
+					            <h:outputText value="#{dataList.supplierName}" />
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="Supplier Type" />
+					            </f:facet>
+					            <h:outputText value="#{dataList.supplierType}" />
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="Create By" />
+					            </f:facet>
+					            <h:outputText value="#{dataList.createBy}" />
+					        </p:column>
+					        <p:column>
+					            <f:facet name="header">
+					                <h:outputText value="Create Date" />
+					            </f:facet>
+					            <h:outputText value="#{dataList.createDate}" >
+					            	<f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
+				                </h:outputText>
+					        </p:column>
+				        </p:dataTable>
+				        <h:outputLabel id="pagnavigator" for="listForm">
+							<ui:include src="/resources/component/pagnavigator.xhtml">
+								<ui:param name="action" 		value="#{supplierAction}"></ui:param>
+					 			<ui:param name="searchBean"		value="#{supplierAction.searchForm}" />
+					 			<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+					 			<ui:param name="dataList"		value="#{supplierAction.transactionList}" />
+					 			<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+							</ui:include>
+						</h:outputLabel>
+								
+				    	<br/><br/><br/><br/><br/><br/>
+				    	
+				    
+				  	
+	
+    
+    
+				</h:form>
+					
+          	</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

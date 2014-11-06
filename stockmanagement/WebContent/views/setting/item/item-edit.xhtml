@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+    <h:body>    	
+    			<script type="text/javascript"> 
+	         		/* <![CDATA[ */
+	         	  	function validateEditSubmit(){	
+	         	  		validateNotNull("editForm:itemCode",			"รหัสวัตถุดิบ");
+		         		validateNotNull("editForm:itemName",			"ชื่อวัตถุดิบ");
+		         		validateNotNull("editForm:itemType",			"ประเภท");
+		         		validateNotNull("editForm:unit",				"หน่วย");
+		         		validateNotNull("editForm:supplier_input",	"ตัวแทนจำหน่าย");
+	         			
+			          	return displayErrorMessage('errorMessageDialogEdit');   
+					} 
+					/* ]]> */
+				</script>	
+						<h:outputLabel>	
+		    				<div id="errorMessageDialogEdit" class="ui-messages ui-widget"/>					
+						</h:outputLabel>
+		
+					    <table width="100%">
+						    <tr> 
+					        	<td align="left" colspan="2">
+									<div style="height: 20px;" id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">
+											<h:outputText value="ข้อมูล"/>
+										</span>
+									</div>
+					        	</td>	
+					        </tr>
+					        <tr>
+					    		<td width="30%" align="right"><h:outputText value="รหัสวัตถุดิบ * "/></td>
+					    		<td><p:inputText id="itemCode" value="#{itemAction.itemForm.itemCode}" maxlength="45"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="ชื่อวัตถุดิบ * "/></td>
+					    		<td><p:inputText id="itemName" value="#{itemAction.itemForm.itemName}" size="50" maxlength="100"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="ประเภท * "/></td>
+					    		<td>
+					    			<p:inputText id="itemType" value="#{itemAction.itemForm.itemType}" maxlength="45"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="หน่วย * "/></td>
+					    		<td>
+					    			<p:inputText id="unit" value="#{itemAction.itemForm.unit}" maxlength="45"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="จำนวนที่ใช้ต่อชุด * "/></td>
+					    		<td>
+					    			<p:inputText id="setPerUse" value="#{itemAction.itemForm.setPerUse}" maxlength="20" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="ตัวแทนจำหน่าย * "/></td>
+					    		<td>
+					    			<p:selectOneMenu id="supplier" value="#{itemAction.itemForm.supplierId}" filter="true" filterMatchMode="contains">
+								    	<f:selectItem itemValue="" itemLabel="-" />
+								    	<f:selectItems value="#{itemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+								    </p:selectOneMenu>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="รหัสวัตถุดิบตัวแทนจำหน่าย * "/></td>
+					    		<td>
+					    			<p:inputText id="itemSupplierCode" value="#{itemAction.itemForm.itemSupplierCode}" maxlength="45"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="ราคาต่อหน่วย "/></td>
+					    		<td><p:inputText id="unitPrice" value="#{itemAction.itemForm.unitPrice}" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="จำนวนคงเหลือ "/></td>
+					    		<td><p:inputText id="qty" value="#{itemAction.itemForm.qty}" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right">
+					    			<h:graphicImage id="pic" value="/DownloadFileServlet?fileName=#{itemAction.itemForm.picName}" width="150" height="150"/>
+								</td>
+					    		<td valign="top">
+					    			<p:fileUpload label="เลือกรูปภาพ" update="pic" fileUploadListener="#{itemAction.handleFileUpload}" mode="advanced" style="boder:none;"
+		    	                		 auto="true" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+					    		</td>
+					    	</tr>
+					    	<tr> 
+					        	<td align="left" colspan="2">
+									<div style="height: 20px;" id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">
+											<h:outputText value="ระดับแจ้งเตือนวัตถุดิบใกล้หมด"/>
+										</span>
+									</div>
+					        	</td>	
+					        </tr>
+					    	<tr>
+					    		<td align="right">
+					    			<h:outputText value="จำนวน เหลือน้อยมาก"/>
+						    		&nbsp;
+									<h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" style="background-color: red"/>
+					    		</td>
+					    		<td>
+					    			<p:inputText id="notificateLevel1Unit" value="#{itemAction.itemForm.notificateLevel1Unit}" size="10" maxlength="45" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right">
+					    			<h:outputText value="จำนวน เหลือน้อย"/>
+						    		&nbsp;
+									<h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" style="background-color: yellow"/>
+					    		</td>
+					    		<td>
+					    			<p:inputText id="notificateLevel2Unit" value="#{itemAction.itemForm.notificateLevel2Unit}" size="10" maxlength="45" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right">
+					    			<h:outputText value="จำนวน ปานกล่าง"/>
+						    		&nbsp;
+									<h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" style="background-color: green"/>
+					    		</td>
+					    		<td>
+					    			<p:inputText id="notificateLevel3Unit" value="#{itemAction.itemForm.notificateLevel3Unit}" size="10" maxlength="45" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td>&nbsp;</td>
+					    	</tr>
+					        
+					    	<tr>
+					    		<td colspan="2">
+						    		<div align="left">
+				    					<p:commandButton id="updateBt" value="บันทึก" actionListener="#{itemAction.doEditItem}" update=":listForm" onclick="return validateEditSubmit();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+									</div>	
+					    		</td>
+					    	</tr>
+					    </table>
+					    
+				    	<br/><br/>
+				    	
+			
+	</h:body>
+</html>
+                

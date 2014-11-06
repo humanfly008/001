@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    
+    			<script type="text/javascript"> 
+	         		/* <![CDATA[ */
+	         	  	function validateAddSubmit(){	
+	         	  		validateNotNull("editForm:firstName",		"ชื่อ");
+	         	  		validateNotNull("editForm:lastName",		"นามสกุล");
+	         	  		
+	         	  		/*
+	         	  		validateNotNull("editForm:userId",			"User Id");
+	         	  		validateNotNull("editForm:password",			"Password");
+	         	  		validateNotNull("editForm:confirmPassword",	"Confirm Password");
+	         	  		*/	
+	         	  		
+	         	  		var password = document.getElementById("editForm:password").value;
+	         	  		var confirmPassword = document.getElementById("editForm:confirmPassword").value;
+	         	  		
+	         	  		if(password != confirmPassword){
+	         	  			setErrorMessage("Password, Confirm Password", "New Password and Confirm Password must equal");
+	         	  		}
+	         	  		
+	         	  		if(document.getElementById("editForm:userInUse").value!=''){
+	         	  			setErrorMessage("User Id", "User Id used");
+	         	  		}
+		         	  	
+	         	  		
+	         			return displayErrorMessage('errorMessageDialogEdit');   
+					} 
+	         		/* ]]> */
+				</script>	
+						<h:outputLabel>	
+							<div id="errorMessageDialogEdit" class="ui-messages ui-widget" />					
+    					</h:outputLabel>
+    					
+    					<h:inputHidden id="userInUse" value="#{userProfileAction.userInUse}"/>
+    					
+    					<table width="100%">
+						    <tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">ข้อมูล</span>
+									</div>
+					        	</td>	
+					        </tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="* ชื่อ"/></td>
+					    		<td><p:inputText id="firstName" value="#{userProfileAction.userFormBO.firstName}" size="30" maxlength="200"/></td>
+					    	</tr>
+					    	<tr>
+					    		<td align="right"><h:outputText value="* นามสกุล"/></td>
+					    		<td>
+					    			<p:inputText id="lastName" value="#{userProfileAction.userFormBO.lastName}" size="30" maxlength="200"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="ตำแหน่ง"/></td>
+					    		<td>
+					    			<p:inputText id="department" value="#{userProfileAction.userFormBO.department}" maxlength="200"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="เบอร์โทรติดต่อ"/></td>
+					    		<td>
+					    			<p:inputText id="phone" value="#{userProfileAction.userFormBO.phone}" maxlength="200"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="ประเภทรายได้"/></td>
+					    		<td>
+					    			<p:selectOneMenu id="payType" value="#{userProfileAction.userFormBO.payType}" >
+								    	<f:selectItem itemValue="MONTH" itemLabel="รายเดือน" />
+								    	<f:selectItem itemValue="DAY" itemLabel="รายวัน" />
+								    </p:selectOneMenu>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="รายได้"/></td>
+					    		<td>
+					    			<p:inputText id="salary" value="#{userProfileAction.userFormBO.salary}" maxlength="20" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    			&nbsp;
+					    			<h:outputText value="บาท"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="หักประกันสังคม"/></td>
+					    		<td>
+					    			<p:inputText id="socialInsurance" value="#{userProfileAction.userFormBO.socialInsurance}" size="2" maxlength="2" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    			&nbsp;
+					    			<h:outputText value="%"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="หักภาษี"/></td>
+					    		<td>
+					    			<p:inputText id="tax" value="#{userProfileAction.userFormBO.tax}" size="2" maxlength="2" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
+					    			&nbsp;
+					    			<h:outputText value="%"/>
+					    		</td>	
+					    	</tr>
+					    	<tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">การเข้าใช้งานระบบ</span>
+									</div>
+					        	</td>	
+					        </tr>
+					        <tr>
+					    		<td align="right" ><h:outputText value="* User "/></td>
+					    		<td>
+					    			<p:inputText id="userId" value="#{userProfileAction.userFormBO.userId}" maxlength="200">
+					    				<p:ajax event="change" update="userInUse" listener="#{userProfileAction.verifyUserId}"/>
+					    			</p:inputText>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="* Password"/></td>
+					    		<td>
+					    			<p:password id="password" value="#{userProfileAction.userFormBO.password}" maxlength="200" redisplay="true"/>
+					    		</td>	
+					    	</tr>
+					    	<tr>
+					    		<td align="right" ><h:outputText value="* Confirm Password"/></td>
+					    		<td>
+					    			<p:password id="confirmPassword" value="#{userProfileAction.userFormBO.confirmPassword}" maxlength="200" redisplay="true"/>
+					    		</td>	
+					    	</tr>
+					    	
+					    	<tr>
+					    		<td align="right"><h:outputText value="สถานะ"/></td>
+					    		<td>
+					    			<p:selectOneRadio id="console" value="#{userProfileAction.userFormBO.status}">
+							            <f:selectItem itemLabel="Enable" itemValue="enable" />
+							            <f:selectItem itemLabel="Disable" itemValue="disable" />
+							        </p:selectOneRadio>
+					    		</td>	
+					    	</tr>
+					    	<tr> 
+					        	<td align="left" colspan="2">
+									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+										<span class="ui-panel-title">สิทธฺ์การใช้ระบบ</span>
+									</div>
+					        	</td>	
+					        </tr>
+					        <tr>
+					        	<td></td>
+					        	<td>
+					        		<p:pickList id="menuList" value="#{userProfileAction.menusList}" var="list" itemValue="#{list.value}" itemLabel="#{list.label}" >
+				                		<f:facet name="sourceCaption">เมนูทั้งหมด</f:facet>  
+		        						<f:facet name="targetCaption">เมนูที่เลือก</f:facet>
+				                	</p:pickList>
+					        	</td>
+					        </tr>
+					        <tr>
+					        	<td></td>
+					        	<td>
+					        		<p:pickList id="functionList" value="#{userProfileAction.functionsList}" var="list" itemValue="#{list.value}" itemLabel="#{list.label}" >
+				                		<f:facet name="sourceCaption">ฟังก์ชันทั้งหมด</f:facet>  
+		        						<f:facet name="targetCaption">ฟังก์ชันที่เลือก</f:facet>
+				                	</p:pickList>
+					        	</td>
+					        </tr>
+					        <tr>
+					    		<td>&nbsp;</td>
+					    	</tr>
+					    	<tr>
+					    		<td align="left" colspan="2">
+						    		<p:commandButton value="บันทึก" action="#{userProfileAction.doUpdateUserProfile}" onclick="return validateAddSubmit();" oncomplete="editFormDialog.hide()" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+					    		</td>
+					    	</tr>
+					    </table>
+					    
+				    	
+		
+	</h:body>
+</html>
+                
