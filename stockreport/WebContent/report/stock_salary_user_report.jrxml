@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.1289478601075547"/>
+	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="114"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="sql" class="java.lang.String"/>
 	<parameter name="month" class="java.lang.String"/>
 	<parameter name="year" class="java.lang.String"/>
@@ -31,10 +31,12 @@
 	OT_HOUR,
 	OT_RATE,
 	OT_SUMMARY,
+	LEAVE_SUBTRACT,
+	ACCUMULATE_SUBTRACT,
 	OTHER_SUBTRACT,
 	(CASE
-		WHEN PAY_TYPE = 'MONTH' THEN SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY
-		ELSE DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY
+		WHEN PAY_TYPE = 'MONTH' THEN SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME
+		ELSE DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME
 	END)TOTAL_SALARY_INCOME,
 
 	(CASE
@@ -48,14 +50,15 @@
 	END)SUBTRACT_TAX,
 
 	(CASE
-		WHEN PAY_TYPE = 'MONTH' THEN (SALARY*SOCIAL_INSURANCE/100)+(SALARY*TAX/100)
-		ELSE (DAILY*SOCIAL_INSURANCE/100)+(DAILY*TAX/100)
+		WHEN PAY_TYPE = 'MONTH' THEN (SALARY*SOCIAL_INSURANCE/100)+(SALARY*TAX/100)+OTHER_SUBTRACT+LEAVE_SUBTRACT+ACCUMULATE_SUBTRACT
+		ELSE (DAILY*SOCIAL_INSURANCE/100)+(DAILY*TAX/100)+OTHER_SUBTRACT+LEAVE_SUBTRACT+ACCUMULATE_SUBTRACT
 	END)TOTAL_SUBTRACT,
 
 	(CASE
-		WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY)-(SALARY*SOCIAL_INSURANCE/100)-(SALARY*TAX/100)
-		ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY)-(DAILY*SOCIAL_INSURANCE/100)-(DAILY*TAX/100)
-	END)TOTAL_SALARY_INCOME_NET
+		WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(SALARY*SOCIAL_INSURANCE/100)-(SALARY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT
+		ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(DAILY*SOCIAL_INSURANCE/100)-(DAILY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT
+	END)TOTAL_SALARY_INCOME_NET,
+	DETAILS
 
 
 
@@ -70,19 +73,22 @@ FROM (
 		U.SALARY,
 		U.SOCIAL_INSURANCE,
 		U.TAX,
-		IFNULL((SELECT COUNT(S.DAILY)	 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY_DAY,
-		IFNULL((SELECT SUM(S.DAILY)	 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY,
-		IFNULL((SELECT DISTINCT S.FARE 					FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'fare'),0) AS FARE,
-		IFNULL((SELECT DISTINCT S.DILIGENCE 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'diligence'),0) AS DILIGENCE,
-		IFNULL((SELECT DISTINCT S.BONUS 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'bonus'),0) AS BONUS,
-		IFNULL((SELECT DISTINCT S.OTHER_INCOME 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'otherIncome'),0) AS OTHER_INCOME,
+		IFNULL((SELECT COUNT(S.DAILY)	 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY_DAY,
+		IFNULL((SELECT SUM(S.DAILY)	 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY,
+		IFNULL((SELECT DISTINCT S.FARE 					FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'fare'),0) AS FARE,
+		IFNULL((SELECT DISTINCT S.DILIGENCE 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'diligence'),0) AS DILIGENCE,
+		IFNULL((SELECT DISTINCT S.BONUS 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'bonus'),0) AS BONUS,
+		IFNULL((SELECT DISTINCT S.OTHER_INCOME 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'otherIncome'),0) AS OTHER_INCOME,
 
-		IFNULL((SELECT DISTINCT(U.SALARY/30/8) 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_PER_HOUR,
-		IFNULL((SELECT DISTINCT COUNT(S.OT_HOUR)			FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_DATE,
-		IFNULL((SELECT DISTINCT SUM(S.OT_HOUR)				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_HOUR,
-		IFNULL((SELECT DISTINCT S.OT_RATE 				FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_RATE,
-		IFNULL((SELECT DISTINCT ((U.SALARY/30/8)*SUM(S.OT_HOUR)*OT_RATE) FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_SUMMARY,
-		IFNULL((SELECT DISTINCT S.OTHER_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'subtractOther'),0) AS OTHER_SUBTRACT
+		IFNULL((SELECT DISTINCT(U.SALARY/30/8) 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_PER_HOUR,
+		IFNULL((SELECT DISTINCT COUNT(S.OT_HOUR)			FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_DATE,
+		IFNULL((SELECT DISTINCT SUM(S.OT_HOUR)				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_HOUR,
+		IFNULL((SELECT DISTINCT S.OT_RATE 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_RATE,
+		IFNULL((SELECT DISTINCT ((U.SALARY/30/8)*SUM(S.OT_HOUR)*OT_RATE) FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_SUMMARY,
+		IFNULL((SELECT DISTINCT S.LEAVE_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'leaveSubtract'),0) AS LEAVE_SUBTRACT,
+		IFNULL((SELECT DISTINCT S.ACCUMULATE_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'accumulateSubtract'),0) AS ACCUMULATE_SUBTRACT,
+		IFNULL((SELECT DISTINCT S.OTHER_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'subtractOther'),0) AS OTHER_SUBTRACT,
+		IFNULL((SELECT DISTINCT S.DETAILS 				FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'details'),'-') AS DETAILS
 
 
 	FROM 	USERS_PROFILE U
@@ -164,6 +170,15 @@ $P!{sql}]]>
 	</field>
 	<field name="TOTAL_SUBTRACT" class="java.lang.Double"/>
 	<field name="OTHER_SUBTRACT" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="LEAVE_SUBTRACT" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ACCUMULATE_SUBTRACT" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="DETAILS" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<columnHeader>
@@ -322,7 +337,7 @@ $P!{sql}]]>
 				<textElement>
 					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[เงินเดือน]]></text>
+				<text><![CDATA[รายได้]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="130" y="32" width="48" height="20">
@@ -550,14 +565,14 @@ $P!{sql}]]>
 			<textField pattern="#,##0.00">
 				<reportElement x="428" y="72" width="71" height="20"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{OTHER_SUBTRACT}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{LEAVE_SUBTRACT}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="315" y="72" width="85" height="20"/>
 				<textElement>
 					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[หักอื่นๆ]]></text>
+				<text><![CDATA[หักหยุดงาน]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="11" y="133" width="100" height="20"/>
@@ -600,6 +615,44 @@ $P!{sql}]]>
 				</textElement>
 				<text><![CDATA[งวดจ่ายเงินเดือน]]></text>
 			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="92" width="71" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{ACCUMULATE_SUBTRACT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="315" y="92" width="85" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หักสะสม]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="112" width="71" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{OTHER_SUBTRACT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="315" y="112" width="85" height="20"/>
+				<textElement>
+					<font pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หักอื่นๆ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="284" width="54" height="20"/>
+				<textElement textAlignment="Right">
+					<font isItalic="true" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<text><![CDATA[หมายเหตุ : ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="56" y="284" width="443" height="20"/>
+				<textElement>
+					<font isItalic="true" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DETAILS}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>
