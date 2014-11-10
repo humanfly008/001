@@ -18,13 +18,31 @@
 						</h:outputLabel>
 					    
 					    <table width="100%">
-						    <tr>
-						    	<td align="right">
-						    		<h:outputText value="รหัสรายการ"/>
-								</td>
-					            <td width="20%"> 
-								    <p:inputText id="stockCode" value="#{stockItemAction.searchForm.stockCode}"/>
-							    </td>
+							<tr>
+								<td align="right"> 
+									<h:outputText value="ตัวแทนจำหน่าย"/>
+							   	</td>
+								<td width="20%">	
+							   		<p:selectOneMenu id="supplier" value="#{stockItemAction.searchForm.supplierId}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
+										<f:selectItems value="#{stockItemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="item" listener="#{stockItemAction.doSelectSupplier}"/>
+										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+									</p:selectOneMenu>
+						   	   	</td>
+								<td align="right">
+									<h:outputText value="วัตถุดิบ"/>
+							   	</td>
+								<td colspan="3">
+							   		<p:selectOneMenu id="item" value="#{stockItemAction.searchForm.itemId}" filter="true" filterMatchMode="contains">
+										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
+										<f:selectItems value="#{stockItemAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="supplier" listener="#{stockItemAction.doSelectItem}"/>
+										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+									</p:selectOneMenu>
+						   		</td>
+						   	</tr>
+						   	<tr>
 					            <td align="right">	
 							    	<h:outputText value="ประเภทรายการ"/>
 								</td>
@@ -49,32 +67,6 @@
 							      	</p:calendar>
 								</td>
 							</tr>
-							<tr>
-								<td align="right"> 
-									<h:outputText value="ตัวแทนจำหน่าย"/>
-							   	</td>
-								<td>	
-							   		<p:selectOneMenu id="supplier" value="#{stockItemAction.searchForm.supplierId}" filter="true" filterMatchMode="contains">
-										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
-										<f:selectItems value="#{stockItemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
-										<p:ajax event="change" update="item" listener="#{stockItemAction.doSelectSupplier}"/>
-										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
-									</p:selectOneMenu>
-						   	   	</td>
-								<td align="right">
-									<h:outputText value="วัตถุดิบ"/>
-							   	</td>
-								<td>
-							   		<p:selectOneMenu id="item" value="#{stockItemAction.searchForm.itemId}" filter="true" filterMatchMode="contains">
-										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
-										<f:selectItems value="#{stockItemAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
-										<p:ajax event="change" update="supplier" listener="#{stockItemAction.doSelectItem}"/>
-										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
-									</p:selectOneMenu>
-						   		</td>
-						   		<td></td>
-						   		<td></td>
-						   	</tr>
 						   	<tr>
 								<td colspan="6" align="right">
 									<h:panelGrid columns="1">

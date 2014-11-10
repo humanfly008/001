@@ -29,6 +29,8 @@ public class SalaryTransactionInquiry implements Serializable{
 	private Integer socialInsurance;
 	private Integer tax;
 	
+	private Double leaveSubtract;
+	private Double accumulateSubtract;
 	private Double otherSubtract;	
 	private Double subtractTax;
 	private Double subtractSocial;
@@ -36,6 +38,7 @@ public class SalaryTransactionInquiry implements Serializable{
 	private Double totalSalaryIncome;
 	private Double totalSalaryIncomeNet;
 	
+	private String details;
 	
 	public String getUserId() {
 		return userId;
@@ -190,6 +193,24 @@ public class SalaryTransactionInquiry implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
+	public Double getLeaveSubtract() {
+		return leaveSubtract;
+	}
+	public void setLeaveSubtract(Double leaveSubtract) {
+		this.leaveSubtract = leaveSubtract;
+	}
+	public Double getAccumulateSubtract() {
+		return accumulateSubtract;
+	}
+	public void setAccumulateSubtract(Double accumulateSubtract) {
+		this.accumulateSubtract = accumulateSubtract;
+	}
+	public String getDetails() {
+		return details;
+	}
+	public void setDetails(String details) {
+		this.details = details;
+	}
 	//*** FORMATTER ***//
 	public String getSalaryStr(){
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(salary));
@@ -230,6 +251,12 @@ public class SalaryTransactionInquiry implements Serializable{
 	public String getOtherIncomeStr(){
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(otherIncome));
 	}
+	public String getLeaveSubtractStr(){
+		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(leaveSubtract));
+	}
+	public String getAccumulateSubtractStr(){
+		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(accumulateSubtract));
+	}	
 	public String getSubtractSocialStr(){
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(subtractSocial));
 	}

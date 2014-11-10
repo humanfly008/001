@@ -19,4 +19,6 @@ public interface SalaryManagementService {
 	
 	public ResultBO updateIncome(DataBo searchBean)throws Exception;
 	public ResultBO deleteIncome(DataBo searchBean)throws Exception;	
+	
+	public ResultBO updateDetails(DataBo searchBean)throws Exception;
 }

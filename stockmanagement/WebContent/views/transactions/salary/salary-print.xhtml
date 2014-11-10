@@ -92,7 +92,7 @@
 								        	</td>	
 								        </tr>
 								        <tr>
-								        	<td align="left" width="30%"><h:outputText value="เงินเดือน"/></td>
+								        	<td align="left" width="30%"><h:outputText value="รายได้"/></td>
 								        	<td width="30%">
 								        		<h:outputText value="30 วัน" rendered="#{salaryManagementAction.printSalaryFormBO.payType=='MONTH'}"/>
 								    			<h:outputText value="#{salaryManagementAction.printSalaryFormBO.dailyDay} วัน" rendered="#{salaryManagementAction.printSalaryFormBO.payType=='DAY'}"/>
@@ -190,17 +190,25 @@
 								    		</td>
 								        </tr>
 								        <tr>
+								        	<td align="left" width="30%"><h:outputText value="หักหยุดงาน"/></td>
+								        	<td width="30%"></td>
+								        	<td align="right" width="30%">
+									        	<h:outputText value="#{salaryManagementAction.printSalaryFormBO.leaveSubtractStr}"/>
+								        	</td>
+								        </tr>
+								        <tr>
+								        	<td align="left" width="30%"><h:outputText value="หักสะสม"/></td>
+								        	<td width="30%"></td>
+								        	<td align="right" width="30%">
+									        	<h:outputText value="#{salaryManagementAction.printSalaryFormBO.accumulateSubtractStr}"/>
+								        	</td>
+								        </tr>
+								        <tr>
 								        	<td align="left" width="30%"><h:outputText value="หักอื่นๆ"/></td>
 								        	<td width="30%"></td>
 								        	<td align="right" width="30%">
 									        	<h:outputText value="#{salaryManagementAction.printSalaryFormBO.otherSubtractStr}"/>
 								        	</td>
-								        </tr>
-								        <tr>
-								        	<td colspan="3">&nbsp;</td>
-								        </tr>
-								        <tr>
-								        	<td colspan="3">&nbsp;</td>
 								        </tr>
 								        <tr>
 								        	<td colspan="3">&nbsp;</td>
@@ -221,7 +229,10 @@
 								        	<td align="right" width="30%">
 									        	<b><h:outputText value="#{salaryManagementAction.printSalaryFormBO.subtractSocial+
 									        								salaryManagementAction.printSalaryFormBO.subtractTax+
-									        								salaryManagementAction.printSalaryFormBO.otherSubtract}">
+									        								salaryManagementAction.printSalaryFormBO.leaveSubtract+
+									        								salaryManagementAction.printSalaryFormBO.accumulateSubtract+
+									        								salaryManagementAction.printSalaryFormBO.otherSubtract
+									        								}">
 													<f:convertNumber minFractionDigits="2" />
 									        	</h:outputText>
 									        	</b>
@@ -238,8 +249,17 @@
 									</table>
 								</td>					    	
 					    	</tr>
+							<tr>
+								<td colspan="3">&nbsp;</td>
+							</tr>
 					    	<tr>
-					    		<td colspan="3">&nbsp;</td>
+								<td colspan="3">
+									<h:outputText value="หมายเหตุ : "/>	
+									<h:outputText value="#{salaryManagementAction.printSalaryFormBO.details}"/>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3">&nbsp;</td>
 							</tr>
 							<tr>
 								<td colspan="3">&nbsp;</td>

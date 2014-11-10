@@ -67,7 +67,8 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
-						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
 					));
 			
 			salarySearchFormBO.setConditionValuesBean(new SearchConditionValuesBean[] { new SearchConditionValuesBean(SQLConstantWhereType.AND,	"FIRST_NAME",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(salarySearchFormBO.getUserName()) })});
@@ -81,6 +82,7 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
 					));
@@ -105,11 +107,12 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 					salarySearchFormBO.setTotalSalaryIncome(		summaryTransactionInquiry.getTotalSalaryIncomeStr());
 					salarySearchFormBO.setTotalSubtractTax(			summaryTransactionInquiry.getSubtractTaxStr());
 					salarySearchFormBO.setTotalSubtractSocial(		summaryTransactionInquiry.getSubtractSocialStr());
+					salarySearchFormBO.setTotalSubtractLeave(		summaryTransactionInquiry.getLeaveSubtractStr());
+					salarySearchFormBO.setTotalSubtractAccumulate(	summaryTransactionInquiry.getAccumulateSubtractStr());
 					salarySearchFormBO.setTotalSubtractOther(		summaryTransactionInquiry.getOtherSubtractStr());
 					
 					salarySearchFormBO.setTotalSalaryIncomeNet(		summaryTransactionInquiry.getTotalSalaryIncomeNetStr());					
 				}
-				
 			}			
 			
 		} catch (Exception e) {
@@ -134,7 +137,8 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
-						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
 					));
 			
 			salarySearchFormBO.setConditionValuesBean(new SearchConditionValuesBean[] { 
@@ -358,6 +362,11 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 				else if(salaryIncomeForm.getIncomeType().equals("subtractOther"))
 					salaryTransaction.setOtherSubtract(	salaryIncomeForm.getIncome());
 
+				else if(salaryIncomeForm.getIncomeType().equals("leaveSubtract"))
+					salaryTransaction.setLeaveSubtract(	salaryIncomeForm.getIncome());
+
+				else if(salaryIncomeForm.getIncomeType().equals("accumulateSubtract"))
+					salaryTransaction.setAccumulateSubtract(	salaryIncomeForm.getIncome());
 				
 				salaryTrasnactionDAO.create(salaryTransaction);
 				
@@ -387,6 +396,11 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 					else if(salaryIncomeForm.getIncomeType().equals("subtractOther"))
 						salaryTransaction.setOtherSubtract(	salaryIncomeForm.getIncome());
 
+					else if(salaryIncomeForm.getIncomeType().equals("leaveSubtract"))
+						salaryTransaction.setLeaveSubtract(	salaryIncomeForm.getIncome());
+
+					else if(salaryIncomeForm.getIncomeType().equals("accumulateSubtract"))
+						salaryTransaction.setAccumulateSubtract(	salaryIncomeForm.getIncome());
 					
 					salaryTrasnactionDAO.update(salaryTransaction);
 				}
@@ -413,24 +427,6 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 			List<SalaryTransaction> listSalaryByUser =  salaryTrasnactionDAO.listByUserId(salaryIncomeForm.getIncomeType(), salaryIncomeForm.getUserId(), salaryIncomeForm.getId(), salaryIncomeForm.getMonth(), salaryIncomeForm.getYear());
 			
 			for(SalaryTransaction salaryTransaction : listSalaryByUser){
-				if(salaryIncomeForm.getIncomeType().equals("daily"))
-					salaryTransaction.setDaily(	salaryIncomeForm.getIncome());
-						
-				else if(salaryIncomeForm.getIncomeType().equals("fare"))
-					salaryTransaction.setFare(	salaryIncomeForm.getIncome());
-						
-				else if(salaryIncomeForm.getIncomeType().equals("diligence"))
-					salaryTransaction.setDiligence(	salaryIncomeForm.getIncome());
-					
-				else if(salaryIncomeForm.getIncomeType().equals("bonus"))
-					salaryTransaction.setBonus(	salaryIncomeForm.getIncome());
-					
-				else if(salaryIncomeForm.getIncomeType().equals("social"))
-					salaryTransaction.setSocialInsurance(	salaryIncomeForm.getIncome());
-					
-				else if(salaryIncomeForm.getIncomeType().equals("tax"))
-					salaryTransaction.setTax(	salaryIncomeForm.getIncome());
-					
 				salaryTrasnactionDAO.delete(salaryTransaction);
 			}
 			
@@ -443,6 +439,45 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 		}
 		
 		return resultBO;
+	}
+	
+	public ResultBO updateDetails(DataBo dataBo)throws Exception{
+		ResultBO resultBO = new ResultBO();
+		SalaryIncomeForm salaryIncomeForm = (SalaryIncomeForm)dataBo;
+		
+		try {
+			
+			List<SalaryTransaction> listSalaryByUser =  salaryTrasnactionDAO.listByUserId(salaryIncomeForm.getIncomeType(), salaryIncomeForm.getUserId(), salaryIncomeForm.getId(), salaryIncomeForm.getMonth(), salaryIncomeForm.getYear());
+			if(listSalaryByUser.isEmpty()){
+				SalaryTransaction salaryTransaction = new SalaryTransaction();
+				salaryTransaction.setDate(1);
+				salaryTransaction.setMonth(		salaryIncomeForm.getMonth());
+				salaryTransaction.setYear(		salaryIncomeForm.getYear());
+				salaryTransaction.setUserId(	salaryIncomeForm.getUserId());
+				salaryTransaction.setId(		salaryIncomeForm.getId());
+				
+				salaryTransaction.setTransactionType(salaryIncomeForm.getIncomeType());
+				salaryTransaction.setDetails(	salaryIncomeForm.getDetails());
+				
+				salaryTrasnactionDAO.create(salaryTransaction);
+				
+			}else{
+				for(SalaryTransaction salaryTransaction : listSalaryByUser){
+					salaryTransaction.setDetails(	salaryIncomeForm.getDetails());
+
+					salaryTrasnactionDAO.update(salaryTransaction);
+				}
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			resultBO.setException(e);
+			resultBO.setErrorMessage(e.getMessage());
+		}
+		
+		return resultBO;		
 	}
 
 }

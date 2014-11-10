@@ -65,7 +65,6 @@
 								</div>
 								<f:param name="userId" 			value="#{dataList.userId}"/>
 								<f:param name="id" 				value="#{dataList.id}"/>
-						      	
 							</p:commandLink>
 						</p:column>
 						<p:column>
@@ -122,7 +121,7 @@
 								<div style="text-align:right;vertical-align: text-top">
 							        <h:outputText value="#{dataList.dailyStr}"/>
 							  	</div>
-							  	<f:param name="income" 			value="#{dataList.salary}"/>
+							  	<f:param name="income" 			value="#{dataList.daily}"/>
 							  	<f:param name="incomeType" 		value="daily"/>
 						      	<f:param name="incomeTypeDesc" 	value="รายวัน"/>
 							  	
@@ -246,7 +245,7 @@
 								<div style="text-align:right;vertical-align: text-top">
 							        <h:outputText value="#{dataList.otherIncomeStr}"/>
 							  	</div>
-							  	<f:param name="income" 			value="#{dataList.fare}"/>
+							  	<f:param name="income" 			value="#{dataList.otherIncome}"/>
 							  	<f:param name="incomeType" 		value="otherIncome"/>
 						      	<f:param name="incomeTypeDesc" 	value="รายได้อื่นๆ"/>
 							  	
@@ -374,6 +373,56 @@
 								</f:facet>
 							</c:if>  
 						</p:column>
+
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หัก หยุดงาน" />
+						  	</f:facet>
+						
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.leaveSubtractStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.leaveSubtract}"/>
+							  	<f:param name="incomeType" 		value="leaveSubtract"/>
+						      	<f:param name="incomeTypeDesc" 	value="หักหยุดงาน"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractLeave}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หักสะม" />
+						  	</f:facet>
+						
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.accumulateSubtractStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.accumulateSubtract}"/>
+							  	<f:param name="incomeType" 		value="accumulateSubtract"/>
+						      	<f:param name="incomeTypeDesc" 	value="หักสะสม"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						    </p:commandLink>
+						    <c:if test="#{!empty salaryManagementAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractAccumulate}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>						
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="หักอื่นๆ" />
@@ -425,6 +474,23 @@
 								</f:facet>
 							</c:if>  
 						</p:column>
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หมายเหคุ" />
+						  	</f:facet>
+							
+							<p:commandLink actionListener="#{salaryManagementAction.updateDetailsPage}" update=":addFormDetails:addFormDialogDetails" oncomplete="addFormDialogDetails.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.details}"/>
+							  	</div>
+							  	<f:param name="details" 			value="#{dataList.details}"/>
+							  	<f:param name="incomeType" 		value="details"/>
+						      	<f:param name="incomeTypeDesc" 	value="หมายเหตุ"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						    </p:commandLink>
+						</p:column>
 					</p:dataTable>
 					</div>				
 					
@@ -460,8 +526,14 @@
 					</p:dialog>
 				</h:form>
 				
+				<h:form id="addFormDetails">		
+					<p:dialog id="addFormDialogDetails" widgetVar="addFormDialogDetails" header="หมายเหตุ" draggable="false" resizable="false" showEffect="fade" width="600" height="150">
+						<ui:include src="/views/transactions/salary/salary-details.xhtml" />
+					</p:dialog>
+				</h:form>
+				
 				<h:form id="printFormIncome">		
-					<p:dialog id="printFormDialogIncome" widgetVar="printFormDialogIncome" header="พิมพ์รายการรายได้" draggable="false" resizable="false" showEffect="fade" width="700" height="490">
+					<p:dialog id="printFormDialogIncome" widgetVar="printFormDialogIncome" header="พิมพ์รายการรายได้" draggable="false" resizable="false" showEffect="fade" width="700" height="520">
 						<ui:include src="/views/transactions/salary/salary-print.xhtml" />
 					</p:dialog>
 				</h:form>

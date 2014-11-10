@@ -141,15 +141,15 @@ public class StockItemManageAction extends BaseAction{
 		String reportType = getHttpServletRequest().getParameter("listForm:reportType_input");
 
 		Report2PDF report2pdfExporter = new Report2PDFExporter();
-		report2pdfExporter.setColumnWidths(new float[]{0.3f, 1f, 0.5f, 0.5f, 0.5f, 1f, 3.5f, 3f, 0.5f, 0.5f});
-		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER});
+		report2pdfExporter.setColumnWidths(new float[]{0.3f, 0.5f, 1f, 0.5f, 1f, 3.5f, 3f, 1f});
+		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER});
 		 
 		reportExporter.setReportName("stock item report");
 		reportExporter.setReport2pdfExporter(report2pdfExporter);
 		
 		fileTransactionsDataExport = reportExporter.genReportData(reportType, "สรุป รายการเข้า/ออก วัตถุดิบ", transactionList, 
-				new String[]{"no",	"stockCode",	"stockTypeDesc",	"stockDateStr",	"stockQtyStr",	"itemCode",	"itemName",	"supplierName", "createBy", "createDateStr"}, 
-				new String[]{"No.",	"รหัสรายการ",		"ประเภทรายการ",			"วันที่บันทึกข้อมูล",		"จำนวน",			"รหัสวัตถุดิบ",	"ชื่อวัตถุดิบ",		"ตัวแทนจำหน่าย",		"คนสร้างรายการ",	"วันที่ของเข้า/ออก"},
+				new String[]{"no",	"stockTypeDesc",	"stockDateStr",	"stockQtyStr",	"itemCode",	"itemName",	"supplierName", "createBy"}, 
+				new String[]{"No.",	"ประเภทรายการ",			"วันที่บันทึกข้อมูล",		"จำนวน",			"รหัสวัตถุดิบ",	"ชื่อวัตถุดิบ",		"ตัวแทนจำหน่าย",		"คนสร้างรายการ"},
 				null,
 				null,
 				searchForm.getSecuriyBO().getUserAuthentication().getUserLogin());

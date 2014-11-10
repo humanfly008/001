@@ -65,7 +65,7 @@ public class SalaryManagementAction extends BaseAction{
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create OT", resultBO);
+		DisplayMessages.showMessage("Create", resultBO);
 	}	
 	
 	public void doCreateSalaryDaily()throws Exception{
@@ -73,7 +73,7 @@ public class SalaryManagementAction extends BaseAction{
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create OT", resultBO);
+		DisplayMessages.showMessage("Create", resultBO);
 	}	
 	
 	public void doUpdateInCome()throws Exception{
@@ -81,21 +81,29 @@ public class SalaryManagementAction extends BaseAction{
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create OT", resultBO);
-	}	
+		DisplayMessages.showMessage("Create", resultBO);
+	}
+	
+	public void doUpdateDetails()throws Exception{
+		ResultBO resultBO = salaryManagementService.updateDetails(salaryIncomeForm);
+		
+		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
+		
+		DisplayMessages.showMessage("Create", resultBO);
+	}
 	
 	public void doDeleteInCome()throws Exception{
 		ResultBO resultBO = salaryManagementService.deleteIncome(salaryIncomeForm);
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create OT", resultBO);
+		DisplayMessages.showMessage("Create", resultBO);
 	}	
 	
 	public void doDeleteOtTransactionByUser() throws Exception{
 		String[]checkDelete = getHttpServletRequest().getParameterValues("checkDelete");
 		ResultBO resultBO = salaryManagementService.deleteOtTrasnactionByUser(checkDelete);
-		DisplayMessages.showMessage("Delete ", resultBO); 
+		DisplayMessages.showMessage("Delete", resultBO); 
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 	}
@@ -103,7 +111,7 @@ public class SalaryManagementAction extends BaseAction{
 	public void doDeleteDailyTransactionByUser() throws Exception{
 		String[]checkDelete = getHttpServletRequest().getParameterValues("checkDelete2");
 		ResultBO resultBO = salaryManagementService.deleteDailyTrasnactionByUser(checkDelete);
-		DisplayMessages.showMessage("Delete ", resultBO); 
+		DisplayMessages.showMessage("Delete", resultBO); 
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 	}
@@ -198,6 +206,7 @@ public class SalaryManagementAction extends BaseAction{
 
 		searchFormBOTemp = new SalarySearchForm();
 		searchFormBOTemp.setUserId(			userId);
+		searchFormBOTemp.setId(				id);
 		searchFormBOTemp.setMonth(			searchFormBO.getMonth());
 		searchFormBOTemp.setYear(			searchFormBO.getYear());
 		transactionOtByUserList = salaryManagementService.listOtByUserTrasnaction(searchFormBOTemp);
@@ -208,12 +217,14 @@ public class SalaryManagementAction extends BaseAction{
 	public String updateIncomePage()throws Exception{
 		String id		  	= getHttpServletRequest().getParameter("id");
 		String userId		= getHttpServletRequest().getParameter("userId");
+		String income		= getHttpServletRequest().getParameter("income");
 		String incomeType 	= getHttpServletRequest().getParameter("incomeType");
 		String incomeTypeDesc = getHttpServletRequest().getParameter("incomeTypeDesc");
 	
 		salaryIncomeForm = new SalaryIncomeForm();
 		salaryIncomeForm.setUserId(			userId);
 		salaryIncomeForm.setId(				id);
+		salaryIncomeForm.setIncome(			Double.parseDouble(income));
 		salaryIncomeForm.setIncomeType(		incomeType);
 		salaryIncomeForm.setIncomeTypeDesc(	incomeTypeDesc);
 		salaryIncomeForm.setMonth(			searchFormBO.getMonth());
@@ -221,7 +232,26 @@ public class SalaryManagementAction extends BaseAction{
 		
 		return null;
 	}
+
+	public String updateDetailsPage()throws Exception{
+		String id		  	= getHttpServletRequest().getParameter("id");
+		String userId		= getHttpServletRequest().getParameter("userId");
+		String details		= getHttpServletRequest().getParameter("details");
+		String incomeType 	= getHttpServletRequest().getParameter("incomeType");
+		String incomeTypeDesc = getHttpServletRequest().getParameter("incomeTypeDesc");
 	
+		salaryIncomeForm = new SalaryIncomeForm();
+		salaryIncomeForm.setUserId(			userId);
+		salaryIncomeForm.setId(				id);
+		salaryIncomeForm.setDetails(		details);
+		salaryIncomeForm.setIncomeType(		incomeType);
+		salaryIncomeForm.setIncomeTypeDesc(	incomeTypeDesc);
+		salaryIncomeForm.setMonth(			searchFormBO.getMonth());
+		salaryIncomeForm.setYear(			searchFormBO.getYear());
+		
+		return null;
+	}
+
 	
 	//**** SETTER, GETTER*****//
 	public List<?> getTransactionList() {

@@ -21,6 +21,8 @@ public class SalarySearchForm extends SearchBean{
 	
 	private String totalSubtractTax;
 	private String totalSubtractSocial;
+	private String totalSubtractLeave;
+	private String totalSubtractAccumulate;
 	private String totalSubtractOther;
 	
 	private String totalSalaryIncome;
@@ -140,5 +142,17 @@ public class SalarySearchForm extends SearchBean{
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getTotalSubtractLeave() {
+		return totalSubtractLeave;
+	}
+	public void setTotalSubtractLeave(String totalSubtractLeave) {
+		this.totalSubtractLeave = totalSubtractLeave;
+	}
+	public String getTotalSubtractAccumulate() {
+		return totalSubtractAccumulate;
+	}
+	public void setTotalSubtractAccumulate(String totalSubtractAccumulate) {
+		this.totalSubtractAccumulate = totalSubtractAccumulate;
 	}
 }

@@ -52,9 +52,14 @@ public class SalaryTransaction implements Serializable {
     private Double socialInsurance;
     @Column(name = "TAX")
     private Double tax;
+    @Column(name = "LEAVE_SUBTRACT")
+    private Double leaveSubtract;
+    @Column(name = "ACCUMULATE_SUBTRACT")
+    private Double accumulateSubtract;
     @Column(name = "OTHER_SUBTRACT")
     private Double otherSubtract;
-
+    @Column(name = "DETAILS")
+    private String details;
 
     public SalaryTransaction() {
     }
@@ -168,6 +173,24 @@ public class SalaryTransaction implements Serializable {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public Double getLeaveSubtract() {
+		return leaveSubtract;
+	}
+	public void setLeaveSubtract(Double leaveSubtract) {
+		this.leaveSubtract = leaveSubtract;
+	}
+	public Double getAccumulateSubtract() {
+		return accumulateSubtract;
+	}
+	public void setAccumulateSubtract(Double accumulateSubtract) {
+		this.accumulateSubtract = accumulateSubtract;
+	}
+	public String getDetails() {
+		return details;
+	}
+	public void setDetails(String details) {
+		this.details = details;
 	}
 	@Override
     public int hashCode() {

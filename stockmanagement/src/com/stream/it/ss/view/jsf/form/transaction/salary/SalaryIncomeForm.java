@@ -11,6 +11,7 @@ public class SalaryIncomeForm extends DataBo{
 	private Integer month;
 	private Integer year;
 	private Double income;
+	private String details;
 	
 	public String getUserId() {
 		return userId;
@@ -53,5 +54,11 @@ public class SalaryIncomeForm extends DataBo{
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getDetails() {
+		return details;
+	}
+	public void setDetails(String details) {
+		this.details = details;
 	}
 }
