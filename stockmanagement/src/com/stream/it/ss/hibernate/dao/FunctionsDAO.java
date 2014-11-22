@@ -1,5 +1,6 @@
 package com.stream.it.ss.hibernate.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.stream.it.ss.hibernate.domain.Functions;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class FunctionsDAO extends BaseDAO{
+public class FunctionsDAO extends BaseDAO implements Serializable{
 
 	public List<Functions> listAll() throws Exception{   
         HibernateTemplate hibernateTemplate = getHibernateTemplate();
