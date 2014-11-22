@@ -162,7 +162,8 @@
         <property name="sql">
             <value>
                 <![CDATA[
-                	SELECT  USER_ID, 
+                	SELECT  ID,
+                			USER_ID, 
 							FIRST_NAME,
 							LAST_NAME,
 							DEPARTMENT,
@@ -180,5 +181,27 @@
         </property>
     </bean> 
     
-    
+    <bean id="productItemGroupInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[
+                	SELECT 	ITEM_ID,
+							ITEM_NAME_TH,
+							ITEM_SUPPLIER_CODE,
+							ITEM_QTY,
+							SET_PER_USE 
+					FROM 	M_ITEM 
+					WHERE 	ITEM_ID IN( 
+							SELECT ITEM_ID  
+							FROM M_PRODUCT_ITEM_GROUP 
+							WHERE PRODUCT_ID = ? 
+					)
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.domain.MItem</value>
+        </property>
+    </bean> 
 </beans>
