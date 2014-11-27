@@ -9,25 +9,42 @@
     <h:body>    
     			<script type="text/javascript"> 
 	         		/* <![CDATA[ */
-	         	  	function validateAddSubmit(){	
-	         	  		validateNotNull("addFormDaily:dailyDate_input",	"Daily Date");
+	         	  	function validateAddDailySubmit(){	
+	         	  		validateNotNull("addFormDaily:dailyDate_input",	"วันที่ทำ");
 	         			
-	         			return displayErrorMessage('errorMessageDialogAdd');   
+	         			return displayErrorMessage('errorMessageDailyDialogAdd');   
 					} 
 	         		/* ]]> */
 				</script>	
 						<h:outputLabel>	
-	    					<div id="errorMessageDialogAdd" class="ui-messages ui-widget" />					
+	    					<div id="errorMessageDailyDialogAdd" class="ui-messages ui-widget" />					
     					</h:outputLabel>
     					
+    					<h:outputLabel id="displayMessage">
+    						<p:growl life="700"/>
+						</h:outputLabel>
+					
     					<table width="100%">
-						    <tr> 
+    						<tr> 
 					        	<td align="left" colspan="2">
 									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
 										<span class="ui-panel-title">ข้อมูล รายได้รายวัน</span>
 									</div>
 					        	</td>	
 					        </tr>
+					        <tr>
+					    		<td align="right"><h:outputText value="พนักงาน"/></td>
+					    		<td>
+					    			<h:outputText value=" #{salaryManagementAction.salaryDailyForm.userFullName}"/>
+					    		</td>	
+					    	</tr>
+					        <tr>
+					    		<td align="right"><h:outputText value="ค่าแรง"/></td>
+					    		<td>
+					    			<h:outputText value=" #{salaryManagementAction.salaryDailyForm.income}"/>
+					    			<h:outputText value="/วัน"/>
+					    		</td>	
+					    	</tr>
 					    	<tr>
 					    		<td align="right"><h:outputText value="วันที่ทำ"/></td>
 					    		<td>
@@ -38,7 +55,7 @@
 					    	</tr>
 					    	<tr>
 					    		<td align="left" colspan="2">
-						    		<p:commandButton value="บันทึกรายได้" action="#{salaryManagementAction.doCreateSalaryDaily}" onclick="return validateAddSubmit();" oncomplete="otAddFormDialog.hide()" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+						    		<p:commandButton value="บันทึกรายได้" update="dailyDataList,:listForm:dataList,displayMessage,totalDaily" actionListener="#{salaryManagementAction.doCreateSalaryDaily}" onclick="validateAddDailySubmit();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
 					    		</td>
 					    	</tr>
 					    </table>
@@ -47,25 +64,36 @@
 						    <tr> 
 					        	<td align="left" colspan="2">
 									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
-										<span class="ui-panel-title">รายการวันที่ทำ ทั้งหมด</span>
+										<span class="ui-panel-title">
+											<h:outputText value="รายการวันที่ทำ ทั้งหมด "/>
+											<h:outputText id="totalDaily" value="#{salaryManagementAction.searchFormBOTemp.paggingBean.totalRow} วัน" />
+										</span>
 									</div>
 					        	</td>	
 					        </tr>
 					    	<tr>
 								<td colspan="2">
-									<p:dataTable id="dataList" var="dataList" value="#{salaryManagementAction.transactionDailyByUserList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+									<p:dataTable id="dailyDataList" var="dailyDataList" value="#{salaryManagementAction.transactionDailyByUserList}" rowIndexVar="no" style="text-align: center;" styleClass="dataTable" emptyMessage="ไม่มีรายการ" stickyHeader="true">
 										<p:column style="text-align: left;vertical-align: text-top" width="10">
 								        	<f:facet name="header">
 								            	<input type="checkbox" id="checkdeleteAll2" name="checkdeleteAll" onclick="checkList('checkdeleteAll2','checkDelete2')"/>
 								           	</f:facet>	
-								           	<input type="checkbox" id="checkDelete2" name="checkDelete2" value="#{dataList.transactionId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+								           	<input type="checkbox" id="checkDelete2" name="checkDelete2" value="#{dailyDataList.transactionId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
 								        </p:column>
+								        <p:column style="width:20px;">
+										    <f:facet name="header">
+										        <h:outputText value="No." />
+										  	</f:facet>
+										   	<div style="text-align:center;vertical-align: text-top">
+												<h:outputText value="#{no+1}" />
+											</div>
+										</p:column>
 										<p:column>
 										    <f:facet name="header">
 										        <h:outputText value="วันที่ทำ" />
 										  	</f:facet>
 										   	<div style="text-align:center;vertical-align: text-top">
-												<h:outputText value="#{dataList.date}/#{dataList.month}/#{dataList.year}" />
+												<h:outputText value="#{dailyDataList.date}/#{dailyDataList.month}/#{dailyDataList.year}" />
 											</div>
 										</p:column>
 									</p:dataTable>		
@@ -81,12 +109,10 @@
 					    <p:dialog id="checkDeleteDialog" widgetVar="checkDeleteDialog" header="ยังไม่ได้เลือกรายการที่จะลบ" resizable="false" />
 					        
 		           		<p:dialog id="confirmDialog" widgetVar="confirmDialog" header="ยินยันลบข้อมูล" rendered="true">
-		            	   	ยืนยันต้องการลบข้อทูลที่เลือก
-		               		<p:commandButton id="confirm" value="ลบ" actionListener="#{salaryManagementAction.doDeleteDailyTransactionByUser}" update="dataList" process="@this" onstart="confirmation.hide();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>  
+		            	   	<h:outputText value="ยืนยันต้องการลบข้อทูลที่เลือก"/>
+		               		<p:commandButton id="confirm" value="ลบ" process="@this" ajax="true" actionListener="#{salaryManagementAction.doDeleteDailyTransactionByUser}" update="dailyDataList,:listForm:dataList,displayMessage,totalDaily" onclick="confirmDialog.hide();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>  
 						   	<p:commandButton id="decline" value="ยกเลิก" onclick="confirmDialog.hide()" type="button" />   
-		              	</p:dialog>
-					    
-					
+						</p:dialog>
 		
 	</h:body>
 </html>

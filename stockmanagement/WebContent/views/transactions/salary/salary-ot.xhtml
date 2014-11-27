@@ -14,33 +14,59 @@
 	         	  		validateNotNull("addFormOT:otRate",			"OT Rate");
 	         	  		validateNotNull("addFormOT:otDate_input",	"OT Date");
 	         			
-	         			return displayErrorMessage('errorMessageDialogAdd');   
+	         			return displayErrorMessage('errorMessageOTDialogAdd');   
 					} 
 	         		/* ]]> */
 				</script>	
 						<h:outputLabel>	
-	    					<div id="errorMessageDialogAdd" class="ui-messages ui-widget" />					
+	    					<div id="errorMessageOTDialogAdd" class="ui-messages ui-widget" />					
     					</h:outputLabel>
     					
-    					<table width="100%">
+    					<h:outputLabel id="displayMessage">
+    						<p:growl life="700"/>
+						</h:outputLabel>
+					    			<p:focus for="otHour"/>
+						
+						<table width="100%">
 						    <tr> 
-					        	<td align="left" colspan="2">
+					        	<td align="left" colspan="4">
 									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
 										<span class="ui-panel-title">ข้อมูล OT</span>
 									</div>
 					        	</td>	
 					        </tr>
 					    	<tr>
-					    		<td align="right"><h:outputText value="จำนวนชม."/></td>
+					    		<td align="right" width="15%"><h:outputText value="ชื่อพนักงาน "/></td>
+					    		<td align="left" width="20%">
+					    			<b><h:outputText value="#{salaryManagementAction.salaryOTFormBO.userFullName}" /></b>
+					    		</td>	
+					    		
+					    		<td align="right" width="10%"><h:outputText value="จำนวนชม. "/></td>
 					    		<td>
 					    			<p:inputText id="otHour" value="#{salaryManagementAction.salaryOTFormBO.otHour}" size="10" maxlength="10" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)"/>
 					    		</td>	
 					    	</tr>
 					    	<tr>
-					    		<td align="right"><h:outputText value="* อัตรา"/></td>
+					    		<td align="right"><h:outputText value="ประเภทรายได้ "/></td>
+					    		<td>
+					    			<b>
+					    			<h:outputText value="รายเดือน" rendered="#{salaryManagementAction.salaryOTFormBO.payType=='MONTH'}"/>
+					    			<h:outputText value="รายวัน" rendered="#{salaryManagementAction.salaryOTFormBO.payType=='DAILY'}"/>
+					    			</b>
+					    		</td>	
+					    		<td align="right"><h:outputText value="* อัตรา "/></td>
 					    		<td><p:inputText id="otRate" value="#{salaryManagementAction.salaryOTFormBO.otRate}" size="10" maxlength="10" readonly="true" style="background-color:#d7d7d7;"/></td>
 					    	</tr>
 					    	<tr>
+					    		<td align="right"><h:outputText value="เงินเดือน/ค่าแรง "/></td>
+					    		<td>
+					    			<b>
+					    				<h:outputText value="#{salaryManagementAction.salaryOTFormBO.salary}" >
+							    			<f:convertNumber type="currency"  currencySymbol=""/>		
+					    				</h:outputText>
+					    			</b>
+					    		</td>	
+					    	
 					    		<td align="right"><h:outputText value="วันที่ทำ"/></td>
 					    		<td>
 					    			<p:calendar id="otDate" value="#{salaryManagementAction.salaryOTFormBO.otDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
@@ -50,7 +76,7 @@
 					    	</tr>
 					    	<tr>
 					    		<td align="left" colspan="2">
-						    		<p:commandButton value="บันทึก OT" action="#{salaryManagementAction.doCreateOT}" onclick="return validateAddSubmit();" oncomplete="otAddFormDialog.hide()" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
+						    		<p:commandButton value="บันทึก OT" update="otDataList,:listForm:dataList,displayMessage,totalTransaction" actionListener="#{salaryManagementAction.doCreateOT}" onclick="validateAddSubmit();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>
 					    		</td>
 					    	</tr>
 					    </table>
@@ -59,25 +85,35 @@
 						    <tr> 
 					        	<td align="left" colspan="2">
 									<div id="pnl_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
-										<span class="ui-panel-title">รายการ OT ทั้งหมด</span>
+										<span class="ui-panel-title">รายการ OT ทั้งหมด
+											<h:outputText id="totalTransaction" value="#{salaryManagementAction.searchFormBOTemp.paggingBean.totalRow} วัน"/>
+										</span>
 									</div>
 					        	</td>	
 					        </tr>
 					    	<tr>
 								<td colspan="2">
-									<p:dataTable id="dataList" var="dataList" value="#{salaryManagementAction.transactionOtByUserList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+									<p:dataTable id="otDataList" var="otDataList" value="#{salaryManagementAction.transactionOtByUserList}" rowIndexVar="no" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true" >
 										<p:column style="text-align: left;vertical-align: text-top" width="10">
 								        	<f:facet name="header">
 								            	<input type="checkbox" id="checkdeleteAll" name="checkdeleteAll" onclick="checkList('checkdeleteAll','checkDelete')"/>
 								           	</f:facet>	
-								           	<input type="checkbox" id="checkDelete" name="checkDelete" value="#{dataList.transactionId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+								           	<input type="checkbox" id="checkDelete" name="checkDelete" value="#{otDataList.transactionId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
 								        </p:column>
+								        <p:column>
+										    <f:facet name="header">
+										        <h:outputText value="No." />
+										  	</f:facet>
+										   	<div style="text-align:center;vertical-align: text-top">
+												<h:outputText value="#{no+1}" />
+											</div>
+										</p:column>
 										<p:column>
 										    <f:facet name="header">
 										        <h:outputText value="วันที่ทำ" />
 										  	</f:facet>
 										   	<div style="text-align:center;vertical-align: text-top">
-												<h:outputText value="#{dataList.date}/#{dataList.month}/#{dataList.year}" />
+												<h:outputText value="#{otDataList.date}/#{otDataList.month}/#{otDataList.year}" />
 											</div>
 										</p:column>
 										<p:column>
@@ -85,7 +121,7 @@
 										        <h:outputText value="จำนวนชม." />
 										  	</f:facet>
 											<div style="text-align:center;vertical-align: text-top">
-												<h:outputText value="#{dataList.otHour}"/>
+												<h:outputText value="#{otDataList.otHour}"/>
 											</div>
 										</p:column>		
 										<p:column>
@@ -93,7 +129,7 @@
 										        <h:outputText value="อัตรา" />
 										  	</f:facet>
 											<div style="text-align:center;vertical-align: text-top">
-												<h:outputText value="#{dataList.otRate}"/>
+												<h:outputText value="#{otDataList.otRate}"/>
 											</div>
 										</p:column>					    
 								  	</p:dataTable>		
@@ -109,11 +145,10 @@
 					    <p:dialog id="checkDeleteDialog" widgetVar="checkDeleteDialog" header="ยังไม่ได้เลือกรายการที่จะลบ" resizable="false" />
 					        
 		           		<p:dialog id="confirmDialog" widgetVar="confirmDialog" header="ยินยันลบข้อมูล" rendered="true">
-		            	   	ยืนยันต้องการลบข้อทูลที่เลือก
-		               		<p:commandButton id="confirm" value="ลบ" actionListener="#{salaryManagementAction.doDeleteOtTransactionByUser}" update="dataList" process="@this" onstart="confirmation.hide();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>  
+		            	   	<h:outputText value="ยืนยันต้องการลบข้อทูลที่เลือก"/>
+		               		<p:commandButton id="confirm" value="ลบ" process="@this" ajax="true" actionListener="#{salaryManagementAction.doDeleteOtTransactionByUser}" update="otDataList,:listForm:dataList,displayMessage,totalTransaction" onclick="confirmDialog.hide();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>  
 						   	<p:commandButton id="decline" value="ยกเลิก" onclick="confirmDialog.hide()" type="button" />   
 		              	</p:dialog>
-					    
 					
 		
 	</h:body>

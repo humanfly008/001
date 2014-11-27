@@ -1,79 +1,85 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui"
-	>
+	xmlns:p="http://primefaces.org/ui">
   	<h:head>
   	   	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
       	<meta http-equiv="Cache-control" content="no-cache" />
       			
 		<link href="resources/bootstrap/bootstrap/css/bootstrap.css" rel="stylesheet" />
-    	<link href="resources/bootstrap/bootstrap/css/signin.css" rel="stylesheet" />
-		<title>Insert title here</title>
+		<link href="resources/bootstrap/bootstrap/css/signin.css" rel="stylesheet" />
+		
+		<title>N.R Autoseats V1.0</title>
 
 		<style type="text/css">
     		body {
-			  padding-top: 40px;
-			  padding-bottom: 40px;
-			  background-color: #eee;
+	    		padding-left: 10px;
+    			padding-top: 140px;
+			  	padding-bottom: 140px;
+			  	background-color: #eee;
 			}
-			
 			.form-signin {
-			  max-width: 330px;
-			  padding: 15px;
-			  margin: 0 auto;
+				padding-left: 10px;
+				padding-top: 140px;
+			  	padding-bottom: 140px;
+			  	max-width: 420px;
+			  	padding: 15px;
+			  	margin: 0 auto;
 			}
 			.form-signin .form-signin-heading,
 			.form-signin .checkbox {
-			  margin-bottom: 10px;
+			  	margin-bottom: 10px;
 			}
 			.form-signin .checkbox {
-			  font-weight: normal;
+			  	font-weight: normal;
 			}
 			.form-signin input[type="text"],
 			.form-signin input[type="password"] {
-			  position: relative;
-			  font-size: 16px;
-			  height: auto;
-			  padding: 10px;
-			  -webkit-box-sizing: border-box;
+			  	position: relative;
+			  	font-size: 16px;
+			  	height: auto;
+			  	padding: 10px;
+			  	-webkit-box-sizing: border-box;
 			     -moz-box-sizing: border-box;
 			          box-sizing: border-box;
 			}
 			.form-signin input[type="text"]:focus,
 			.form-signin input[type="password"]:focus {
-			  z-index: 2;
+			  	z-index: 2;
 			}
 			.form-signin input[type="text"] {
-			  margin-bottom: -1px;
-			  border-bottom-left-radius: 0;
-			  border-bottom-right-radius: 0;
+			  	margin-bottom: -1px;
+			  	border-bottom-left-radius: 0;
+			  	border-bottom-right-radius: 0;
 			}
 			.form-signin input[type="password"] {
-			  margin-bottom: 10px;
-			  border-top-left-radius: 0;
-			  border-top-right-radius: 0;
+			  	margin-bottom: 10px;
+			  	border-top-left-radius: 0;
+			  	border-top-right-radius: 0;
 			}
-    	
     	</style>
-	</h:head>
+    </h:head>
 	<h:body>
-		  	<h:form class="form-signin">
-		        <h1>Please sign in</h1>
+		  	<h:form id="loginForm" class="form-signin">
+		        <h1><h:outputText value="N.R Autoseats"/></h1>
 		        <p:focus for="user"/>
-		        <h:messages style="color: red" showDetail="true"/>
-		        <h:panelGrid cellpadding="0" cellspacing="0">
-			        <p:inputText id="user" value="#{authenficationAction.user}" />
+				
+				<h:outputLabel id="displayMessage">
+		         	<p:messages  closable="true" autoUpdate="true"/>
+				</h:outputLabel>
+			
+			  	<h:panelGrid cellpadding="0" cellspacing="0">
+			   		<p:inputText id="user" value="#{authenficationAction.user}" size="20" required="true" requiredMessage="Please input user"/>
 			        <p:watermark for="user" value="User ID" />
 			        
-			        <p:password id="password" value="#{authenficationAction.password}" />
+			        <p:password id="password" value="#{authenficationAction.password}" size="20" required="true" requiredMessage="Please input password"/>
 					<p:watermark for="password" value="Password" />
-					<p:commandButton value="Login" action="#{authenficationAction.doLogin}" styleClass="ui-priority-primary" style="width:200px;"/>
+					<p:commandButton value="Login" action="#{authenficationAction.doLogin}" onclick="return validateSubmit();" styleClass="ui-priority-primary" style="width:200px;"/>
+					
 				</h:panelGrid>
 	      	</h:form>
 	</h:body>

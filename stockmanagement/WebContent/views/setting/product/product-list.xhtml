@@ -132,15 +132,6 @@
 					  		<f:facet name="header">
 					      		<h:outputText value="จำนวนคงเหลือ" />
 					 		</f:facet>
-					   		<div style="text-align:right;vertical-align: text-top">
-								<h:outputText value="#{dataList.productQtyStr}" />
-					   		</div>
-						</p:column>
-						
-						<p:column>
-					  		<f:facet name="header">
-					      		<h:outputText value="จำนวนคงเหลือ" />
-					 		</f:facet>
 					 		
 					 		<p:commandLink actionListener="#{productAction.doFindProductDetail}" update=":stockForm:stockProductDialog" oncomplete="stockProductDialog.show();">
 								<div style="text-align:right;vertical-align: text-top">

@@ -23,14 +23,16 @@
 					/* ]]> */
 				</script>	
 				<h:form id="formData">
-					<h:outputLabel id="displayMessage">
-						<p:growl life="1500" rendered="#{stockItemAction.dataFormBO.resultBO.errorMessage==''}"/> 
-						<p:messages rendered="#{stockItemAction.dataFormBO.resultBO.errorMessage!=''}" closable="true"/>
-					</h:outputLabel>
-				
 					<table width="90%" >
 						<tr>
 							<td colspan="2">
+								<div align="left">
+								<h:outputLabel id="displayMessage">
+									<p:messages rendered="#{stockItemAction.dataFormBO.resultBO.errorMessage!=''}" closable="true"/>
+									<p:messages rendered="#{stockItemAction.dataFormBO.resultBO.errorMessage==''}" closable="true"/>
+								</h:outputLabel>
+								</div>
+								
 								<h:outputLabel>	
 				    				<div id="errorMessageAddForm" class="ui-messages ui-widget"/>					
 			    				</h:outputLabel>

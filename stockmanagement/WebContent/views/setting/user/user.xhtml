@@ -38,7 +38,7 @@
 					        	<f:facet name="header">
 					            	<input type="checkbox" id="checkdeleteAll" name="checkdeleteAll" onclick="checkList('checkdeleteAll','checkDelete')"/>
 					          	</f:facet>	
-					          	<input type="checkbox" id="checkDelete" name="checkDelete" value="#{dataList.userId}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+					          	<input type="checkbox" id="checkDelete" name="checkDelete" value="#{dataList.id}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
 					        </p:column>
 					        <p:column>
 						    	<f:facet name="header">
@@ -119,7 +119,7 @@
 							<ui:include src="/resources/component/pagnavigator.xhtml">
 							<ui:param name="action" 		value="#{userProfileAction}"></ui:param>
 						 	<ui:param name="searchBean"		value="#{userProfileAction.searchFormBO}" />
-						 	<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+						 	<ui:param name="method" 		value="doListUserProfile"></ui:param>		 					
 						 	<ui:param name="dataList"		value="#{userProfileAction.transactionList}" />
 						 	<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
 						</ui:include>

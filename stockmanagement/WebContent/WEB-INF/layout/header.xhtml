@@ -23,21 +23,20 @@
 			        		<h:panelGrid columns="4">
 				            	<p:inputText id="main_search" size="50" styleClass="search-query"/>                                
 				               	<p:watermark for="main_search" value="what is going on ???" />
-				              	<p:commandButton id="main_search_bt"  styleClass="ui-priority-primary" icon="ui-icon-search"/>  
+				              	<p:commandButton id="main_search_bt"  styleClass="ui-priority-primary" icon="ui-icon-search"/> 
 				            </h:panelGrid>
 				        </td>
 						<td align="left">
 							<font color="#ffffff" style="font-family: tahoma; font-weight: bolder;">
 								<h:panelGrid columns="3">
 									<p:graphicImage value="/resources/images/profile_001.jpg" width="25" height="25"/>
-							
 									<h:outputText id="user" value="#{authenficationAction.userAuthentication.userAccountName}"/>
+									<span class="ui-icon ui-icon-triangle-1-s"></span> 
 									<p:overlayPanel for="user" hideEffect="fade" styleClass="myOverlayPanel">
 								        <p:menu style="border: none;width: 220px;">
-								        	<p:menuitem value="เปลี่ยน password" action="#{changePasswordAction.changePasswordPage}"/>
-								        	<p:menuitem value="ออกจากระบบ" action="#{authenficationAction.doLogout}"/>
+								        	<p:menuitem value="เปลี่ยน password" action="#{changePasswordAction.changePasswordPage}" icon="ui-icon-locked"/>
+								        	<p:menuitem value="ออกจากระบบ" action="#{authenficationAction.doLogout}" icon="ui-icon-power" />
 								        </p:menu>
-								        
 								    </p:overlayPanel>
 				               	</h:panelGrid>
 			           		</font>

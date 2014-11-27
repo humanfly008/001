@@ -74,24 +74,23 @@
 	</url-mapping>
 	
 	<!-- ITEM -->
-	<url-mapping id="item">
+	<url-mapping id="item.list">
 		<pattern value="/item" />
 		<view-id value="/views/setting/item/item-list.xhtml" />
 	</url-mapping>
-	<url-mapping id="item.add">
-		<pattern value="/item.add" />
-		<view-id value="/views/setting/item/item-add.xhtml" />
+	<url-mapping id="item.list.view">
+		<pattern value="/item.view" />
+		<view-id value="/views/setting/item/item-list-view.xhtml" />
 	</url-mapping>
-	<url-mapping id="item.edit">
-		<pattern value="/item.edit" />
-		<view-id value="/views/setting/item/item-edit.xhtml" />
-	</url-mapping>
-	
 
 	<!-- PRODUCT -->
 	<url-mapping id="product.list">
 		<pattern value="/product" />
 		<view-id value="/views/setting/product/product-list.xhtml" />
+	</url-mapping>
+	<url-mapping id="product.list.view">
+		<pattern value="/product.view" />
+		<view-id value="/views/setting/product/product-list-view.xhtml" />
 	</url-mapping>
 
 
@@ -123,5 +122,11 @@
 		<pattern value="/salary" />
 		<view-id value="/views/transactions/salary/salary-list.xhtml" />
 	</url-mapping>
+	
+	<url-mapping id="finance.list">
+		<pattern value="/finance" />
+		<view-id value="/views/transactions/finance/finance-list.xhtml" />
+	</url-mapping>
+	
 	
 </pretty-config>

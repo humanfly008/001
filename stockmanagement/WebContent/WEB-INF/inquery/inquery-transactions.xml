@@ -344,13 +344,103 @@
 					
 					)AS SUB_QUERY 
 					WHERE 1=1 
-					
-					
 				]]>
             </value>
         </property>
         <property name="classMapping">
             <value>java.lang.Integer</value>
+        </property>
+	</bean>
+
+	<bean id="financeMonthlyTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	U.ID,
+								F.YEAR,
+								F.MONTH,
+								F.USER_ID,
+								U.FIRST_NAME,
+								U.LAST_NAME,
+								F.POSITION,
+								F.PAY_TYPE,
+								F.SALARY,
+								F.DAILY,
+								F.FARE,
+								F.DILIGENCE,
+								F.BONUS,
+								F.OTHER_INCOME,
+								F.OT_SUMMARY,
+								(CASE 
+									WHEN F.PAY_TYPE = 'MONTH' THEN F.SALARY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME  
+									ELSE F.DAILY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME 
+								END)TOTAL_SALARY_INCOME, 
+							
+								F.SUBTRACT_SOCIAL,
+								F.SUBTRACT_TAX,
+								F.LEAVE_SUBTRACT,
+								F.ACCUMULATE_SUBTRACT,
+								F.OTHER_SUBTRACT,
+								
+								(CASE 
+									WHEN F.PAY_TYPE = 'MONTH' THEN (F.SALARY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME )- F.SUBTRACT_SOCIAL - F.SUBTRACT_TAX - F.OTHER_SUBTRACT - F.LEAVE_SUBTRACT - F.ACCUMULATE_SUBTRACT 
+									ELSE (F.DAILY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME )- F.SUBTRACT_SOCIAL - F.SUBTRACT_TAX - F.OTHER_SUBTRACT - F.LEAVE_SUBTRACT - F.ACCUMULATE_SUBTRACT 
+								END)TOTAL_SALARY_INCOME_NET, 
+							
+								F.DETAILS 
+						FROM 	FINANCE_MONTHLY_TRANSACTION F LEFT JOIN USERS_PROFILE U ON(F.USER_ID = U.ID) 
+						WHERE 	1=1 
+						AND 	F.MONTH = ? 
+						AND 	F.YEAR  = ? 
+						ORDER BY F.TRANSACTION_ID  
+						]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry</value>
+        </property>
+	</bean>
+	
+	<bean id="summaryFinanceMonthlyTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	SUM(F.SALARY) AS SALARY,
+								SUM(F.DAILY) AS DAILY,
+								SUM(F.FARE) AS FARE,
+								SUM(F.DILIGENCE) AS DILIGENCE,
+								SUM(F.BONUS) AS BONUS,
+								SUM(F.OTHER_INCOME) AS OTHER_INCOME,
+								SUM(F.OT_SUMMARY) AS OT_SUMMARY,
+								SUM((CASE 
+									WHEN F.PAY_TYPE = 'MONTH' THEN F.SALARY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME  
+									ELSE F.DAILY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME 
+								END))TOTAL_SALARY_INCOME, 
+							
+								SUM(F.SUBTRACT_SOCIAL) AS SUBTRACT_SOCIAL,
+								SUM(F.SUBTRACT_TAX) AS SUBTRACT_TAX,
+								SUM(F.LEAVE_SUBTRACT) AS LEAVE_SUBTRACT,
+								SUM(F.ACCUMULATE_SUBTRACT) AS ACCUMULATE_SUBTRACT,
+								SUM(F.OTHER_SUBTRACT) AS OTHER_SUBTRACT,
+								
+								SUM((CASE 
+									WHEN F.PAY_TYPE = 'MONTH' THEN (F.SALARY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME )- F.SUBTRACT_SOCIAL - F.SUBTRACT_TAX - F.OTHER_SUBTRACT - F.LEAVE_SUBTRACT - F.ACCUMULATE_SUBTRACT 
+									ELSE (F.DAILY+F.FARE+F.DILIGENCE+F.BONUS+F.OT_SUMMARY+F.OTHER_INCOME )- F.SUBTRACT_SOCIAL - F.SUBTRACT_TAX - F.OTHER_SUBTRACT - F.LEAVE_SUBTRACT - F.ACCUMULATE_SUBTRACT 
+								END))TOTAL_SALARY_INCOME_NET 
+							
+								
+						FROM 	FINANCE_MONTHLY_TRANSACTION F LEFT JOIN USERS_PROFILE U ON(F.USER_ID = U.ID) 
+						WHERE 	1=1 
+						AND 	F.MONTH = ? 
+						AND 	F.YEAR  = ? 
+						ORDER BY F.TRANSACTION_ID   
+						]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry</value>
         </property>
 	</bean>
 	

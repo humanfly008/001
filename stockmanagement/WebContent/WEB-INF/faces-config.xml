@@ -55,6 +55,7 @@
   	
  	<navigation-rule>
   		<navigation-case>
+	  		<from-action>#{navigator.navigateTo}</from-action>
 	   		<from-outcome>index</from-outcome>
 	   		<to-view-id>/views/index.xhtml</to-view-id>
 	   		<redirect/>
@@ -68,7 +69,16 @@
   		
  	</navigation-rule>
  	
- 	
+ 	<navigation-rule>
+        <display-name>pages/home/home.xhtml</display-name>
+        <from-view-id>/views/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{navigator.navigateTo}</from-action>
+            <from-outcome>UnSecured</from-outcome>
+            <to-view-id>/views/unsecured.xhtml</to-view-id>
+            <redirect></redirect>
+        </navigation-case>
+    </navigation-rule>
  	
  	
  	<!-- MENU -->
@@ -159,20 +169,9 @@
 	   		<to-view-id>/views/setting/item/item-list.xhtml</to-view-id>
 	   		<redirect/>
   		</navigation-case>
- 	</navigation-rule>
- 	
- 	<navigation-rule>
-  		<navigation-case>
-	   		<from-outcome>item.add</from-outcome>
-	   		<to-view-id>/views/setting/item/item-add.xhtml</to-view-id>
-	   		<redirect/>
-  		</navigation-case>
- 	</navigation-rule>
- 	
- 	<navigation-rule>
-  		<navigation-case>
-	   		<from-outcome>item.edit</from-outcome>
-	   		<to-view-id>/views/setting/item/item-edit.xhtml</to-view-id>
+ 		<navigation-case>
+	   		<from-outcome>item.list.view</from-outcome>
+	   		<to-view-id>/views/setting/item/item-list-view.xhtml</to-view-id>
 	   		<redirect/>
   		</navigation-case>
  	</navigation-rule>
@@ -182,6 +181,11 @@
   		<navigation-case>
 	   		<from-outcome>product.list</from-outcome>
 	   		<to-view-id>/views/setting/product/product-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+  		<navigation-case>
+	   		<from-outcome>product.list.view</from-outcome>
+	   		<to-view-id>/views/setting/product/product-list-view.xhtml</to-view-id>
 	   		<redirect/>
   		</navigation-case>
  	</navigation-rule>
@@ -237,6 +241,13 @@
   		</navigation-case>
  	</navigation-rule>
  	
+ 	<navigation-rule>
+  		<navigation-case>
+	   		<from-outcome>finance.list</from-outcome>
+	   		<to-view-id>/views/transactions/finance/finance-list.xhtml</to-view-id>
+	   		<redirect/>
+  		</navigation-case>
+ 	</navigation-rule>
  	
  	<managed-bean>
 	  	<managed-bean-name>currentDate</managed-bean-name>
