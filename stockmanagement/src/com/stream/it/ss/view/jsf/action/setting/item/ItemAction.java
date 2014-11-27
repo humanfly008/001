@@ -205,6 +205,16 @@ public class ItemAction extends BaseAction{
 		return "item.list";
 	}
 	
+	public String listViewPage()throws Exception{
+		itemForm = new ItemForm();
+		searchForm = new ItemSearchForm();
+		supplierDropdown = supplierComboDropdownService.listAll();
+		
+		transactionList = itemService.listTransaction(searchForm);
+		
+		return "item.list.view";
+	}
+	
 	public void addPage() throws Exception{
 		itemForm = new ItemForm();
 		supplierDropdown = supplierComboDropdownService.listAll();

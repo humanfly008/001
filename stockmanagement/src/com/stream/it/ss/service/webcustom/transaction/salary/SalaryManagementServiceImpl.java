@@ -76,6 +76,77 @@ public class SalaryManagementServiceImpl implements SalaryManagementService{
 			resultDataList = inquiryDAO.listByPage(salarySearchFormBO);
 			
 			if(!resultDataList.isEmpty()){
+				SalarySearchForm summarySalarySearchFormBO = new SalarySearchForm();
+				summarySalarySearchFormBO.setSqlParameter(Arrays.asList(
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
+					));
+			
+				summarySalarySearchFormBO.setConditionValuesBean(new SearchConditionValuesBean[] { new SearchConditionValuesBean(SQLConstantWhereType.AND,	"FIRST_NAME",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(salarySearchFormBO.getUserName()) })});
+			
+				
+				List<SalaryTransactionInquiry> totalSumResultDataList = summarySalaryTransactionsInquiryDAO.listAll(summarySalarySearchFormBO);
+				
+				for(SalaryTransactionInquiry summaryTransactionInquiry: totalSumResultDataList){
+					
+					salarySearchFormBO.setTotalSalary(				summaryTransactionInquiry.getSalaryStr());
+					salarySearchFormBO.setTotalDaily(				summaryTransactionInquiry.getDailyStr());
+					salarySearchFormBO.setTotalFare(				summaryTransactionInquiry.getFareStr());
+					salarySearchFormBO.setTotalDiligence(			summaryTransactionInquiry.getDiligenceStr());
+					salarySearchFormBO.setTotalBonus(				summaryTransactionInquiry.getBonusStr());
+					salarySearchFormBO.setTotalOtherIncome(			summaryTransactionInquiry.getOtherIncomeStr());
+					
+					salarySearchFormBO.setTotalOtDate(				summaryTransactionInquiry.getOtDate());
+					salarySearchFormBO.setTotalOtHour(				summaryTransactionInquiry.getOtHour());
+					salarySearchFormBO.setTotalOtSummary(			summaryTransactionInquiry.getOtSummaryStr());
+					salarySearchFormBO.setTotalSalaryIncome(		summaryTransactionInquiry.getTotalSalaryIncomeStr());
+					salarySearchFormBO.setTotalSubtractTax(			summaryTransactionInquiry.getSubtractTaxStr());
+					salarySearchFormBO.setTotalSubtractSocial(		summaryTransactionInquiry.getSubtractSocialStr());
+					salarySearchFormBO.setTotalSubtractLeave(		summaryTransactionInquiry.getLeaveSubtractStr());
+					salarySearchFormBO.setTotalSubtractAccumulate(	summaryTransactionInquiry.getAccumulateSubtractStr());
+					salarySearchFormBO.setTotalSubtractOther(		summaryTransactionInquiry.getOtherSubtractStr());
+					
+					salarySearchFormBO.setTotalSalaryIncomeNet(		summaryTransactionInquiry.getTotalSalaryIncomeNetStr());					
+				}
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			salarySearchFormBO.getResultBO().setException(e);
+			salarySearchFormBO.getResultBO().setErrorMessage(e.getMessage());
+		}
+		
+		return resultDataList;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public List listTrasnactionAll(SearchBean searchBean) throws Exception {
+		SalarySearchForm salarySearchFormBO = (SalarySearchForm) searchBean;
+		List<SalaryTransactionInquiry> resultDataList = new ArrayList<SalaryTransactionInquiry>();
+
+		try {
+			salarySearchFormBO.setSqlParameter(Arrays.asList(
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
+					));
+			
+			salarySearchFormBO.setConditionValuesBean(new SearchConditionValuesBean[] { new SearchConditionValuesBean(SQLConstantWhereType.AND,	"FIRST_NAME",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(salarySearchFormBO.getUserName()) })});
+			
+			resultDataList = inquiryDAO.listAll(salarySearchFormBO);
+			
+			if(!resultDataList.isEmpty()){
 				
 				salarySearchFormBO.setSqlParameter(Arrays.asList(
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),

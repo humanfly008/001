@@ -28,6 +28,10 @@ public class FinanceTransactionServiceImpl implements FinanceTransactionService{
 	private InquiryDAO inquiryDAO;
 	
 	@Autowired
+	@Qualifier("summaryFinanceMonthlyTransactionsInquiry")
+	private InquiryDAO summaryFinanceMonthlyTransactionsInquiryDAO;
+	
+	@Autowired
 	@Qualifier("financeMonthlyTransactionDAO")
 	private FinanceMonthlyTransactionDAO financeMonthlyTransactionDAO;
 	
@@ -41,6 +45,33 @@ public class FinanceTransactionServiceImpl implements FinanceTransactionService{
 		try {
 			salarySearchFormBO.setSqlParameter(Arrays.asList(salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()));
 			resultDataList = inquiryDAO.listAll(salarySearchFormBO);
+			
+			if(!resultDataList.isEmpty()){
+				salarySearchFormBO.setSqlParameter(Arrays.asList(salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()));
+				
+				List<SalaryTransactionInquiry> totalSumResultDataList = summaryFinanceMonthlyTransactionsInquiryDAO.listAll(salarySearchFormBO);
+				
+				for(SalaryTransactionInquiry summaryTransactionInquiry: totalSumResultDataList){
+					salarySearchFormBO.setTotalSalary(				summaryTransactionInquiry.getSalaryStr());
+					salarySearchFormBO.setTotalDaily(				summaryTransactionInquiry.getDailyStr());
+					salarySearchFormBO.setTotalFare(				summaryTransactionInquiry.getFareStr());
+					salarySearchFormBO.setTotalDiligence(			summaryTransactionInquiry.getDiligenceStr());
+					salarySearchFormBO.setTotalBonus(				summaryTransactionInquiry.getBonusStr());
+					salarySearchFormBO.setTotalOtherIncome(			summaryTransactionInquiry.getOtherIncomeStr());
+					
+					salarySearchFormBO.setTotalOtDate(				summaryTransactionInquiry.getOtDate());
+					salarySearchFormBO.setTotalOtHour(				summaryTransactionInquiry.getOtHour());
+					salarySearchFormBO.setTotalOtSummary(			summaryTransactionInquiry.getOtSummaryStr());
+					salarySearchFormBO.setTotalSalaryIncome(		summaryTransactionInquiry.getTotalSalaryIncomeStr());
+					salarySearchFormBO.setTotalSubtractTax(			summaryTransactionInquiry.getSubtractTaxStr());
+					salarySearchFormBO.setTotalSubtractSocial(		summaryTransactionInquiry.getSubtractSocialStr());
+					salarySearchFormBO.setTotalSubtractLeave(		summaryTransactionInquiry.getLeaveSubtractStr());
+					salarySearchFormBO.setTotalSubtractAccumulate(	summaryTransactionInquiry.getAccumulateSubtractStr());
+					salarySearchFormBO.setTotalSubtractOther(		summaryTransactionInquiry.getOtherSubtractStr());
+					
+					salarySearchFormBO.setTotalSalaryIncomeNet(		summaryTransactionInquiry.getTotalSalaryIncomeNetStr());					
+				}
+			}
 			
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -63,7 +94,7 @@ public class FinanceTransactionServiceImpl implements FinanceTransactionService{
 				FinanceMonthlyTransaction financeMonthlyTransaction = new FinanceMonthlyTransaction();
 				financeMonthlyTransaction.setMonth(				month);
 				financeMonthlyTransaction.setYear(				year);
-				financeMonthlyTransaction.setUserId(			salaryTransactionInquiry.getUserId());
+				financeMonthlyTransaction.setUserId(			Integer.parseInt(salaryTransactionInquiry.getId()));
 				financeMonthlyTransaction.setPosition(			salaryTransactionInquiry.getPosition());
 				financeMonthlyTransaction.setPayType(			salaryTransactionInquiry.getPayType());
 			    financeMonthlyTransaction.setSalary(			salaryTransactionInquiry.getSalary());
@@ -104,35 +135,33 @@ public class FinanceTransactionServiceImpl implements FinanceTransactionService{
 
 			if(transactionThisMonth>0){
 				financeMonthlyTransactionDAO.deleteByMonthYear(month, year);
-				
-				for(int i=0; i<transactionList.size(); i++){
-					SalaryTransactionInquiry salaryTransactionInquiry = (SalaryTransactionInquiry)transactionList.get(i);
-					FinanceMonthlyTransaction financeMonthlyTransaction = new FinanceMonthlyTransaction();
-					financeMonthlyTransaction.setMonth(				month);
-					financeMonthlyTransaction.setYear(				year);
-					financeMonthlyTransaction.setTransactionId(		Integer.parseInt(salaryTransactionInquiry.getId()));
-					financeMonthlyTransaction.setUserId(			salaryTransactionInquiry.getUserId());
-					financeMonthlyTransaction.setPosition(			salaryTransactionInquiry.getPosition());
-					financeMonthlyTransaction.setPayType(			salaryTransactionInquiry.getPayType());
-				    financeMonthlyTransaction.setSalary(			salaryTransactionInquiry.getSalary());
-				    financeMonthlyTransaction.setDaily(				salaryTransactionInquiry.getDaily());
-				    financeMonthlyTransaction.setFare(				salaryTransactionInquiry.getFare());
-				    financeMonthlyTransaction.setDiligence(			salaryTransactionInquiry.getDiligence());
-				    financeMonthlyTransaction.setBonus(				salaryTransactionInquiry.getBonus());
-				    financeMonthlyTransaction.setOtherIncome(		salaryTransactionInquiry.getOtherIncome());
-				    financeMonthlyTransaction.setOtSummary(			salaryTransactionInquiry.getOtSummary());
-				  
-				    financeMonthlyTransaction.setSubtractTax(		salaryTransactionInquiry.getSubtractTax());
-				    financeMonthlyTransaction.setSubtractSocial(	salaryTransactionInquiry.getSubtractSocial());
-				    financeMonthlyTransaction.setLeaveSubtract(		salaryTransactionInquiry.getLeaveSubtract());
-				    financeMonthlyTransaction.setAccumulateSubtract(salaryTransactionInquiry.getAccumulateSubtract());
-				    financeMonthlyTransaction.setOtherSubtract(		salaryTransactionInquiry.getOtherSubtract());
-				    financeMonthlyTransaction.setDetails(			salaryTransactionInquiry.getDetails());
-					financeMonthlyTransactionDAO.update(financeMonthlyTransaction);
-				}
+			}
 			
-			}else
-				createTrasnaction(transactionList, month, year);
+			for(int i=0; i<transactionList.size(); i++){
+				SalaryTransactionInquiry salaryTransactionInquiry = (SalaryTransactionInquiry)transactionList.get(i);
+				FinanceMonthlyTransaction financeMonthlyTransaction = new FinanceMonthlyTransaction();
+				financeMonthlyTransaction.setMonth(				month);
+				financeMonthlyTransaction.setYear(				year);
+				financeMonthlyTransaction.setTransactionId(		Integer.parseInt(salaryTransactionInquiry.getId()));
+				financeMonthlyTransaction.setUserId(			Integer.parseInt(salaryTransactionInquiry.getId()));
+				financeMonthlyTransaction.setPosition(			salaryTransactionInquiry.getPosition());
+				financeMonthlyTransaction.setPayType(			salaryTransactionInquiry.getPayType());
+			    financeMonthlyTransaction.setSalary(			salaryTransactionInquiry.getSalary());
+			    financeMonthlyTransaction.setDaily(				salaryTransactionInquiry.getDaily());
+			    financeMonthlyTransaction.setFare(				salaryTransactionInquiry.getFare());
+			    financeMonthlyTransaction.setDiligence(			salaryTransactionInquiry.getDiligence());
+			    financeMonthlyTransaction.setBonus(				salaryTransactionInquiry.getBonus());
+			    financeMonthlyTransaction.setOtherIncome(		salaryTransactionInquiry.getOtherIncome());
+			    financeMonthlyTransaction.setOtSummary(			salaryTransactionInquiry.getOtSummary());
+				  
+			    financeMonthlyTransaction.setSubtractTax(		salaryTransactionInquiry.getSubtractTax());
+			    financeMonthlyTransaction.setSubtractSocial(	salaryTransactionInquiry.getSubtractSocial());
+			    financeMonthlyTransaction.setLeaveSubtract(		salaryTransactionInquiry.getLeaveSubtract());
+			    financeMonthlyTransaction.setAccumulateSubtract(salaryTransactionInquiry.getAccumulateSubtract());
+			    financeMonthlyTransaction.setOtherSubtract(		salaryTransactionInquiry.getOtherSubtract());
+			    financeMonthlyTransaction.setDetails(			salaryTransactionInquiry.getDetails());
+				financeMonthlyTransactionDAO.create(financeMonthlyTransaction);
+			}
 			
 			
 		}catch (Exception e) {

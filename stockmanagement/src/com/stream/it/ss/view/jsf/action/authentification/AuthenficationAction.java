@@ -58,19 +58,16 @@ public class AuthenficationAction extends BaseAction{
 		if(userAuthfication == null){
 			user = null;
 			password = null;
-			errorMessage = "Please Check User and Password";
-			getHttpServletRequest().setAttribute("errorMessage", errorMessage);
-			
-			DisplayMessages.addErrorMessage("Login Fail!!","Please Check User and Password");
+
+			DisplayMessages.showErrorMessage("Login Fail!! Please Check User and Password");
 			
 			return null;
 		
 		}else if(userAuthfication.getStatus().equalsIgnoreCase("disable")){
 			user = null;
 			password = null;
-			errorMessage = "User is Disable";
 
-			DisplayMessages.addErrorMessage("Login Fail!!","User is Disable");
+			DisplayMessages.showErrorMessage("Login Fail!! User is Disable");
 
 			return null;
 			
@@ -94,7 +91,6 @@ public class AuthenficationAction extends BaseAction{
 			usersProfileDAO.update(userAuthfication);
 			
 			return "index";
-			
 		}
 		
 		return null;

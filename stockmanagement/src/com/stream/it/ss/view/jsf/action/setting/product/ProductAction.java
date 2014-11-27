@@ -269,6 +269,17 @@ public class ProductAction extends BaseAction{
 		return "product.list";
 	}
 	
+	public String listViewPage() throws Exception{
+		productForm = new ProductForm();
+		searchForm = new ProductSearchForm();
+		
+		supplierDropdown = supplierComboDropdownService.listAll();
+		
+		transactionList = productService.listTransaction(searchForm);
+		
+		return "product.list.view";
+	}
+	
 	public void addPage() throws Exception{
 		productForm = new ProductForm();
 		productItemGroupSearchForm = new ProductItemGroupSearchForm();

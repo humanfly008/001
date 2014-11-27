@@ -47,7 +47,7 @@ public class InquiryDAOImpl extends JdbcDaoSupport implements InquiryDAO{
         sqlStr = "SELECT @ROW_NUMNER:=@ROW_NUMNER+1 AS NO,QUERY1.* FROM ("+sqlStr+")QUERY1, (SELECT @ROW_NUMNER:=0)QUERY2";
         
         List resultList  = getJdbcTemplate().query(sqlStr, param.toArray() , new BeanPropertyRowMapper(Class.forName(classMapping)));
-        
+        searchBean.getPaggingBean().setTotalRow(resultList.size());
         logger.info("result size:"+resultList.size());
         
         return resultList;

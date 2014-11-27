@@ -1,9 +1,12 @@
 package com.stream.it.ss.hibernate.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
@@ -50,13 +53,13 @@ public class FinanceMonthlyTransactionDAO extends BaseDAO{
         hibernateTemplate.delete(financeMonthlyTransaction);
     }
     
-    public void deleteByMonthYear(int month, int year){
-    	HibernateTemplate hibernateTemplate = getHibernateTemplate();
-        Session session = hibernateTemplate.getSessionFactory().getCurrentSession();
-    	Query query = session.createSQLQuery("DELETE FROM finance_monthly_transaction WHERE MONTH = ? AND YEAR = ?");
-        query.setInteger(0, month);
-        query.setInteger(1, year);
-        query.executeUpdate();
-        session.close();
+    public void deleteByMonthYear(int month, int year) throws DataAccessResourceFailureException, HibernateException, IllegalStateException, SQLException{
+    	logger.info("begin....");
+    	logger.info("month : "+month);
+    	logger.info("year  : "+year);
+    	String sql = "DELETE FROM finance_monthly_transaction WHERE MONTH = "+month+" AND YEAR = "+year;
+    	getSession().connection().createStatement().execute(sql);    	
+    	
+    	logger.info("end....");
     }
 }

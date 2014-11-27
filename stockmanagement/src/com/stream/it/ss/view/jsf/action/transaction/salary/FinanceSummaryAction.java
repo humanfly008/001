@@ -6,6 +6,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
+import org.primefaces.model.StreamedContent;
+
+import com.lowagie.text.Cell;
 import com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry;
 import com.stream.it.ss.service.combo.MonthComboDropdownService;
 import com.stream.it.ss.service.combo.YearComboDropdownService;
@@ -13,6 +16,9 @@ import com.stream.it.ss.service.webcustom.transaction.salary.FinanceTransactionS
 import com.stream.it.ss.service.webcustom.transaction.salary.SalaryManagementService;
 import com.stream.it.ss.utils.format.DateUtil;
 import com.stream.it.ss.utils.format.StringType;
+import com.stream.it.ss.utils.primefaces.report.Report2PDF;
+import com.stream.it.ss.utils.primefaces.report.Report2PDFExporter;
+import com.stream.it.ss.utils.primefaces.report.ReportExporter;
 import com.stream.it.ss.view.jsf.base.BaseAction;
 import com.stream.it.ss.view.jsf.base.DisplayMessages;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalarySearchForm;
@@ -34,9 +40,13 @@ public class FinanceSummaryAction extends BaseAction{
 	@ManagedProperty(value="#{monthComboDropdownService}")
 	private MonthComboDropdownService monthComboDropdownService;
 	
+	@ManagedProperty(value="#{reportExporter}")
+	private ReportExporter reportExporter;
+	
 	/*** FORM ****/
 	private SalarySearchForm searchFormBO;
-	
+	private StreamedContent fileTransactionsDataExport;
+	private String transactionFrom;
 	private List<?>transactionList;
 	private List<?> yearDropdown;
 	private List<?> monthDropdown;
@@ -44,7 +54,12 @@ public class FinanceSummaryAction extends BaseAction{
 	
 	//**** ACTION ****//
 	public void doListTransaction()throws Exception{
+		transactionFrom = "SALARY";
+
 		transactionList = financeTransactionService.listTrasnaction(searchFormBO);
+		if(transactionList.size()>0)
+			transactionFrom = "FINANCE";
+			
 		
 		DisplayMessages.showMessage("Search", searchFormBO);
 	}	
@@ -55,6 +70,7 @@ public class FinanceSummaryAction extends BaseAction{
 		transactionList = financeTransactionService.listTrasnaction(searchFormBO);		
 		
 		DisplayMessages.showMessage("Create", searchFormBO);
+		transactionFrom = "FINANCE";
 	}
 	
 	public void doUpdateTransaction()throws Exception{
@@ -68,8 +84,16 @@ public class FinanceSummaryAction extends BaseAction{
 	/***** AJAX EVENT ********/
 	public void prepareTransactionFromMonthSalary()throws Exception{
 		transactionList = salaryManagementService.listTrasnactionAll(searchFormBO);
+		transactionFrom = "SALARY";
 		
 		DisplayMessages.showErrorMessage("น่ำรายการจากทะเบียนเงินเดือนเรียบร้อย");
+	}
+	
+	public void removeTransaction(){
+		String[]checkDelete = getHttpServletRequest().getParameterValues("checkDelete");
+		for(int i=0; i<checkDelete.length; i++){
+			transactionList.remove(Integer.parseInt(checkDelete[i]));		
+		}
 	}
 	
 	public void updateCalculateTrasnsaction(){
@@ -109,17 +133,16 @@ public class FinanceSummaryAction extends BaseAction{
 			totalSubtractAccumulate	+=	transactionInquiry.getAccumulateSubtract();
 			totalSubtractOther		+=	transactionInquiry.getOtherSubtract();
 			
-			transactionInquiry.setTotalSalaryIncome(transactionInquiry.getSalary()+
-													transactionInquiry.getDaily()+
-													transactionInquiry.getFare()+
-													transactionInquiry.getDiligence()+
-													transactionInquiry.getBonus()+
-													transactionInquiry.getOtherIncome()+
-													transactionInquiry.getOtSummary()
-													);
-			
-			transactionInquiry.setTotalSalaryIncomeNet((transactionInquiry.getSalary()+
-														transactionInquiry.getDaily()+
+			if(transactionInquiry.getPayType().equals("MONTH")){
+				transactionInquiry.setTotalSalaryIncome(transactionInquiry.getSalary()+
+														transactionInquiry.getFare()+
+														transactionInquiry.getDiligence()+
+														transactionInquiry.getBonus()+
+														transactionInquiry.getOtherIncome()+
+														transactionInquiry.getOtSummary()
+														);
+				
+				transactionInquiry.setTotalSalaryIncomeNet((transactionInquiry.getSalary()+
 														transactionInquiry.getFare()+
 														transactionInquiry.getDiligence()+
 														transactionInquiry.getBonus()+
@@ -132,22 +155,33 @@ public class FinanceSummaryAction extends BaseAction{
 														transactionInquiry.getAccumulateSubtract()+
 														transactionInquiry.getOtherSubtract())
 													);
-			
+			}else{
+				transactionInquiry.setTotalSalaryIncome(transactionInquiry.getDaily()+
+														transactionInquiry.getFare()+
+														transactionInquiry.getDiligence()+
+														transactionInquiry.getBonus()+
+														transactionInquiry.getOtherIncome()+
+														transactionInquiry.getOtSummary()
+														);
+
+				transactionInquiry.setTotalSalaryIncomeNet((transactionInquiry.getDaily()+
+														transactionInquiry.getFare()+
+														transactionInquiry.getDiligence()+
+														transactionInquiry.getBonus()+
+														transactionInquiry.getOtherIncome()+
+														transactionInquiry.getOtSummary())
+															-
+														(transactionInquiry.getSubtractTax()+
+														transactionInquiry.getSubtractSocial()+
+														transactionInquiry.getLeaveSubtract()+
+														transactionInquiry.getAccumulateSubtract()+
+														transactionInquiry.getOtherSubtract())
+													);
+			}
 		}	
 				
 		totalSalaryIncome = totalSalary+totalDaily+totalFare+totalDiligence+totalBonus+totalOtSummary+totalOtherIncome;
 		totalSalaryIncomeNet = totalSalaryIncome-(totalSubtractTax+totalSubtractSocial+totalSubtractLeave+totalSubtractAccumulate+totalSubtractOther);
-
-//		System.out.println("totalSalary 	: "+totalSalary);
-//		System.out.println("totalDaily 		: "+totalDaily);
-//		System.out.println("totalFare 		: "+totalFare);
-//		System.out.println("totalDiligence 	: "+totalDiligence);
-//		System.out.println("totalBonus 		: "+totalBonus);
-//		System.out.println("totalOtherIncome: "+totalOtherIncome);
-//		System.out.println("totalOtSummary 	: "+totalOtSummary);
-
-//		System.out.println("totalSalaryIncome 		: "+totalSalaryIncome);
-//		System.out.println("totalSalaryIncomeNet 	: "+totalSalaryIncomeNet);
 		
 		searchFormBO.setTotalSalary(				StringType.getDoubleNumberMoneyFormatted(totalSalary));
 		searchFormBO.setTotalDaily(					StringType.getDoubleNumberMoneyFormatted(totalDaily));
@@ -168,8 +202,34 @@ public class FinanceSummaryAction extends BaseAction{
 		searchFormBO.setTotalSalaryIncomeNet(		StringType.getDoubleNumberMoneyFormatted(totalSalaryIncomeNet));	
 	}
 	
+	private String[] monthTHDesc = {"","มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กฏกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤจิยายน","ธันวาคม"};
+	
+	public void doExportReport() throws Exception{
+		transactionList = financeTransactionService.listTrasnaction(searchFormBO);
+		String reportType = getHttpServletRequest().getParameter("listForm:reportType_input");
+
+		Report2PDF report2pdfExporter = new Report2PDFExporter();
+		report2pdfExporter.setColumnWidths(new float[]{0.5f, 2f, 1.5f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 2.0f});
+		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_LEFT});
+		
+		reportExporter.setReportName("salary report");
+		reportExporter.setReport2pdfExporter(report2pdfExporter);
+		
+		fileTransactionsDataExport = reportExporter.genReportData(reportType, "ทะเบียนเงินเดือน", transactionList, 
+				new String[]{"no",	"fullName",	"position",	"payTypeDesc",	"salaryStr",		"dailyStr",		"fareStr",	"diligenceStr",	"bonusStr",		"otherIncomeStr",	"otSummaryStr",	"totalSalaryIncome",	"subtractSocialStr",	"subtractTaxStr",	"leaveSubtractStr",		"accumulateSubtractStr",	"otherSubtractStr",	"totalSalaryIncomeNet",	"details"}, 
+				new String[]{"No.",	"ชื่อ",		"ตำแหน่ง",		"ประเภทรายได้",		"เงินเดือน/ค่าแรง",		"รายวัน",			"ค่าพาหนะ",		"ค่าเบี้ยขยัน", 		"โบนัส", 			"รายได้อื่นๆ", 			"OT", 			"รายได้รวม", 				"หัก ปกส", 					"หัก ภาษี", 				"หัก หยุดงาน", 				"หักสะม", 						"หักอื่นๆ", 				"คงเหลือ", 					"หมายเหคุ"},
+				new String[][]{	
+						new String[]{"ปี :"+searchFormBO.getYear() +" เดือน : "+monthTHDesc[searchFormBO.getMonth()]}	
+				},
+				new String[]{"", "", "", "รวม", searchFormBO.getTotalSalary(), searchFormBO.getTotalDaily(), searchFormBO.getTotalFare(), searchFormBO.getTotalDiligence(), searchFormBO.getTotalBonus(), searchFormBO.getTotalOtherIncome(), searchFormBO.getTotalOtSummary(), searchFormBO.getTotalSalaryIncome(), searchFormBO.getTotalSubtractSocial(), searchFormBO.getTotalSubtractTax() , searchFormBO.getTotalSubtractLeave(), searchFormBO.getTotalSubtractAccumulate(), searchFormBO.getTotalSubtractOther(), searchFormBO.getTotalSalaryIncomeNet(), ""},
+				
+				searchFormBO.getSecuriyBO().getUserAuthentication().getUserLogin());
+	}
+	
 	//**** PAGENAVIGATOR ****//
 	public String listPage() throws Exception{
+		transactionFrom = "SALARY";
+
 		yearDropdown = yearComboDropdownService.listCurrent10Year();
 		monthDropdown = monthComboDropdownService.listAllMonthTh();
 		
@@ -178,6 +238,8 @@ public class FinanceSummaryAction extends BaseAction{
 		searchFormBO.setYear(Integer.parseInt(DateUtil.getCurrentYear()));
 		
 		transactionList = financeTransactionService.listTrasnaction(searchFormBO);
+		if(transactionList.size()>0)
+			transactionFrom = "FINANCE";
 		
 		return "finance.list";
 	}
@@ -218,5 +280,20 @@ public class FinanceSummaryAction extends BaseAction{
 	}
 	public void setFinanceTransactionService(FinanceTransactionService financeTransactionService) {
 		this.financeTransactionService = financeTransactionService;
+	}
+	public StreamedContent getFileTransactionsDataExport() {
+		return fileTransactionsDataExport;
+	}
+	public void setFileTransactionsDataExport(StreamedContent fileTransactionsDataExport) {
+		this.fileTransactionsDataExport = fileTransactionsDataExport;
+	}
+	public void setReportExporter(ReportExporter reportExporter) {
+		this.reportExporter = reportExporter;
+	}
+	public String getTransactionFrom() {
+		return transactionFrom;
+	}
+	public void setTransactionFrom(String transactionFrom) {
+		this.transactionFrom = transactionFrom;
 	}
 }

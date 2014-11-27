@@ -12,6 +12,7 @@ public class SalaryTransactionInquiry implements Serializable{
 	private String userId;
 	private String firstName;
 	private String lastName;
+	private String fullName;
 	private String idCard;
 	private String position;
 	private String payType;
@@ -211,6 +212,12 @@ public class SalaryTransactionInquiry implements Serializable{
 	public void setDetails(String details) {
 		this.details = details;
 	}
+	public String getFullName() {
+		return "".concat(firstName).concat(lastName).toString();
+	}
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
 	//*** FORMATTER ***//
 	public String getSalaryStr(){
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(salary));
@@ -287,5 +294,10 @@ public class SalaryTransactionInquiry implements Serializable{
 	public String getTotalSubtractStr(){
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(subtractSocial+subtractTax));
 	}
-	
+	public String getPayTypeDesc(){
+		if(payType.equals("DAY"))return "รายวัน";
+		else if(payType.equals("MONTH")) return "รายเดือน";
+			
+		return "";
+	}
 }

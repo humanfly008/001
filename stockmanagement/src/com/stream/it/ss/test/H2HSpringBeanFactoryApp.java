@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.stream.it.ss.base.databo.SecuriyBO;
+import com.stream.it.ss.hibernate.dao.FinanceMonthlyTransactionDAO;
 import com.stream.it.ss.service.webcustom.transaction.exhausted.StockExhaustedInquiryService;
 import com.stream.it.ss.view.jsf.form.transaction.exhausted.StockExhaustedSearchForm;
 
@@ -21,7 +22,7 @@ public class H2HSpringBeanFactoryApp {
 				"transaction.xml",
 				"inquery-dropdown.xml",
 				"inquery-master.xml",
-				"inquery-orders-transactions.xml"
+				"inquery-transactions.xml"
 				
 		});
 		beanFactory = (BeanFactory) appContext;
@@ -37,8 +38,8 @@ public class H2HSpringBeanFactoryApp {
 			StockExhaustedSearchForm stockExhaustedSearchForm = new StockExhaustedSearchForm();
 			stockExhaustedSearchForm.setSecuriyBO(new SecuriyBO());
 			
-			StockExhaustedInquiryService inquiryService = (StockExhaustedInquiryService) springBeanFactoryApp.getBean("stockExhaustedInquiryService");
-			inquiryService.listTransaction(stockExhaustedSearchForm);
+			FinanceMonthlyTransactionDAO financeMonthlyTransactionDAO = (FinanceMonthlyTransactionDAO) springBeanFactoryApp.getBean("financeMonthlyTransactionDAO");
+			financeMonthlyTransactionDAO.deleteByMonthYear(11, 2014);
 			
 			
 		}catch(Exception e){

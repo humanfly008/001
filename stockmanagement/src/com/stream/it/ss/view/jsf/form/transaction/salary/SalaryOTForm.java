@@ -7,10 +7,14 @@ import com.stream.it.ss.base.databo.DataBo;
 public class SalaryOTForm extends DataBo{
 	private String id;
 	private String userId;
+	private String userFullName;
+	private String payType;
+	
 	private Double otRate;
 	private Integer otHour;
 	private Date otDate;
 	
+	private Double income;
 	private Double salary;
 	private Double daily;
 	private Double fare;
@@ -91,5 +95,23 @@ public class SalaryOTForm extends DataBo{
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getUserFullName() {
+		return userFullName;
+	}
+	public void setUserFullName(String userFullName) {
+		this.userFullName = userFullName;
+	}
+	public String getPayType() {
+		return payType;
+	}
+	public void setPayType(String payType) {
+		this.payType = payType;
+	}
+	public Double getIncome() {
+		return income;
+	}
+	public void setIncome(Double income) {
+		this.income = income;
 	}
 }

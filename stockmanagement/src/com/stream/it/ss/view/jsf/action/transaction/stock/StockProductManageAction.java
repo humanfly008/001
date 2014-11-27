@@ -84,11 +84,10 @@ public class StockProductManageAction extends BaseAction{
 	public String doCreateStock() throws Exception{
 		ResultBO resultBO = stockService.createStockTransaction(dataFormBO);
 		
-		dataFormBO.setResultBO(resultBO);
-		DisplayMessages.showMessage("Create Transaction", dataFormBO);   				
+		DisplayMessages.showInfoMessage("สินค้า "+productDataFormBO.getProductSupplierCode()+" "+productDataFormBO.getProductName()+" จำนวน "+dataFormBO.getStockQty()+" ถูกสร้างรายการเรียบร้อย");
 
-		dataFormBO = new StockProductForm();
-		productDataFormBO = new ProductForm();
+		dataFormBO.setResultBO(resultBO);
+		dataFormBO.setStockQty(null);		
 		
 		return null;
 	}

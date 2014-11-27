@@ -7,16 +7,23 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
+import org.primefaces.model.StreamedContent;
+
 
 import com.ibm.db2.jcc.am.dp;
+import com.lowagie.text.Cell;
 import com.stream.it.ss.base.databo.ResultBO;
 import com.stream.it.ss.hibernate.inquiry.Dropdown;
 import com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry;
 import com.stream.it.ss.service.combo.MonthComboDropdownService;
 import com.stream.it.ss.service.combo.YearComboDropdownService;
+import com.stream.it.ss.service.webcustom.report.SalaryManagementReportService;
 import com.stream.it.ss.service.webcustom.transaction.salary.SalaryManagementService;
 import com.stream.it.ss.utils.format.DateUtil;
 import com.stream.it.ss.utils.format.StringType;
+import com.stream.it.ss.utils.primefaces.report.Report2PDF;
+import com.stream.it.ss.utils.primefaces.report.Report2PDFExporter;
+import com.stream.it.ss.utils.primefaces.report.ReportExporter;
 import com.stream.it.ss.view.jsf.base.BaseAction;
 import com.stream.it.ss.view.jsf.base.DisplayMessages;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalaryDailyForm;
@@ -31,12 +38,17 @@ public class SalaryManagementAction extends BaseAction{
 	@ManagedProperty(value="#{salaryManagementService}")
     private SalaryManagementService salaryManagementService;
 	
+	@ManagedProperty(value="#{salaryManagementReportService}")
+    private SalaryManagementReportService salaryManagementReportService;
+	
 	@ManagedProperty(value="#{yearComboDropdownService}")
 	private YearComboDropdownService yearComboDropdownService;
 	
 	@ManagedProperty(value="#{monthComboDropdownService}")
 	private MonthComboDropdownService monthComboDropdownService;
 	
+	@ManagedProperty(value="#{reportExporter}")
+	private ReportExporter reportExporter;
 	
 	//**** FORM ****//
 	private SalarySearchForm searchFormBO;
@@ -46,6 +58,8 @@ public class SalaryManagementAction extends BaseAction{
 	private SalaryDailyForm salaryDailyForm;
 	private SalaryTransactionInquiry printSalaryFormBO;
 	
+	private StreamedContent fileTransactionsDataExport;
+
 	private List<?>transactionList;
 	private List<?>transactionOtByUserList;
 	private List<?>transactionDailyByUserList;
@@ -63,17 +77,21 @@ public class SalaryManagementAction extends BaseAction{
 	public void doCreateOT()throws Exception{
 		ResultBO resultBO = salaryManagementService.createOt(salaryOTFormBO);
 		
+		transactionOtByUserList = salaryManagementService.listOtByUserTrasnaction(searchFormBOTemp);
+		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create", resultBO);
+		DisplayMessages.showMessage("บันทึกรายการสำเร็จ", resultBO);
 	}	
 	
 	public void doCreateSalaryDaily()throws Exception{
 		ResultBO resultBO = salaryManagementService.createDaily(salaryDailyForm);
 		
+		transactionDailyByUserList = salaryManagementService.listSalaryDailyByUserTrasnaction(searchFormBOTemp);		
+
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create", resultBO);
+		DisplayMessages.showMessage("บันทึกรายการสำเร็จ", resultBO);
 	}	
 	
 	public void doUpdateInCome()throws Exception{
@@ -81,7 +99,7 @@ public class SalaryManagementAction extends BaseAction{
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create", resultBO);
+		DisplayMessages.showMessage("บันทึกรายการสำเร็จ", resultBO);
 	}
 	
 	public void doUpdateDetails()throws Exception{
@@ -89,7 +107,7 @@ public class SalaryManagementAction extends BaseAction{
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create", resultBO);
+		DisplayMessages.showMessage("บันทึกรายการสำเร็จ", resultBO);
 	}
 	
 	public void doDeleteInCome()throws Exception{
@@ -97,26 +115,55 @@ public class SalaryManagementAction extends BaseAction{
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
-		DisplayMessages.showMessage("Create", resultBO);
+		DisplayMessages.showMessage("บันทึกรายการสำเร็จ", resultBO);
 	}	
 	
 	public void doDeleteOtTransactionByUser() throws Exception{
 		String[]checkDelete = getHttpServletRequest().getParameterValues("checkDelete");
 		ResultBO resultBO = salaryManagementService.deleteOtTrasnactionByUser(checkDelete);
-		DisplayMessages.showMessage("Delete", resultBO); 
-		
+
+		transactionOtByUserList = salaryManagementService.listOtByUserTrasnaction(searchFormBOTemp);
+
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
+		
+		DisplayMessages.showMessage("Delete", resultBO); 
 	}
 	
 	public void doDeleteDailyTransactionByUser() throws Exception{
 		String[]checkDelete = getHttpServletRequest().getParameterValues("checkDelete2");
 		ResultBO resultBO = salaryManagementService.deleteDailyTrasnactionByUser(checkDelete);
-		DisplayMessages.showMessage("Delete", resultBO); 
+
+		transactionDailyByUserList = salaryManagementService.listSalaryDailyByUserTrasnaction(searchFormBOTemp);		
 		
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
+		
+		DisplayMessages.showMessage("Delete", resultBO); 
 	}
 
+	public void doExportReport() throws Exception{
+		transactionList = salaryManagementReportService.listTrasnaction(searchFormBO);
+		String reportType = getHttpServletRequest().getParameter("listForm:reportType_input");
+
+		Report2PDF report2pdfExporter = new Report2PDFExporter();
+		report2pdfExporter.setColumnWidths(new float[]{0.5f, 2f, 1.5f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 2.5f});
+		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_LEFT});
+		
+		reportExporter.setReportName("salary report");
+		reportExporter.setReport2pdfExporter(report2pdfExporter);
+		
+		fileTransactionsDataExport = reportExporter.genReportData(reportType, "ทะเบียนเงินเดือน", transactionList, 
+				new String[]{"no",	"fullName",	"position",	"payTypeDesc",	"salary",		"dailyStr",		"fareStr",	"diligenceStr",	"bonusStr",		"otherIncomeStr",	"otDate",	"otHourStr",	"otSummaryStr",	"totalSalaryIncome",	"subtractSocialStr",	"subtractTaxStr",	"leaveSubtractStr",		"accumulateSubtractStr",	"otherSubtractStr",	"totalSalaryIncomeNet",	"details"}, 
+				new String[]{"No.",	"ชื่อ",		"ตำแหน่ง",		"ประเภทรายได้",		"เงินเดือน/ค่าแรง",		"รายวัน",			"ค่าพาหนะ",		"ค่าเบี้ยขยัน", 		"โบนัส", 			"รายได้อื่นๆ", 			"OT จำนวนวัน", 	"OT จำนวนชม.", 	"OT รวม", 		"รายได้รวม", 				"หัก ปกส", 					"หัก ภาษี", 				"หัก หยุดงาน", 				"หักสะม", 						"หักอื่นๆ", 				"คงเหลือ", 					"หมายเหคุ"},
+				new String[][]{	
+						new String[]{"ปี :"+searchFormBO.getYear() +" เดือน : "+monthTHDesc[searchFormBO.getMonth()]}	
+				},
+				new String[]{"", "", "", "รวม", searchFormBO.getTotalSalary(), searchFormBO.getTotalDaily(), searchFormBO.getTotalFare(), searchFormBO.getTotalDiligence(), searchFormBO.getTotalBonus(), searchFormBO.getTotalOtherIncome(), searchFormBO.getTotalOtDate()+"", searchFormBO.getTotalOtHour()+"", searchFormBO.getTotalOtSummary(), searchFormBO.getTotalSalaryIncome(), searchFormBO.getTotalSubtractSocial(), searchFormBO.getTotalSubtractTax() , searchFormBO.getTotalSubtractLeave(), searchFormBO.getTotalSubtractAccumulate(), searchFormBO.getTotalSubtractOther(), searchFormBO.getTotalSalaryIncomeNet(), ""},
+				
+				searchFormBO.getSecuriyBO().getUserAuthentication().getUserLogin());
+	}
 	
+    private String[] monthTHDesc = {"","มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กฏกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤจิยายน","ธันวาคม"};
+
 	//**** PAGENAVIGATOR ****//
 	public String listPage() throws Exception{
 		yearDropdown = yearComboDropdownService.listCurrent10Year();
@@ -160,14 +207,16 @@ public class SalaryManagementAction extends BaseAction{
 		String income 		  = getHttpServletRequest().getParameter("income");
 		String incomeType 	  = getHttpServletRequest().getParameter("incomeType");
 		String incomeTypeDesc = getHttpServletRequest().getParameter("incomeTypeDesc");
-	
+		String userFullName	  = getHttpServletRequest().getParameter("userFullName");
+		
 		salaryDailyForm = new SalaryDailyForm();
 		salaryDailyForm.setUserId(			userId);
-		salaryDailyForm.setId(id);
+		salaryDailyForm.setId(				id);
 		salaryDailyForm.setIncome(			Double.parseDouble(income));
 		salaryDailyForm.setIncomeType(		incomeType);
 		salaryDailyForm.setIncomeTypeDesc(	incomeTypeDesc);
-				
+		salaryDailyForm.setUserFullName(	userFullName);		
+		
 		searchFormBOTemp = new SalarySearchForm();
 		searchFormBOTemp.setUserId(			userId);
 		searchFormBOTemp.setId(				id);
@@ -188,6 +237,10 @@ public class SalaryManagementAction extends BaseAction{
 		String bonus		= StringType.getStringReplaceValue(getHttpServletRequest().getParameter("bonus"),"0");
 		String socialInsurance = StringType.getStringReplaceValue(getHttpServletRequest().getParameter("socialInsurance"),"0");
 		String tax			= StringType.getStringReplaceValue(getHttpServletRequest().getParameter("tax"),"0");
+		String userFullName	= getHttpServletRequest().getParameter("userFullName");
+		String payType		= getHttpServletRequest().getParameter("payType");
+		String income 		= getHttpServletRequest().getParameter("income");
+		
 		
 		salaryOTFormBO = new SalaryOTForm();
 		salaryOTFormBO.setOtHour(4);
@@ -196,6 +249,10 @@ public class SalaryManagementAction extends BaseAction{
 
 		salaryOTFormBO.setUserId(			userId);
 		salaryOTFormBO.setId(				id);
+		salaryOTFormBO.setUserFullName(		userFullName);
+		salaryOTFormBO.setIncome(			Double.parseDouble(income));
+		salaryOTFormBO.setPayType(			payType);
+		
 		salaryOTFormBO.setSalary(			Double.parseDouble(salary));
 		salaryOTFormBO.setDaily(			Double.parseDouble(daily));
 		salaryOTFormBO.setFare(				Double.parseDouble(fare));
@@ -331,5 +388,17 @@ public class SalaryManagementAction extends BaseAction{
 	}
 	public void setPrintSalaryFormBO(SalaryTransactionInquiry printSalaryFormBO) {
 		this.printSalaryFormBO = printSalaryFormBO;
+	}
+	public StreamedContent getFileTransactionsDataExport() {
+		return fileTransactionsDataExport;
+	}
+	public void setFileTransactionsDataExport(StreamedContent fileTransactionsDataExport) {
+		this.fileTransactionsDataExport = fileTransactionsDataExport;
+	}
+	public void setReportExporter(ReportExporter reportExporter) {
+		this.reportExporter = reportExporter;
+	}
+	public void setSalaryManagementReportService(SalaryManagementReportService salaryManagementReportService) {
+		this.salaryManagementReportService = salaryManagementReportService;
 	}		
 }

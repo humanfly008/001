@@ -32,21 +32,24 @@ public class FilterServlet implements Filter{
         HttpSession session = request.getSession();
 
         try{
-	        if(request.getRequestURI().indexOf(loginPage) < 0&& request.getRequestURI().indexOf(loginPage) < 0 && session.getAttribute(userLogonId) == null){
+
+        	if(request.getRequestURI().indexOf(loginPage) < 0&& request.getRequestURI().indexOf(loginPage) < 0 && session.getAttribute(userLogonId) == null){
 	        	
-	        	if(request.getRequestURI().indexOf("/logout") > 0 || request.getRequestURI().indexOf("/javax.faces.resource/theme.css.xhtml") > 0 || request.getRequestURI().indexOf("/resources/images/header.jpg") > 0 ){
-					chain.doFilter(request, response);	
+	        	if(request.getRequestURI().contains("/login") || request.getRequestURI().contains("/javax.faces") || request.getRequestURI().contains("/resources/")){
+	        		chain.doFilter(request, response);	
+
+	        		return;
 				}else{
-					response.sendRedirect("login");
+					response.sendRedirect("/" + filterConfig.getServletContext().getServletContextName()+loginPage);
+
+					return;
 				}          
-	        	return;
 	        }
 	        
 	        request.setCharacterEncoding("UTF-8");        
 	        chain.doFilter(request, response);
 
         }catch(Exception e){
-        	System.out.println("EXCEPTION.............");
         	e.printStackTrace();
         }
     }

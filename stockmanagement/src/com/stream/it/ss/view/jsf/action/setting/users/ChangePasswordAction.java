@@ -35,12 +35,14 @@ public class ChangePasswordAction extends BaseAction{
 	}
 	
 	public String changePasswordPage() throws Exception{
+		newPassword = "";
 		userFormBO = new UserForm();
 		
 		UsersProfile usersProfile = usersProfileDAO.findByUserId(userFormBO.getSecuriyBO().getUserAuthentication().getUserLogin());
 		userFormBO.setUserId(usersProfile.getUserId());
 		userFormBO.setFirstName(usersProfile.getFirstName());
 		userFormBO.setLastName(usersProfile.getLastName());
+
 		
 		return "change.password";
 	}

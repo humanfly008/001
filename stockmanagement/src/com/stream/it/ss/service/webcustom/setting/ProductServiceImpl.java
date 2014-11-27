@@ -108,10 +108,10 @@ public class ProductServiceImpl implements ProductService{
 
 		try {
 			productSearchForm.setConditionValuesBean(new SearchConditionValuesBean[] {
-				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"UPPER(I.ITEM_CODE)",			SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getProductCode())}),
-				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"UPPER(I.ITEM_NAME_TH)",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getProductName()) }),
+				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"UPPER(I.PRODUCT_CODE)",			SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getProductCode())}),
+				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"UPPER(I.PRODUCT_NAME_TH)",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getProductName()) }),
 				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"UNIT",							SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getUnit()) }),
-				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"ITEM_TYPE",					SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getProductType()) }),
+				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"PRODUCT_TYPE",					SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(productSearchForm.getProductType()) }),
 				new SearchConditionValuesBean(SQLConstantWhereType.AND,	"S.SUPPLIER_ID",				SQLConstantOperType.EQUALS,new Object[] { productSearchForm.getSupplier() })
 			});
 

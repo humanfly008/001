@@ -11,6 +11,7 @@ public class SalaryDailyForm extends DataBo{
 	private String id;
 	private String userId;
 	private Date date;
+	private String userFullName;
 	
 	public String getIncomeType() {
 		return incomeType;
@@ -47,5 +48,11 @@ public class SalaryDailyForm extends DataBo{
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getUserFullName() {
+		return userFullName;
+	}
+	public void setUserFullName(String userFullName) {
+		this.userFullName = userFullName;
 	}
 }

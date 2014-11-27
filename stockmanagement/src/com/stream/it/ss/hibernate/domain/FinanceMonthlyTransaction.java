@@ -30,7 +30,7 @@ public class FinanceMonthlyTransaction implements Serializable {
     @Column(name = "MONTH")
     private Integer month;
     @Column(name = "USER_ID")
-    private String userId;
+    private Integer userId;
     @Column(name = "POSITION")
     private String position;
     @Column(name = "PAY_TYPE")
@@ -93,11 +93,11 @@ public class FinanceMonthlyTransaction implements Serializable {
         this.month = month;
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

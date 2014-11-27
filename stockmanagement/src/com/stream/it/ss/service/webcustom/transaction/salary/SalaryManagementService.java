@@ -8,6 +8,7 @@ import com.stream.it.ss.base.databo.SearchBean;
 
 public interface SalaryManagementService {
 	public List listTrasnaction(SearchBean searchBean)throws Exception;
+	public List listTrasnactionAll(SearchBean searchBean) throws Exception;
 	public List listTrasnactionByUser(SearchBean searchBean)throws Exception;
 	public List listOtByUserTrasnaction(SearchBean searchBean) throws Exception;
 	public List listSalaryDailyByUserTrasnaction(SearchBean searchBean)throws Exception;	
