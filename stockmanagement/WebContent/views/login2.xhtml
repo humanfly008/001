@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	>
+  	<h:head>
+  	   	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+      	<meta http-equiv="Cache-control" content="no-cache" />
+      			
+		<link href="resources/bootstrap/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    	<link href="resources/bootstrap/bootstrap/css/signin.css" rel="stylesheet" />
+		<title>Insert title here</title>
+
+		<style type="text/css">
+    		body {
+			  padding-top: 40px;
+			  padding-bottom: 40px;
+			  background-color: #eee;
+			}
+			
+			.form-signin {
+			  max-width: 330px;
+			  padding: 15px;
+			  margin: 0 auto;
+			}
+			.form-signin .form-signin-heading,
+			.form-signin .checkbox {
+			  margin-bottom: 10px;
+			}
+			.form-signin .checkbox {
+			  font-weight: normal;
+			}
+			.form-signin input[type="text"],
+			.form-signin input[type="password"] {
+			  position: relative;
+			  font-size: 16px;
+			  height: auto;
+			  padding: 10px;
+			  -webkit-box-sizing: border-box;
+			     -moz-box-sizing: border-box;
+			          box-sizing: border-box;
+			}
+			.form-signin input[type="text"]:focus,
+			.form-signin input[type="password"]:focus {
+			  z-index: 2;
+			}
+			.form-signin input[type="text"] {
+			  margin-bottom: -1px;
+			  border-bottom-left-radius: 0;
+			  border-bottom-right-radius: 0;
+			}
+			.form-signin input[type="password"] {
+			  margin-bottom: 10px;
+			  border-top-left-radius: 0;
+			  border-top-right-radius: 0;
+			}
+    	
+    	</style>
+	</h:head>
+	<h:body>
+  		<div align="right" style="">
+	        <h:form  id="loginFormId" prependId="false">
+	                <div id="loginFieldsPnlId">
+	                    <div id="loginFieldUsrContId">
+	                        <h:outputText id="outTxtUserNameId" value="Username:" name="outTxtUserNameNm"></h:outputText>
+	                        <h:inputText id="userName" required="true" value="#{loginMgmtBean.userName}" requiredMessage="Please enter username"></h:inputText>
+	                        <h:outputLabel id="outLblUserNameId" for="userName" name="outLblUserNameNm"></h:outputLabel>
+	                    </div>
+	                    <div id="loginFieldPassContId">
+	                        <h:outputText id="outTxtPasswordId" value="Password:" name="outTxtPasswordNm"></h:outputText>
+	                        <h:inputSecret id="password"  required="true" value="#{loginMgmtBean.password}" requiredMessage="Please enter password" name="inTxtPasswordNm"></h:inputSecret>
+	                        <h:outputLabel id="outLblPasswordId" for="password" name="outLblPasswordNm"></h:outputLabel>
+	                    </div>
+	                </div>
+	                <div id="loginBtnPanelId">
+	                    <h:commandButton id="btnLoginId" value="Login" action="#{loginMgmtBean.login}" styleClass="loginPanelBtn"></h:commandButton>
+	                    <h:commandButton id="btnCancelId" value="Cancel" action="#{loginMgmtBean.cancel}" styleClass="loginPanelBtn" immediate="true" update="loginFormId"></h:commandButton>
+	                </div>
+	        </h:form>
+	    </div>
+	    <div>
+	        <h:messages></h:messages>
+	    </div>
+	</h:body>
+</html>

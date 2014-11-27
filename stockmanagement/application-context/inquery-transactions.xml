@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+    <!-- SALARY -->
+	<bean id="salaryTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	ID,
+								USER_ID,
+								FIRST_NAME,
+								LAST_NAME,
+								POSITION,
+								PAY_TYPE,
+								SALARY,
+								SOCIAL_INSURANCE,
+								TAX,
+								DAILY,
+								FARE,
+								DILIGENCE,
+								BONUS,
+								OTHER_INCOME,
+								OT_PER_HOUR,
+								OT_DATE,
+								OT_HOUR,
+								OT_RATE,
+								OT_SUMMARY,
+								LEAVE_SUBTRACT,
+								ACCUMULATE_SUBTRACT,
+								OTHER_SUBTRACT, 
+								(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME  
+									ELSE DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+ OTHER_INCOME 
+								END)TOTAL_SALARY_INCOME, 
+							
+								(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN SALARY*SOCIAL_INSURANCE/100 
+									ELSE DAILY*SOCIAL_INSURANCE/100 
+								END)SUBTRACT_SOCIAL, 
+							
+								(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN SALARY*TAX/100 
+									ELSE DAILY*TAX/100 
+								END)SUBTRACT_TAX, 
+							
+								(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(SALARY*SOCIAL_INSURANCE/100)-(SALARY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT 
+									ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(DAILY*SOCIAL_INSURANCE/100)-(DAILY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT 
+								END)TOTAL_SALARY_INCOME_NET, 
+								DETAILS 								
+								
+							FROM ( 
+								SELECT 	U.ID,
+										U.USER_ID AS USER_ID, 
+										U.FIRST_NAME,
+										U.LAST_NAME,
+										U.DEPARTMENT AS POSITION,
+										U.PAY_TYPE,
+										U.SALARY,
+										U.SOCIAL_INSURANCE,	  
+										U.TAX,
+										IFNULL((SELECT SUM(S.DAILY)	 										FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY,   
+										IFNULL((SELECT DISTINCT S.FARE 										FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'fare'),0) AS FARE,
+										IFNULL((SELECT DISTINCT S.DILIGENCE 								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'diligence'),0) AS DILIGENCE,
+										IFNULL((SELECT DISTINCT S.BONUS 									FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'bonus'),0) AS BONUS,
+										IFNULL((SELECT DISTINCT S.OTHER_INCOME 								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'otherIncome'),0) AS OTHER_INCOME,
+										IFNULL((SELECT DISTINCT(U.SALARY/30/8) 								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_PER_HOUR,
+										IFNULL((SELECT DISTINCT COUNT(S.OT_HOUR)							FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_DATE,
+										IFNULL((SELECT DISTINCT SUM(S.OT_HOUR)								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_HOUR,
+										IFNULL((SELECT DISTINCT S.OT_RATE 									FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_RATE,
+										IFNULL((SELECT DISTINCT ((U.SALARY/30/8)*SUM(S.OT_HOUR)*OT_RATE) 	FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_SUMMARY,  
+										IFNULL((SELECT DISTINCT S.LEAVE_SUBTRACT 							FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'leaveSubtract'),0) AS LEAVE_SUBTRACT, 
+										IFNULL((SELECT DISTINCT S.ACCUMULATE_SUBTRACT 						FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'accumulateSubtract'),0) AS ACCUMULATE_SUBTRACT,
+										IFNULL((SELECT DISTINCT S.OTHER_SUBTRACT 							FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'subtractOther'),0) AS OTHER_SUBTRACT, 
+										IFNULL((SELECT DISTINCT S.DETAILS 									FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'details'),'-') AS DETAILS 
+																			 													
+								FROM 	USERS_PROFILE U 
+								WHERE 	1=1 	
+							
+							)AS SUB_QUERY 
+							WHERE 1=1	 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry</value>
+        </property>
+	</bean>
+    
+    <bean id="summarySalaryTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	SUM(SALARY) AS SALARY,
+								SUM(DAILY) AS DAILY,
+								SUM(FARE) AS FARE,
+								SUM(DILIGENCE) AS DILIGENCE,
+								SUM(BONUS) AS BONUS,
+								SUM(OTHER_INCOME) AS OTHER_INCOME,
+								SUM(OT_DATE) AS OT_DATE,
+								SUM(OT_HOUR) AS OT_HOUR,
+								SUM(OT_SUMMARY) AS OT_SUMMARY,
+								SUM(OTHER_SUBTRACT) AS OTHER_SUBTRACT, 
+								SUM(LEAVE_SUBTRACT) AS LEAVE_SUBTRACT, 
+								SUM(ACCUMULATE_SUBTRACT) AS ACCUMULATE_SUBTRACT, 
+								
+								SUM(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY 
+									ELSE DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY 
+								END)TOTAL_SALARY_INCOME, 
+							
+								SUM(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN SALARY*SOCIAL_INSURANCE/100 
+									ELSE DAILY*SOCIAL_INSURANCE/100 
+								END)SUBTRACT_SOCIAL, 
+							
+								SUM(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN SALARY*TAX/100 
+									ELSE DAILY*TAX/100 
+								END)SUBTRACT_TAX, 
+							
+								SUM(CASE 
+									WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY)-(SALARY*SOCIAL_INSURANCE/100)-(SALARY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT 
+									ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY)-(DAILY*SOCIAL_INSURANCE/100)-(DAILY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT 
+								END)TOTAL_SALARY_INCOME_NET 
+								
+								
+								
+							FROM ( 
+								SELECT 	U.FIRST_NAME,
+										U.USER_ID AS USER_ID, 
+										U.PAY_TYPE,
+										U.SALARY,
+										U.SOCIAL_INSURANCE,	  
+										U.TAX,
+										IFNULL((SELECT SUM(S.DAILY)	 										FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'daily'),0) AS DAILY,   
+										IFNULL((SELECT DISTINCT S.FARE 										FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'fare'),0) AS FARE,
+										IFNULL((SELECT DISTINCT S.DILIGENCE 								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'diligence'),0) AS DILIGENCE,
+										IFNULL((SELECT DISTINCT S.BONUS 									FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'bonus'),0) AS BONUS,
+										IFNULL((SELECT DISTINCT S.OTHER_INCOME 								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'otherIncome'),0) AS OTHER_INCOME,
+										IFNULL((SELECT DISTINCT(U.SALARY/30/8) 								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_PER_HOUR,
+										IFNULL((SELECT DISTINCT COUNT(S.OT_HOUR)							FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_DATE,
+										IFNULL((SELECT DISTINCT SUM(S.OT_HOUR)								FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_HOUR,
+										IFNULL((SELECT DISTINCT S.OT_RATE 									FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_RATE,
+										IFNULL((SELECT DISTINCT ((U.SALARY/30/8)*SUM(S.OT_HOUR)*OT_RATE) 	FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_SUMMARY, 
+										IFNULL((SELECT DISTINCT S.LEAVE_SUBTRACT 							FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'leaveSubtract'),0) AS LEAVE_SUBTRACT, 
+										IFNULL((SELECT DISTINCT S.ACCUMULATE_SUBTRACT 						FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'accumulateSubtract'),0) AS ACCUMULATE_SUBTRACT,
+										IFNULL((SELECT DISTINCT S.OTHER_SUBTRACT 							FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = ? AND S.YEAR = ? AND S.TRANSACTION_TYPE = 'subtractOther'),0) AS OTHER_SUBTRACT  
+											 
+													
+								FROM 	USERS_PROFILE U 
+								WHERE 	1=1 	
+							
+							)AS SUB_QUERY 
+							WHERE 1=1	 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry</value>
+        </property>
+	</bean>
+    
+   	<bean id="salaryOtTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	TRANSACTION_ID,
+								DATE,
+								MONTH,
+								YEAR,
+								OT_HOUR,
+								OT_RATE  
+						
+						FROM 	SALARY_TRANSACTION 
+						WHERE 	USER_ID = ? 
+						AND 	ID = ? 
+						AND 	MONTH = ? 
+						AND 	YEAR = ? 
+						AND 	TRANSACTION_TYPE = 'ot' 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryOtDetailInquery</value>
+        </property>
+	</bean>
+	
+	<bean id="salarySalaryDailyTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	TRANSACTION_ID,
+								DATE,
+								MONTH,
+								YEAR 
+								
+						FROM 	SALARY_TRANSACTION 
+						WHERE 	USER_ID = ? 
+						AND 	ID = ? 
+						AND 	MONTH = ? 
+						AND 	YEAR = ? 
+						AND 	TRANSACTION_TYPE = 'daily' 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryOtDetailInquery</value>
+        </property>
+	</bean>
+    
+    <!-- STOCK -->
+	<bean id="stockItemTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+					SELECT 	S.STOCK_DATE,
+							S.STOCK_TYPE,
+							I.ITEM_CODE,
+							I.ITEM_NAME_TH AS ITEM_NAME,
+							I.ITEM_TYPE,
+							SP.SUPPLIER_NAME_TH AS SUPPLIER_NAME,
+							S.STOCK_QTY,
+							CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS CREATE_BY 
+					
+					FROM 	T_STOCK_ITEM S LEFT JOIN M_ITEM I ON(S.ITEM_ID = I.ITEM_ID) 
+								LEFT JOIN M_SUPPLIER SP ON(I.SUPPLIER_ID = SP.SUPPLIER_ID)  
+								LEFT JOIN USERS_PROFILE U ON(S.CREATE_BY = U.USER_ID) 
+					WHERE 	1=1 
+					                	
+									
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.StockItemInquiry</value>
+        </property>
+	</bean>
+	
+	<bean id="stockProductTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+					SELECT 	S.STOCK_DATE,
+							S.STOCK_TYPE,
+							I.PRODUCT_CODE,
+							I.PRODUCT_NAME_TH AS PRODUCT_NAME,
+							I.PRODUCT_TYPE,
+							SP.SUPPLIER_NAME_TH AS SUPPLIER_NAME,
+							S.STOCK_QTY,
+							CONCAT(U.FIRST_NAME,' ',U.LAST_NAME) AS CREATE_BY 
+					
+					FROM 	T_STOCK_PRODUCT S LEFT JOIN M_PRODUCT I ON(S.PRODUCT_ID = I.PRODUCT_ID) 
+												LEFT JOIN M_SUPPLIER SP ON(I.SUPPLIER_ID = SP.SUPPLIER_ID) 
+												LEFT JOIN USERS_PROFILE U ON(S.CREATE_BY = U.USER_ID) 
+					WHERE 	1=1 
+					                	
+									
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.StockProductInquiry</value>
+        </property>
+	</bean>
+	
+	<bean id="stockExhaustedTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+					SELECT * FROM ( 
+							SELECT 	'วัตถุดิบ' AS TRANSACTION_TYPE,
+								I.ITEM_ID AS OBJECT_ID,
+								I.ITEM_CODE AS OBJECT_CODE,
+								I.ITEM_NAME_TH AS OBJECT_NAME,
+								I.ITEM_QTY AS QTY,
+								S.SUPPLIER_ID AS SUPPLIER_ID,
+								S.SUPPLIER_NAME_TH AS SUPPLIER,
+								I.ITEM_SUPPLIER_CODE AS OBJECT_SUPPLIER_CODE,
+								(CASE 
+									WHEN (I.ITEM_QTY <= I.NOTIFICATE_LEVEL1_UNIT) THEN 'LEVEL1'
+									WHEN (I.ITEM_QTY <= I.NOTIFICATE_LEVEL2_UNIT) THEN 'LEVEL2'
+									WHEN (I.ITEM_QTY <= I.NOTIFICATE_LEVEL3_UNIT) THEN 'LEVEL3'
+								END)STATUS 
+						
+						
+							FROM M_ITEM I LEFT JOIN M_SUPPLIER S ON (I.SUPPLIER_ID = S.SUPPLIER_ID)
+							WHERE (I.ITEM_QTY <= I.NOTIFICATE_LEVEL1_UNIT OR I.ITEM_QTY <= I.NOTIFICATE_LEVEL2_UNIT OR I.ITEM_QTY <= I.NOTIFICATE_LEVEL3_UNIT) 
+						
+							UNION ALL 
+						
+							SELECT 	'สินค้า' AS TRANSACTION_TYPE,
+								I.PRODUCT_ID AS OBJECT_ID,
+								I.PRODUCT_CODE AS OBJECT_CODE,
+								I.PRODUCT_NAME_TH AS OBJECT_NAME,
+								I.PRODUCT_QTY AS QTY,
+								S.SUPPLIER_ID AS SUPPLIER_ID,
+								S.SUPPLIER_NAME_TH AS SUPPLIER,
+								I.PRODUCT_SUPPLIER_CODE AS OBJECT_SUPPLIER_CODE,
+								(CASE 
+									WHEN (I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL1_UNIT) THEN 'LEVEL1'
+									WHEN (I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL2_UNIT) THEN 'LEVEL2'
+									WHEN (I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL3_UNIT) THEN 'LEVEL3'
+								END)STATUS 
+						
+							FROM M_PRODUCT I LEFT JOIN M_SUPPLIER S ON (I.SUPPLIER_ID = S.SUPPLIER_ID)
+							WHERE (I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL1_UNIT OR I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL2_UNIT OR I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL3_UNIT) 
+						)AS SUB_QUERY 
+						WHERE 1=1 
+					
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.StockExhaustedInquiry</value>
+        </property>
+	</bean>
+
+	<bean id="stockExhaustedTransactionsSummaryInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+					SELECT COUNT(*) 
+					FROM (
+						SELECT 	'ITEM' AS TRANSACTION_TYPE 
+						FROM 	M_ITEM I 
+						WHERE 	(I.ITEM_QTY <= I.NOTIFICATE_LEVEL1_UNIT OR I.ITEM_QTY <= I.NOTIFICATE_LEVEL2_UNIT OR I.ITEM_QTY <= I.NOTIFICATE_LEVEL3_UNIT)
+					
+						UNION 
+					
+						SELECT 	'PRODUCT' AS TRANSACTION_TYPE 
+						FROM	 M_PRODUCT I 
+						WHERE 	(I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL1_UNIT OR I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL1_UNIT OR I.PRODUCT_QTY <= I.NOTIFTCATE_LEVEL1_UNIT)
+					
+					)AS SUB_QUERY 
+					WHERE 1=1 
+				]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>java.lang.Integer</value>
+        </property>
+	</bean>
+
+	<bean id="financeMonthlyTransactionsInquiry" class="com.stream.it.ss.hibernate.dao.InquiryDAOImpl">  
+        <property name="dataSource" ref="dataSource" />
+        <property name="sql">
+            <value>
+                <![CDATA[  
+						SELECT 	* 
+						FROM 	FINANCE_MONTHLY_TRANSACTION 
+						WHERE 	1=1 
+						AND 	MONTH = ? 
+						AND 	YEAR  = ? 
+						ORDER BY TRANSACTION_ID  
+						]]>
+            </value>
+        </property>
+        <property name="classMapping">
+            <value>com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry</value>
+        </property>
+	</bean>
+	
+</beans>

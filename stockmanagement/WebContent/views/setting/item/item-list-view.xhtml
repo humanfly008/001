@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+    <h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+           	<ui:param name="transaction" value="วัตถุดิบ" />
+            <ui:define name="content">
+				<h:form id="listForm">
+					
+					<h:outputLabel id="displayMessage">
+						<p:growl life="1500" rendered="#{itemAction.searchForm.resultBO.errorMessage==''}"/> 
+						<p:messages rendered="#{itemAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
+					</h:outputLabel>
+					    
+					<table width="100%">
+						<tr>
+							<td>
+					    		<h:outputText value="รหัสวัตถุดิบ"/>
+					    	</td>
+					    	<td>
+					    		<p:inputText id="itemCode" value="#{itemAction.searchForm.itemCode}"/>
+						  	</td>
+					    	<td>
+					    		<h:outputText value="ชื่อวัตถุดิบ"/>
+							</td>
+					    	<td>
+					    		<p:inputText id="itemName" value="#{itemAction.searchForm.itemName}"/>
+						  	</td>
+					    	<td>
+					    		<h:outputText value="ประเภท"/>
+							</td>
+					    	<td>	
+						    	<p:inputText id="itemType" value="#{itemAction.searchForm.itemType}"/>
+					    	</td>
+					   	</tr>
+					    <tr>
+					    	<td>
+					    		<h:outputText value="หน่วย"/>
+							</td>
+					   		<td>	
+						   		<p:inputText id="unit" value="#{itemAction.searchForm.unit}"/>
+					   		</td>
+					    	<td>
+					    		<h:outputText value="ตัวแทนจำหน่าย"/>
+							</td>
+					    	<td colspan="2">	   	
+					    		<p:selectOneMenu id="supplierType" value="#{itemAction.searchForm.supplier}" filter="true" filterMatchMode="contains">
+									<f:selectItem itemValue="" itemLabel="ทั้งหมด" />
+								   	<f:selectItems value="#{itemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+									<p:ajax event="change" update="listForm" listener="#{itemAction.doListTransaction}"/>							
+								</p:selectOneMenu>
+							</td>
+						</tr>
+					    <tr>
+					    	<td colspan="6" align="right">
+					    		<p:commandButton id="searchBtn" value="ค้นหา" update="listForm" actionListener="#{itemAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+					    	</td>
+					 	</tr>
+					</table>
+					    
+					<br></br>
+				   		
+					<p:dataTable id="dataList" var="dataList" value="#{itemAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+						<p:column>
+					    	<f:facet name="header">
+					        	<h:outputText value="No." />
+					      	</f:facet>
+					      	<div style="text-align:center;vertical-align: text-top">
+						    	<h:outputText value="#{dataList.no}" />
+						 	</div>
+					 	</p:column>	
+					  	<p:column>
+					    	<f:facet name="header">
+					        	<h:outputText value="รหัสวัตถุดิบ" />
+					      	</f:facet>
+					      	<div style="text-align:center;vertical-align: text-top">
+						    	<h:outputText value="#{dataList.itemCode}" />
+						    </div>
+					   </p:column>
+					  	<p:column>
+					    	<f:facet name="header">
+					        	<h:outputText value="ชื่อวัตถุดิบ" />
+					      	</f:facet>
+					      	<div style="text-align:center;vertical-align: text-top">
+						    	<h:outputText value="#{dataList.itemName}" />
+						 	</div>
+					 	</p:column>
+					   	<p:column>
+					  		<f:facet name="header">
+					        	<h:outputText value="ประเภท" />
+					      	</f:facet>
+					      	<div style="text-align:center;vertical-align: text-top">
+						    	<h:outputText value="#{dataList.itemType}" />
+							</div>     
+						</p:column>
+					  	<p:column>
+					    	<f:facet name="header">
+					        	<h:outputText value="หน่วย" />
+					      	</f:facet>
+					      	<div style="text-align:center;vertical-align: text-top">
+						  		<h:outputText value="#{dataList.unit}" />
+					     	</div>
+					 	</p:column>
+					  	<p:column>
+					  		<f:facet name="header">
+					      		<h:outputText value="จำนวนคงเหลือ" />
+					 		</f:facet>
+					 		
+					 		<div style="text-align:right;vertical-align: text-top">
+						    	<h:outputText value="#{dataList.itemQtyStr}" />
+						   	</div>
+					    </p:column>
+						<p:column>
+							<f:facet name="header">
+					   			<h:outputText value="ตัวแทนจำหน่าย" />
+					  		</f:facet>
+					   		<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="#{dataList.supplier}" />
+					 		</div>
+						</p:column>
+					</p:dataTable>
+					
+					<h:panelGrid columns="2">
+					  	<h:outputLabel id="pagnavigator" for="listForm">
+							<ui:include src="/resources/component/pagnavigator.xhtml">
+								<ui:param name="action" 		value="#{itemAction}"></ui:param>
+						 		<ui:param name="searchBean"		value="#{itemAction.searchForm}" />
+						 		<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
+						 		<ui:param name="dataList"		value="#{itemAction.transactionList}" />
+								<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
+							</ui:include>
+						</h:outputLabel>
+					
+						<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{not empty itemAction.transactionList}">
+		                    <p:selectOneMenu id="reportType" style="text-align: left;">
+								<f:selectItem itemValue="PDF" itemLabel="PDF" />
+								<f:selectItem itemValue="XLS" itemLabel="XLS" />
+							</p:selectOneMenu>
+		
+			              	<p:commandButton value="Print" icon="ui-icon-print" ajax="none" actionListener="#{itemAction.doExportReport}" onclick="PrimeFaces.monitorDownload(showLoadingDialog, hideLoadingDialog); return validateSubmit();" style="vertical-align: top;">
+			                	<p:fileDownload value="#{itemAction.fileTransactionsDataExport}" contentDisposition="attachment" />
+			               	</p:commandButton>      
+		             	</h:panelGrid>
+					</h:panelGrid>
+					
+					<br/>
+				</h:form>
+
+          	</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>
+                

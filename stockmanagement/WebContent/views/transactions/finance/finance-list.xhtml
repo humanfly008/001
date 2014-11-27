@@ -1,0 +1,526 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:body>    	
+    	<ui:composition template="/WEB-INF/layout/layout.xhtml">
+        	<ui:param name="transaction" value="บัญชีรายเดือน" />
+           	<ui:define name="content">
+	       		<h:form id="listForm">
+					<h:outputLabel id="displayMessage">
+						<p:growl life="1500" rendered="#{financeSummaryAction.searchFormBO.resultBO.errorMessage==''}" />
+						<p:messages rendered="#{financeSummaryAction.searchFormBO.resultBO.errorMessage!=''}" closable="true"/>
+					</h:outputLabel>
+						
+					<h:panelGrid columns="3" cellpadding="7">
+						<h:panelGrid columns="2">	
+							<h:outputText value="ปี"/>
+	                   		<p:selectOneMenu  id="year" value="#{financeSummaryAction.searchFormBO.year}">
+								<f:selectItems value="#{financeSummaryAction.yearDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}"/>
+								<p:ajax update="listForm" event="change" listener="#{financeSummaryAction.doListTransaction}"/>
+							</p:selectOneMenu>
+			          	</h:panelGrid>      
+			            
+			            <h:panelGrid columns="2">
+							<h:outputText value="เดือน"/>
+		                   	<p:selectOneMenu  id="month" value="#{financeSummaryAction.searchFormBO.month}">
+								<f:selectItems value="#{financeSummaryAction.monthDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}"/>
+					      		<p:ajax update="listForm" event="change" listener="#{financeSummaryAction.doListTransaction}"/>
+							</p:selectOneMenu>
+				      	</h:panelGrid>
+				      	
+					   	<p:commandButton id="searchBtn" value="ค้นหา" update="listForm" actionListener="#{financeSummaryAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+					</h:panelGrid>
+					<br></br>
+					
+					<div align="left">
+						<p:commandButton value="นำเข้าจากทะเบียนเงินเดือน" update="listForm" actionListener="#{financeSummaryAction.prepareTransactionFromMonthSalary}" rendered="#{empty financeSummaryAction.transactionList}" styleClass="ui-priority-primary" icon="ui-icon-circle-plus"/>					
+						<p:commandButton value="บันทึกบัญชีประจำเดือน" update="listForm" actionListener="#{financeSummaryAction.doUpdateTransaction}" rendered="#{not empty financeSummaryAction.transactionList}" styleClass="ui-priority-primary" icon="ui-icon-circle-plus"/>					
+						<p:commandButton value="ลบ" onclick="return doValidateDelete('checkDelete');" icon="ui-icon-circle-minus" type="button" rendered="#{financeSummaryAction.transactionFrom=='SALARY'}"/>
+					</div>
+	
+					<div style="width:100%; white-space: nowrap;overflow-x: scroll;overflow: auto;">
+					<p:dataTable id="dataList" var="dataList" value="#{financeSummaryAction.transactionList}" editable="true" editMode="cell" styleClass="dataTable" rowIndexVar="index" emptyMessage="ยังไม้มีรายการ" stickyHeader="true">
+	
+						<p:column style="text-align: left;vertical-align: text-top" width="10" rendered="#{financeSummaryAction.transactionFrom=='SALARY'}">
+				        	<f:facet name="header">
+				            	<input type="checkbox" id="checkdeleteAll" name="checkdeleteAll" onclick="checkList('checkdeleteAll','checkDelete')"/>
+				           	</f:facet>	
+				           	<input type="checkbox" id="checkDelete" name="checkDelete" value="#{index}" onclick="oneCheck('checkDeleteAll','checkDelete')"/>
+				        </p:column>
+
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="No." />
+						  	</f:facet>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="#{index+1}"/>
+							</div>
+						</p:column>
+
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ชื่อ" />
+						  	</f:facet>
+								<div style="text-align:center;vertical-align: text-top">
+									<h:outputText value="#{dataList.firstName}"/>
+									<h:outputText value="&nbsp;"/>
+									<h:outputText value="#{dataList.lastName}"/>
+								</div>
+						</p:column>
+						
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ตำแหน่ง" />
+						  	</f:facet>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="#{dataList.position}"/>
+							</div>
+						</p:column>
+						
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="ประเภทรายได้" />
+						  	</f:facet>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="รายวัน" rendered="#{dataList.payType=='DAY'}"/>
+								<h:outputText value="รายเดือน" rendered="#{dataList.payType=='MONTH'}"/>
+							</div>
+							<!-- summary -->
+					      	<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					            	<div style="text-align:center;vertical-align: text-top">
+					                	<b><h:outputText value="รวม"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="เงินเดือน/ค่าแรง" />
+						  	</f:facet>
+						  	
+						  	<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.salary}">
+		                  				<f:convertNumber type="currency"  currencySymbol=""/>
+	                  				</h:outputText>
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.salary}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+		                  				<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+							
+							<!-- summary -->
+					      	<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalary}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="รายวัน" />
+						  	</f:facet>
+						  	
+						  	<div style="text-align:center;vertical-align: text-top">
+							  	<h:outputText value="-" rendered="#{dataList.payType=='MONTH'}"/>
+						  	</div>
+						  	
+						  	<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.dailyStr}" rendered="#{dataList.payType=='DAY'}"/>		                  			
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.daily}" rendered="#{dataList.payType=='DAY'}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+				                  		<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+						  	  	
+							<!-- summary -->
+					      	<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalDaily}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="ค่าพาหนะ" />
+						  	</f:facet>
+							
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.fareStr}"/>		                  			
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.fare}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+		                  				<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+	              			
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalFare}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="ค่าเบี้ยขยัน" />
+						  	</f:facet>
+							
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.diligenceStr}"/>		                  			
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.diligence}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+				                  		<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+							
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalDiligence}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="โบนัส" />
+						  	</f:facet>
+							
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.bonusStr}"/>		                  			
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.bonus}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+							
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalBonus}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="รายได้อื่นๆ" />
+						  	</f:facet>
+							
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.otherIncomeStr}"/>		                  			
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.otherIncome}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+
+						    <c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalOtherIncome}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="OT" />
+						  	</f:facet>
+
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.otSummaryStr}"/>		                  			
+	                  			</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.otSummary}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+		                  			
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+	              			 
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalOtSummary}"/></b>
+									</div>
+								</f:facet>
+							</c:if> 	
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="รายได้รวม" />
+						  	</f:facet>
+						  	
+						  	<div style="text-align:right;vertical-align: text-top">
+								<h:outputText value="#{dataList.totalSalaryIncomeStr}" >
+									<f:convertNumber type="currency"  currencySymbol=""/>
+								</h:outputText>
+							</div> 
+							
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalaryIncome}"/></b>
+									</div>
+								</f:facet>
+							</c:if> 
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="หัก ปกส" />
+						  	</f:facet>
+						  	
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.subtractSocialStr} "/>
+								</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.subtractSocial}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+							
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractSocial}"/></b>
+									</div>
+								</f:facet>
+							</c:if>  
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="หัก ภาษี" />
+						  	</f:facet>
+
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.subtractTaxStr} "/>
+								</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.subtractTax}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+							
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractTax}"/></b>
+									</div>
+								</f:facet>
+							</c:if>  
+						</p:column>
+
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="หัก หยุดงาน" />
+						  	</f:facet>
+						
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.leaveSubtractStr}"/>
+								</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.leaveSubtract}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+
+						    <c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractLeave}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="หักสะม" />
+						  	</f:facet>
+
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.accumulateSubtractStr} "/>
+								</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.accumulateSubtract}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+
+						    <c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractAccumulate}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>	
+											
+						<p:column style="text-align:right">
+						    <f:facet name="header">
+						        <h:outputText value="หักอื่นๆ" />
+						  	</f:facet>
+
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.otherSubtractStr} "/>
+								</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.otherSubtract}" style="width:100%" onchange="numberFormat5(this, false)" onkeypress="return isInteger(event)">
+			                  			<p:ajax event="blur" listener="#{financeSummaryAction.updateCalculateTrasnsaction}" update="dataList"/>
+		                  			</p:inputText>
+		                  		</f:facet>
+	              			</p:cellEditor>
+	              			
+						    <c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractOther}"/></b>
+									</div>
+								</f:facet>
+							</c:if>
+						</p:column>
+						
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="คงเหลือ" />
+						  	</f:facet>
+						  	
+						  	<div style="text-align:right;vertical-align: text-top">
+								<b>
+								<h:outputText value="#{dataList.totalSalaryIncomeNet}" >
+									<f:convertNumber type="currency"  currencySymbol=""/>
+								</h:outputText>
+								</b>
+							</div>
+							<c:if test="#{!empty financeSummaryAction.transactionList}">
+					        	<f:facet name="footer">
+					        		<div style="text-align:right;vertical-align: text-top;t" >
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalaryIncomeNet}"/></b>
+									</div>
+								</f:facet>
+							</c:if>  
+						</p:column>
+						
+						<p:column>
+						    <f:facet name="header">
+						        <h:outputText value="หมายเหคุ" />
+						  	</f:facet>
+							
+							<p:cellEditor>
+								<f:facet name="output">
+	                  				<h:outputText value="#{dataList.details} "/>
+								</f:facet>
+	                  			<f:facet name="input">
+		                  			<p:inputText value="#{dataList.details}" style="width:100%" />			                  		
+		                  		</f:facet>
+	              			</p:cellEditor>
+						</p:column>
+					</p:dataTable>					
+					</div>
+					<div align="left">
+					<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{financeSummaryAction.transactionFrom=='FINANCE'}">
+			        	<p:selectOneMenu id="reportType" style="text-align: left;">
+							<f:selectItem itemValue="PDF" itemLabel="PDF" />
+							<f:selectItem itemValue="XLS" itemLabel="XLS" />
+						</p:selectOneMenu>
+						
+				      	<p:commandButton value="Print" icon="ui-icon-print" ajax="none" actionListener="#{financeSummaryAction.doExportReport}" onclick="PrimeFaces.monitorDownload(showLoadingDialog, hideLoadingDialog); return validateSubmit();" style="vertical-align: top;">
+				        	<p:fileDownload value="#{financeSummaryAction.fileTransactionsDataExport}" contentDisposition="attachment" />
+				       	</p:commandButton>      
+			       	</h:panelGrid>
+					</div>
+					<br/><br/><br/>
+					
+					<p:dialog id="checkDeleteDialog" widgetVar="checkDeleteDialog" header="ยังไม่ได้เลือกรายการที่จะลบ" resizable="false" />
+					        
+	           		<p:dialog id="confirmDialog" widgetVar="confirmDialog" header="ยินยันลบข้อมูล" rendered="true">
+	            	   	ยืนยันต้องการลบข้อทูลที่เลือก
+	            	   	<p:commandButton id="confirm" value="ลบ" process="@this" ajax="true" actionListener="#{financeSummaryAction.removeTransaction}" update="listForm" onclick="confirmDialog.hide();" styleClass="ui-priority-primary" icon="ui-icon-disk"/>  
+					   	<p:commandButton id="decline" value="ยกเลิก" onclick="confirmDialog.hide()" type="button" />   
+	              	</p:dialog>
+				</h:form>
+					
+				<h:form id="addFormOT">		
+					<p:dialog id="addFormDialogOT" widgetVar="addFormDialogOT" header="เพิ่ม OT" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
+						<ui:include src="/views/transactions/salary/salary-ot.xhtml" />
+					</p:dialog>		
+				</h:form>
+				
+				<h:form id="addFormDaily">		
+					<p:dialog id="addFormDialogDaily" widgetVar="addFormDialogDaily" header="เพิ่มรายได้รายวัน" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
+						<ui:include src="/views/transactions/salary/salary-daily.xhtml" />
+					</p:dialog>		
+				</h:form>
+				
+				<h:form id="addFormIncome">		
+					<p:dialog id="addFormDialogIncome" widgetVar="addFormDialogIncome" header="เพิ่มรายได้/รายจ่าย" draggable="false" resizable="false" showEffect="fade" width="300" height="150">
+						<ui:include src="/views/transactions/salary/salary-income.xhtml" />
+					</p:dialog>
+				</h:form>
+				
+				<h:form id="addFormDetails">		
+					<p:dialog id="addFormDialogDetails" widgetVar="addFormDialogDetails" header="หมายเหตุ" draggable="false" resizable="false" showEffect="fade" width="600" height="150">
+						<ui:include src="/views/transactions/salary/salary-details.xhtml" />
+					</p:dialog>
+				</h:form>
+				
+				<h:form id="printFormIncome">		
+					<p:dialog id="printFormDialogIncome" widgetVar="printFormDialogIncome" header="พิมพ์รายการรายได้" draggable="false" resizable="false" showEffect="fade" width="700" height="520">
+						<ui:include src="/views/transactions/salary/salary-print.xhtml" />
+					</p:dialog>
+				</h:form>
+				
+       		</ui:define>
+     	</ui:composition>
+	</h:body>
+</html>         
