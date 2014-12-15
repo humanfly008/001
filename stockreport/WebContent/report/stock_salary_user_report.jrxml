@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="156"/>
-	<property name="ireport.y" value="744"/>
+	<property name="ireport.zoom" value="1.1269722013523664"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="170"/>
 	<parameter name="sql" class="java.lang.String"/>
 	<parameter name="month" class="java.lang.String"/>
 	<parameter name="year" class="java.lang.String"/>
@@ -39,10 +39,7 @@
 		ELSE DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME
 	END)TOTAL_SALARY_INCOME,
 
-	(CASE
-		WHEN PAY_TYPE = 'MONTH' THEN SALARY*SOCIAL_INSURANCE/100
-		ELSE DAILY*SOCIAL_INSURANCE/100
-	END)SUBTRACT_SOCIAL,
+	SUBTRACT_SOCIAL,
 
 	(CASE
 		WHEN PAY_TYPE = 'MONTH' THEN SALARY*TAX/100
@@ -50,13 +47,13 @@
 	END)SUBTRACT_TAX,
 
 	(CASE
-		WHEN PAY_TYPE = 'MONTH' THEN (SALARY*SOCIAL_INSURANCE/100)+(SALARY*TAX/100)+OTHER_SUBTRACT+LEAVE_SUBTRACT+ACCUMULATE_SUBTRACT
-		ELSE (DAILY*SOCIAL_INSURANCE/100)+(DAILY*TAX/100)+OTHER_SUBTRACT+LEAVE_SUBTRACT+ACCUMULATE_SUBTRACT
+		WHEN PAY_TYPE = 'MONTH' THEN SUBTRACT_SOCIAL+(SALARY*TAX/100)+OTHER_SUBTRACT+LEAVE_SUBTRACT+ACCUMULATE_SUBTRACT
+		ELSE SUBTRACT_SOCIAL+(DAILY*TAX/100)+OTHER_SUBTRACT+LEAVE_SUBTRACT+ACCUMULATE_SUBTRACT
 	END)TOTAL_SUBTRACT,
 
 	(CASE
-		WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(SALARY*SOCIAL_INSURANCE/100)-(SALARY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT
-		ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(DAILY*SOCIAL_INSURANCE/100)-(DAILY*TAX/100)-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT
+		WHEN PAY_TYPE = 'MONTH' THEN (SALARY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(SALARY*TAX/100)-SUBTRACT_SOCIAL-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT
+		ELSE (DAILY+FARE+DILIGENCE+BONUS+OT_SUMMARY+OTHER_INCOME)-(DAILY*TAX/100)-SUBTRACT_SOCIAL-OTHER_SUBTRACT-LEAVE_SUBTRACT-ACCUMULATE_SUBTRACT
 	END)TOTAL_SALARY_INCOME_NET,
 	DETAILS
 
@@ -85,6 +82,7 @@ FROM (
 		IFNULL((SELECT DISTINCT SUM(S.OT_HOUR)				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_HOUR,
 		IFNULL((SELECT DISTINCT S.OT_RATE 				FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_RATE,
 		IFNULL((SELECT DISTINCT ((U.SALARY/30/8)*SUM(S.OT_HOUR)*OT_RATE) FROM SALARY_TRANSACTION S WHERE U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'ot'),0) AS OT_SUMMARY,
+		IFNULL((SELECT DISTINCT S.SOCIAL_INSURANCE 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'social'),0) AS SUBTRACT_SOCIAL,
 		IFNULL((SELECT DISTINCT S.LEAVE_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'leaveSubtract'),0) AS LEAVE_SUBTRACT,
 		IFNULL((SELECT DISTINCT S.ACCUMULATE_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'accumulateSubtract'),0) AS ACCUMULATE_SUBTRACT,
 		IFNULL((SELECT DISTINCT S.OTHER_SUBTRACT 			FROM SALARY_TRANSACTION S WHERE  U.ID = S.ID AND U.USER_ID = S.USER_ID AND S.MONTH = $P{month} AND S.YEAR = $P{year} AND S.TRANSACTION_TYPE = 'subtractOther'),0) AS OTHER_SUBTRACT,
@@ -544,16 +542,16 @@ $P!{sql}]]>
 				</graphicElement>
 			</line>
 			<textField isBlankWhenNull="true">
-				<reportElement x="373" y="554" width="59" height="20"/>
+				<reportElement x="424" y="554" width="59" height="20"/>
 				<textElement verticalAlignment="Bottom">
-					<font size="12" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+					<font fontName="Tahoma" size="16" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{year_th}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="49" y="554" width="30" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="14" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+					<font fontName="Tahoma" size="16" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[คุณ]]></text>
 			</staticText>
@@ -584,7 +582,7 @@ $P!{sql}]]>
 			<textField isBlankWhenNull="true">
 				<reportElement x="134" y="554" width="78" height="20"/>
 				<textElement verticalAlignment="Bottom">
-					<font size="14" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+					<font fontName="Tahoma" size="16" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{LAST_NAME}]]></textFieldExpression>
 			</textField>
@@ -597,21 +595,21 @@ $P!{sql}]]>
 			<textField>
 				<reportElement x="79" y="554" width="52" height="20"/>
 				<textElement verticalAlignment="Bottom">
-					<font size="14" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+					<font fontName="Tahoma" size="16" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{FIRST_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="324" y="554" width="49" height="20"/>
+				<reportElement x="347" y="554" width="77" height="20"/>
 				<textElement verticalAlignment="Bottom">
-					<font size="12" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+					<font fontName="Tahoma" size="16" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{month_th}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="223" y="554" width="101" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
-					<font size="12" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
+				<reportElement x="223" y="554" width="124" height="20"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Tahoma" size="16" pdfFontName="TAHOMA.TTF" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[งวดจ่ายเงินเดือน]]></text>
 			</staticText>
