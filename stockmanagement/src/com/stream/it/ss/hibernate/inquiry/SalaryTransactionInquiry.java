@@ -213,7 +213,7 @@ public class SalaryTransactionInquiry implements Serializable{
 		this.details = details;
 	}
 	public String getFullName() {
-		return "".concat(firstName).concat(lastName).toString();
+		return "".concat(firstName).concat(" ").concat(lastName).toString();
 	}
 	public void setFullName(String fullName) {
 		this.fullName = fullName;

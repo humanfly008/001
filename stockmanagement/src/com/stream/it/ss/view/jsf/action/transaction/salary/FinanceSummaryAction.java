@@ -129,9 +129,9 @@ public class FinanceSummaryAction extends BaseAction{
 			
 			totalSubtractTax		+=	transactionInquiry.getSubtractTax();
 			totalSubtractSocial		+=	transactionInquiry.getSubtractSocial();
-			totalSubtractLeave		+=	transactionInquiry.getLeaveSubtract();
-			totalSubtractAccumulate	+=	transactionInquiry.getAccumulateSubtract();
-			totalSubtractOther		+=	transactionInquiry.getOtherSubtract();
+//			totalSubtractLeave		+=	transactionInquiry.getLeaveSubtract();
+//			totalSubtractAccumulate	+=	transactionInquiry.getAccumulateSubtract();
+//			totalSubtractOther		+=	transactionInquiry.getOtherSubtract();
 			
 			if(transactionInquiry.getPayType().equals("MONTH")){
 				transactionInquiry.setTotalSalaryIncome(transactionInquiry.getSalary()+
@@ -150,10 +150,11 @@ public class FinanceSummaryAction extends BaseAction{
 														transactionInquiry.getOtSummary())
 														-
 														(transactionInquiry.getSubtractTax()+
-														transactionInquiry.getSubtractSocial()+
-														transactionInquiry.getLeaveSubtract()+
-														transactionInquiry.getAccumulateSubtract()+
-														transactionInquiry.getOtherSubtract())
+														transactionInquiry.getSubtractSocial()
+//														transactionInquiry.getLeaveSubtract()+
+//														transactionInquiry.getAccumulateSubtract()+
+//														transactionInquiry.getOtherSubtract()
+														)
 													);
 			}else{
 				transactionInquiry.setTotalSalaryIncome(transactionInquiry.getDaily()+
@@ -172,10 +173,11 @@ public class FinanceSummaryAction extends BaseAction{
 														transactionInquiry.getOtSummary())
 															-
 														(transactionInquiry.getSubtractTax()+
-														transactionInquiry.getSubtractSocial()+
-														transactionInquiry.getLeaveSubtract()+
-														transactionInquiry.getAccumulateSubtract()+
-														transactionInquiry.getOtherSubtract())
+														transactionInquiry.getSubtractSocial()
+//														transactionInquiry.getLeaveSubtract()+
+//														transactionInquiry.getAccumulateSubtract()+
+//														transactionInquiry.getOtherSubtract()
+														)
 													);
 			}
 		}	
@@ -195,9 +197,9 @@ public class FinanceSummaryAction extends BaseAction{
 		
 		searchFormBO.setTotalSubtractTax(			StringType.getDoubleNumberMoneyFormatted(totalSubtractTax));
 		searchFormBO.setTotalSubtractSocial(		StringType.getDoubleNumberMoneyFormatted(totalSubtractSocial));
-		searchFormBO.setTotalSubtractLeave(			StringType.getDoubleNumberMoneyFormatted(totalSubtractLeave));
-		searchFormBO.setTotalSubtractAccumulate(	StringType.getDoubleNumberMoneyFormatted(totalSubtractAccumulate));
-		searchFormBO.setTotalSubtractOther(			StringType.getDoubleNumberMoneyFormatted(totalSubtractOther));
+//		searchFormBO.setTotalSubtractLeave(			StringType.getDoubleNumberMoneyFormatted(totalSubtractLeave));
+//		searchFormBO.setTotalSubtractAccumulate(	StringType.getDoubleNumberMoneyFormatted(totalSubtractAccumulate));
+//		searchFormBO.setTotalSubtractOther(			StringType.getDoubleNumberMoneyFormatted(totalSubtractOther));
 		
 		searchFormBO.setTotalSalaryIncomeNet(		StringType.getDoubleNumberMoneyFormatted(totalSalaryIncomeNet));	
 	}
@@ -209,19 +211,20 @@ public class FinanceSummaryAction extends BaseAction{
 		String reportType = getHttpServletRequest().getParameter("listForm:reportType_input");
 
 		Report2PDF report2pdfExporter = new Report2PDFExporter();
-		report2pdfExporter.setColumnWidths(new float[]{0.5f, 2f, 1.5f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 2.0f});
-		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_LEFT});
+		report2pdfExporter.setColumnWidths(new float[]{0.5f, 2f, 1.5f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.0f});
+		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_LEFT});
 		
 		reportExporter.setReportName("salary report");
 		reportExporter.setReport2pdfExporter(report2pdfExporter);
 		
-		fileTransactionsDataExport = reportExporter.genReportData(reportType, "ทะเบียนเงินเดือน", transactionList, 
-				new String[]{"no",	"fullName",	"position",	"payTypeDesc",	"salaryStr",		"dailyStr",		"fareStr",	"diligenceStr",	"bonusStr",		"otherIncomeStr",	"otSummaryStr",	"totalSalaryIncome",	"subtractSocialStr",	"subtractTaxStr",	"leaveSubtractStr",		"accumulateSubtractStr",	"otherSubtractStr",	"totalSalaryIncomeNet",	"details"}, 
-				new String[]{"No.",	"ชื่อ",		"ตำแหน่ง",		"ประเภทรายได้",		"เงินเดือน/ค่าแรง",		"รายวัน",			"ค่าพาหนะ",		"ค่าเบี้ยขยัน", 		"โบนัส", 			"รายได้อื่นๆ", 			"OT", 			"รายได้รวม", 				"หัก ปกส", 					"หัก ภาษี", 				"หัก หยุดงาน", 				"หักสะม", 						"หักอื่นๆ", 				"คงเหลือ", 					"หมายเหคุ"},
+		fileTransactionsDataExport = reportExporter.genReportData(reportType, "บัญชีเงินเดือน                                                            " +
+				"บริษัท เอ็น.อาร์.ออโต้ซีทส์ จำกัด", transactionList, 
+				new String[]{"no",	"fullName",	"position",	"payTypeDesc",	"salaryStr",	"dailyStr",		"fareStr",	"diligenceStr",	"bonusStr",		"otherIncomeStr",	"otSummaryStr",	"totalSalaryIncome",	"subtractSocialStr",	"subtractTaxStr",	"totalSalaryIncomeNetStr",	"details"}, 
+				new String[]{"No.",	"ชื่อ",		"ตำแหน่ง",		"ประเภทรายได้",		"เงินเดือน/ค่าแรง",		"รายวัน",			"ค่าพาหนะ",		"ค่าเบี้ยขยัน", 		"โบนัส", 			"รายได้อื่นๆ", 			"OT", 			"รายได้รวม", 				"หัก ปกส", 					"หัก ภาษี", 				"คงเหลือ", 						"หมายเหคุ"},
 				new String[][]{	
 						new String[]{"ปี :"+searchFormBO.getYear() +" เดือน : "+monthTHDesc[searchFormBO.getMonth()]}	
 				},
-				new String[]{"", "", "", "รวม", searchFormBO.getTotalSalary(), searchFormBO.getTotalDaily(), searchFormBO.getTotalFare(), searchFormBO.getTotalDiligence(), searchFormBO.getTotalBonus(), searchFormBO.getTotalOtherIncome(), searchFormBO.getTotalOtSummary(), searchFormBO.getTotalSalaryIncome(), searchFormBO.getTotalSubtractSocial(), searchFormBO.getTotalSubtractTax() , searchFormBO.getTotalSubtractLeave(), searchFormBO.getTotalSubtractAccumulate(), searchFormBO.getTotalSubtractOther(), searchFormBO.getTotalSalaryIncomeNet(), ""},
+				new String[]{"", "", "", "รวม", searchFormBO.getTotalSalary(), searchFormBO.getTotalDaily(), searchFormBO.getTotalFare(), searchFormBO.getTotalDiligence(), searchFormBO.getTotalBonus(), searchFormBO.getTotalOtherIncome(), searchFormBO.getTotalOtSummary(), searchFormBO.getTotalSalaryIncome(), searchFormBO.getTotalSubtractSocial(), searchFormBO.getTotalSubtractTax() , searchFormBO.getTotalSalaryIncomeNet(), ""},
 				
 				searchFormBO.getSecuriyBO().getUserAuthentication().getUserLogin());
 	}

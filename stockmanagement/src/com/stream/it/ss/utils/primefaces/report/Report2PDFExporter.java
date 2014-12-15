@@ -57,15 +57,14 @@ public class Report2PDFExporter extends Report2PDF{
 			PdfWriter.getInstance(document, fileout);
 			
 			BaseFont bf = BaseFont.createFont(font, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-            Font font2 = new Font(bf, 12);
+            Font font2 = new Font(bf, 13);
 			
             SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
             SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm aa");
             String userAndTime = "User Name : " + user + "     Date : " + formatDate.format(new Date()) + "     Time : " + formatTime.format(new Date());    
-            HeaderFooter footer = new HeaderFooter(new Phrase(userAndTime, new Font(bf, 12)), false);
+            HeaderFooter footer = new HeaderFooter(new Phrase(userAndTime, new Font(bf, 15)), false);
             footer.setBorder(Rectangle.NO_BORDER);
 			document.setFooter(footer); 
-            
 			document.open();	
 					
             Paragraph paragraph;

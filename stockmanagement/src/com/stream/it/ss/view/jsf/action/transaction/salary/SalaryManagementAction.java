@@ -10,10 +10,8 @@ import javax.faces.bean.SessionScoped;
 import org.primefaces.model.StreamedContent;
 
 
-import com.ibm.db2.jcc.am.dp;
 import com.lowagie.text.Cell;
 import com.stream.it.ss.base.databo.ResultBO;
-import com.stream.it.ss.hibernate.inquiry.Dropdown;
 import com.stream.it.ss.hibernate.inquiry.SalaryTransactionInquiry;
 import com.stream.it.ss.service.combo.MonthComboDropdownService;
 import com.stream.it.ss.service.combo.YearComboDropdownService;
@@ -30,6 +28,7 @@ import com.stream.it.ss.view.jsf.form.transaction.salary.SalaryDailyForm;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalaryIncomeForm;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalaryOTForm;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalarySearchForm;
+
 
 @SessionScoped
 @ManagedBean
@@ -145,19 +144,19 @@ public class SalaryManagementAction extends BaseAction{
 		String reportType = getHttpServletRequest().getParameter("listForm:reportType_input");
 
 		Report2PDF report2pdfExporter = new Report2PDFExporter();
-		report2pdfExporter.setColumnWidths(new float[]{0.5f, 2f, 1.5f, 1.5f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 2.5f});
-		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_LEFT});
+		report2pdfExporter.setColumnWidths(new float[]{0.5f, 2f, 1.5f, 1.2f, 1.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f, 1.5f});
+		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT, Cell.ALIGN_RIGHT});
 		
 		reportExporter.setReportName("salary report");
 		reportExporter.setReport2pdfExporter(report2pdfExporter);
 		
 		fileTransactionsDataExport = reportExporter.genReportData(reportType, "ทะเบียนเงินเดือน", transactionList, 
-				new String[]{"no",	"fullName",	"position",	"payTypeDesc",	"salary",		"dailyStr",		"fareStr",	"diligenceStr",	"bonusStr",		"otherIncomeStr",	"otDate",	"otHourStr",	"otSummaryStr",	"totalSalaryIncome",	"subtractSocialStr",	"subtractTaxStr",	"leaveSubtractStr",		"accumulateSubtractStr",	"otherSubtractStr",	"totalSalaryIncomeNet",	"details"}, 
-				new String[]{"No.",	"ชื่อ",		"ตำแหน่ง",		"ประเภทรายได้",		"เงินเดือน/ค่าแรง",		"รายวัน",			"ค่าพาหนะ",		"ค่าเบี้ยขยัน", 		"โบนัส", 			"รายได้อื่นๆ", 			"OT จำนวนวัน", 	"OT จำนวนชม.", 	"OT รวม", 		"รายได้รวม", 				"หัก ปกส", 					"หัก ภาษี", 				"หัก หยุดงาน", 				"หักสะม", 						"หักอื่นๆ", 				"คงเหลือ", 					"หมายเหคุ"},
+				new String[]{"no",	"fullName",	"position",	"payTypeDesc",	"salaryStr",	"dailyStr",		"diligenceStr",	"otherIncomeStr",	"otDate",		"otHourStr",	"otSummaryStr",	"totalSalaryIncome",	"subtractSocialStr",	"subtractTaxStr",	"leaveSubtractStr",		"accumulateSubtractStr",	"otherSubtractStr",	"totalSalaryIncomeNetStr"}, 
+				new String[]{"No.",	"ชื่อ",		"ตำแหน่ง",		"ประเภท\nรายได้",		"เงินเดือน\n/ค่าแรง",	"รายวัน",			"ค่าเบี้ย\nขยัน", 		"รายได้\nอื่นๆ", 			"OT จำนวน\nวัน", 	"OT จำนวน\nชม.", 	"OT รวม", 		"รายได้รวม", 				"หัก ปกส", 					"หัก ภาษี", 				"หัก หยุดงาน", 				"หักสะสม", 					"หักอื่นๆ", 				"คงเหลือ"},
 				new String[][]{	
 						new String[]{"ปี :"+searchFormBO.getYear() +" เดือน : "+monthTHDesc[searchFormBO.getMonth()]}	
 				},
-				new String[]{"", "", "", "รวม", searchFormBO.getTotalSalary(), searchFormBO.getTotalDaily(), searchFormBO.getTotalFare(), searchFormBO.getTotalDiligence(), searchFormBO.getTotalBonus(), searchFormBO.getTotalOtherIncome(), searchFormBO.getTotalOtDate()+"", searchFormBO.getTotalOtHour()+"", searchFormBO.getTotalOtSummary(), searchFormBO.getTotalSalaryIncome(), searchFormBO.getTotalSubtractSocial(), searchFormBO.getTotalSubtractTax() , searchFormBO.getTotalSubtractLeave(), searchFormBO.getTotalSubtractAccumulate(), searchFormBO.getTotalSubtractOther(), searchFormBO.getTotalSalaryIncomeNet(), ""},
+				new String[]{"", "", "", "รวม", searchFormBO.getTotalSalary(), searchFormBO.getTotalDaily(), searchFormBO.getTotalDiligence(), searchFormBO.getTotalOtherIncome(), searchFormBO.getTotalOtDate()+"", searchFormBO.getTotalOtHour()+"", searchFormBO.getTotalOtSummary(), searchFormBO.getTotalSalaryIncome(), searchFormBO.getTotalSubtractSocial(), searchFormBO.getTotalSubtractTax() , searchFormBO.getTotalSubtractLeave(), searchFormBO.getTotalSubtractAccumulate(), searchFormBO.getTotalSubtractOther(), searchFormBO.getTotalSalaryIncomeNet()},
 				
 				searchFormBO.getSecuriyBO().getUserAuthentication().getUserLogin());
 	}
@@ -216,6 +215,7 @@ public class SalaryManagementAction extends BaseAction{
 		salaryDailyForm.setIncomeType(		incomeType);
 		salaryDailyForm.setIncomeTypeDesc(	incomeTypeDesc);
 		salaryDailyForm.setUserFullName(	userFullName);		
+		salaryDailyForm.setDate(			new Date());
 		
 		searchFormBOTemp = new SalarySearchForm();
 		searchFormBOTemp.setUserId(			userId);

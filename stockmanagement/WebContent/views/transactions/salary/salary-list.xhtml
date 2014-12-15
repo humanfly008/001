@@ -350,8 +350,26 @@
 						        <h:outputText value="หัก ปกส" />
 						  	</f:facet>
 						  	<div style="text-align:right;vertical-align: text-top">
-								<h:outputText value="#{dataList.subtractSocialStr} "/>
-								<b><h:outputText value="(#{dataList.socialInsurance}%)"/></b>
+								
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.subtractSocialStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.subtractSocial}"/>
+							  	<f:param name="incomeType" 		value="social"/>
+						      	<f:param name="incomeTypeDesc" 	value="หักประกันสังคม"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+						    
 							</div>
 							<c:if test="#{!empty salaryManagementAction.transactionList}">
 					        	<f:facet name="footer">

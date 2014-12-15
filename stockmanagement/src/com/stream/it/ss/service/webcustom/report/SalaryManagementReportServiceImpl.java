@@ -46,7 +46,8 @@ public class SalaryManagementReportServiceImpl implements SalaryManagementReport
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
-						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
 					));
 			
 			salarySearchFormBO.setConditionValuesBean(new SearchConditionValuesBean[] { new SearchConditionValuesBean(SQLConstantWhereType.AND,	"FIRST_NAME",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(salarySearchFormBO.getUserName()) })});
@@ -62,7 +63,7 @@ public class SalaryManagementReportServiceImpl implements SalaryManagementReport
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), 
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
 						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(),
-						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
+						salarySearchFormBO.getMonth(), salarySearchFormBO.getYear(), salarySearchFormBO.getMonth(), salarySearchFormBO.getYear()
 					));
 			
 				salarySearchFormBO.setConditionValuesBean(new SearchConditionValuesBean[] { new SearchConditionValuesBean(SQLConstantWhereType.AND,	"FIRST_NAME",		SQLConstantOperType.LIKE,new Object[] { SQLStringType.likeValue(salarySearchFormBO.getUserName()) })});
