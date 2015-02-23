@@ -91,14 +91,13 @@
 								<h:outputText value="รายวัน" rendered="#{dataList.payType=='DAY'}"/>
 								<h:outputText value="รายเดือน" rendered="#{dataList.payType=='MONTH'}"/>
 							</div>
+							
 							<!-- summary -->
-					      	<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
-					            	<div style="text-align:center;vertical-align: text-top">
-					                	<b><h:outputText value="รวม"/></b>
+								<f:facet name="footer">
+						           	<div style="text-align:center;vertical-align: text-top">
+						               	<b><h:outputText value="รวม" rendered="#{!empty financeSummaryAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -120,13 +119,11 @@
 	              			</p:cellEditor>
 							
 							<!-- summary -->
-					      	<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					      		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalary}"/></b>
+					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalary}" rendered="#{!empty financeSummaryAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -150,13 +147,11 @@
 	              			</p:cellEditor>
 						  	  	
 							<!-- summary -->
-					      	<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					      		<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalDaily}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -175,13 +170,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 	              			
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					        	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalFare}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -200,13 +193,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 							
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+								<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalDiligence}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -225,13 +216,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 							
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+								<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalBonus}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -250,13 +239,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 
-						    <c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+						    	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalOtherIncome}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -276,13 +263,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 	              			 
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					        	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalOtSummary}"/></b>
 									</div>
 								</f:facet>
-							</c:if> 	
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -296,13 +281,11 @@
 								</h:outputText>
 							</div> 
 							
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					        	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalaryIncome}"/></b>
 									</div>
 								</f:facet>
-							</c:if> 
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -321,13 +304,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 							
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					        	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractSocial}"/></b>
 									</div>
 								</f:facet>
-							</c:if>  
 						</p:column>
 						
 						<p:column style="text-align:right">
@@ -346,13 +327,11 @@
 		                  		</f:facet>
 	              			</p:cellEditor>
 							
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					        	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSubtractTax}"/></b>
 									</div>
 								</f:facet>
-							</c:if>  
 						</p:column>
 						
 						<p:column>
@@ -367,13 +346,11 @@
 								</h:outputText>
 								</b>
 							</div>
-							<c:if test="#{!empty financeSummaryAction.transactionList}">
-					        	<f:facet name="footer">
+					        	<f:facet name="footer" rendered="#{!empty financeSummaryAction.transactionList}">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
 					                	<b><h:outputText value="#{financeSummaryAction.searchFormBO.totalSalaryIncomeNet}"/></b>
 									</div>
 								</f:facet>
-							</c:if>  
 						</p:column>
 						
 						<p:column>
@@ -392,6 +369,7 @@
 						</p:column>
 					</p:dataTable>					
 					</div>
+					
 					<div align="left">
 					<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{financeSummaryAction.transactionFrom=='FINANCE'}">
 			        	<p:selectOneMenu id="reportType" style="text-align: left;">
@@ -415,35 +393,7 @@
 	              	</p:dialog>
 				</h:form>
 					
-				<h:form id="addFormOT">		
-					<p:dialog id="addFormDialogOT" widgetVar="addFormDialogOT" header="เพิ่ม OT" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
-						<ui:include src="/views/transactions/salary/salary-ot.xhtml" />
-					</p:dialog>		
-				</h:form>
 				
-				<h:form id="addFormDaily">		
-					<p:dialog id="addFormDialogDaily" widgetVar="addFormDialogDaily" header="เพิ่มรายได้รายวัน" draggable="false" resizable="false" showEffect="fade" width="800" height="500">
-						<ui:include src="/views/transactions/salary/salary-daily.xhtml" />
-					</p:dialog>		
-				</h:form>
-				
-				<h:form id="addFormIncome">		
-					<p:dialog id="addFormDialogIncome" widgetVar="addFormDialogIncome" header="เพิ่มรายได้/รายจ่าย" draggable="false" resizable="false" showEffect="fade" width="300" height="150">
-						<ui:include src="/views/transactions/salary/salary-income.xhtml" />
-					</p:dialog>
-				</h:form>
-				
-				<h:form id="addFormDetails">		
-					<p:dialog id="addFormDialogDetails" widgetVar="addFormDialogDetails" header="หมายเหตุ" draggable="false" resizable="false" showEffect="fade" width="600" height="150">
-						<ui:include src="/views/transactions/salary/salary-details.xhtml" />
-					</p:dialog>
-				</h:form>
-				
-				<h:form id="printFormIncome">		
-					<p:dialog id="printFormDialogIncome" widgetVar="printFormDialogIncome" header="พิมพ์รายการรายได้" draggable="false" resizable="false" showEffect="fade" width="700" height="520">
-						<ui:include src="/views/transactions/salary/salary-print.xhtml" />
-					</p:dialog>
-				</h:form>
 				
        		</ui:define>
      	</ui:composition>

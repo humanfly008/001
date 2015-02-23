@@ -84,31 +84,29 @@
 								<h:outputText value="รายเดือน" rendered="#{dataList.payType=='MONTH'}"/>
 							</div>
 							<!-- summary -->
-					      	<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+					      		<f:facet name="footer">
 					            	<div style="text-align:center;vertical-align: text-top">
-					                	<b><h:outputText value="รวม"/></b>
+					                	<b><h:outputText value="รวม" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="เงินเดือน/ค่าแรง" />
 						  	</f:facet>
 							<div style="text-align:right;vertical-align: text-top">
-								<h:outputText value="#{dataList.salary}">
-									<f:convertNumber type="currency"  currencySymbol=""/>
-								</h:outputText>
+								<h:outputText value="#{dataList.salaryStr}" rendered="#{dataList.payType=='MONTH'}"/>
 							</div>
+							<div style="text-align:center;vertical-align: text-top">
+								<h:outputText value="-" rendered="#{dataList.payType=='DAY'}"/>
+							</div>
+							
 							<!-- summary -->
-					      	<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+					      		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalary}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalary}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -137,13 +135,11 @@
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
 						    <!-- summary -->
-					      	<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+					      		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalDaily}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalDaily}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -168,13 +164,11 @@
 						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						  		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalFare}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalFare}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -199,13 +193,11 @@
 						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						  		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalDiligence}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalDiligence}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -229,13 +221,11 @@
 						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						  		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalBonus}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalBonus}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -260,13 +250,12 @@
 						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+
+					      		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtherIncome}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtherIncome}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -290,13 +279,11 @@
 						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						  		<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtDate}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtDate}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -305,13 +292,11 @@
 							<div style="text-align:right;vertical-align: text-top">
 								<h:outputText value="#{dataList.otHourStr}" />
 							</div>
-							<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtHour}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtHour}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if> 	
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -320,13 +305,11 @@
 						  	<div style="text-align:right;vertical-align: text-top">
 								<h:outputText value="#{dataList.otSummaryStr}" />
 							</div> 
-							<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtSummary}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalOtSummary}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if> 	
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -337,13 +320,11 @@
 									<f:convertNumber type="currency"  currencySymbol=""/>
 								</h:outputText>
 							</div> 
-							<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalaryIncome}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalaryIncome}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if> 
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
@@ -371,36 +352,47 @@
 						    </p:commandLink>
 						    
 							</div>
-							<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractSocial}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractSocial}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>  
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="หัก ภาษี" />
 						  	</f:facet>
-							<div style="text-align:right;vertical-align: text-top">
-								<h:outputText value="#{dataList.subtractTaxStr} "/>
-								<h:outputText value="(#{dataList.tax}%)"/>
-							</div>
-							<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+							
+							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
+								<div style="text-align:right;vertical-align: text-top">
+							        <h:outputText value="#{dataList.subtractTaxStr}"/>
+							  	</div>
+							  	<f:param name="income" 			value="#{dataList.subtractTax}"/>
+							  	<f:param name="incomeType" 		value="tax"/>
+						      	<f:param name="incomeTypeDesc" 	value="หัก ภาษี"/>
+							  	
+							  	<f:param name="id" 				value="#{dataList.id}"/>
+						      	<f:param name="userId" 			value="#{dataList.userId}"/>
+						      	<f:param name="salary" 			value="#{dataList.salary}"/>
+						      	<f:param name="daily" 			value="#{dataList.daily}"/>
+						      	<f:param name="fare" 			value="#{dataList.fare}"/>
+						      	<f:param name="diligence" 		value="#{dataList.diligence}"/>
+						      	<f:param name="bonus" 			value="#{dataList.bonus}"/>
+						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
+						      	<f:param name="tax" 			value="#{dataList.tax}"/>
+						    </p:commandLink>
+							
+								<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractTax}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractTax}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>  
 						</p:column>
 
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="หัก หยุดงาน" />
 						  	</f:facet>
-						
 							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
 								<div style="text-align:right;vertical-align: text-top">
 							        <h:outputText value="#{dataList.leaveSubtractStr}"/>
@@ -412,20 +404,19 @@
 							  	<f:param name="id" 				value="#{dataList.id}"/>
 						      	<f:param name="userId" 			value="#{dataList.userId}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractLeave}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractLeave}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
+							
 						</p:column>
 						
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="หักสะม" />
 						  	</f:facet>
-						
 							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
 								<div style="text-align:right;vertical-align: text-top">
 							        <h:outputText value="#{dataList.accumulateSubtractStr}"/>
@@ -437,19 +428,18 @@
 							  	<f:param name="id" 				value="#{dataList.id}"/>
 						      	<f:param name="userId" 			value="#{dataList.userId}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractAccumulate}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractAccumulate}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
+							
 						</p:column>						
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="หักอื่นๆ" />
-						  	</f:facet>
-							
+						  	</f:facet>						
 							<p:commandLink actionListener="#{salaryManagementAction.updateIncomePage}" update=":addFormIncome:addFormDialogIncome" oncomplete="addFormDialogIncome.show();">
 								<div style="text-align:right;vertical-align: text-top">
 							        <h:outputText value="#{dataList.otherSubtractStr}"/>
@@ -468,19 +458,18 @@
 						      	<f:param name="socialInsurance" value="#{dataList.socialInsurance}"/>
 						      	<f:param name="tax" 			value="#{dataList.tax}"/>
 						    </p:commandLink>
-						    <c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+						    
+						    	<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractOther}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSubtractOther}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>
+							
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="คงเหลือ" />
 						  	</f:facet>
-						  	
 						  	<div style="text-align:right;vertical-align: text-top">
 								<b>
 								<h:outputText value="#{dataList.totalSalaryIncomeNet}" >
@@ -488,19 +477,18 @@
 								</h:outputText>
 								</b>
 							</div>
-							<c:if test="#{!empty salaryManagementAction.transactionList}">
-					        	<f:facet name="footer">
+							
+								<f:facet name="footer">
 					        		<div style="text-align:right;vertical-align: text-top;t" >
-					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalaryIncomeNet}"/></b>
+					                	<b><h:outputText value="#{salaryManagementAction.searchFormBO.totalSalaryIncomeNet}" rendered="#{!empty salaryManagementAction.transactionList}"/></b>
 									</div>
 								</f:facet>
-							</c:if>  
+							  
 						</p:column>
 						<p:column>
 						    <f:facet name="header">
 						        <h:outputText value="หมายเหคุ" />
 						  	</f:facet>
-							
 							<p:commandLink actionListener="#{salaryManagementAction.updateDetailsPage}" update=":addFormDetails:addFormDialogDetails" oncomplete="addFormDialogDetails.show();">
 								<div style="text-align:right;vertical-align: text-top">
 							        <h:outputText value="#{dataList.details}"/>

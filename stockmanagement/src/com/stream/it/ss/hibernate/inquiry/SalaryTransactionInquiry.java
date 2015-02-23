@@ -220,9 +220,11 @@ public class SalaryTransactionInquiry implements Serializable{
 	}
 	//*** FORMATTER ***//
 	public String getSalaryStr(){
+		if("DAY".equals(payType)) return "";
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(salary));
 	}
 	public String getDailyStr(){
+		if("MONTH".equals(payType)) return "";
 		return StringType.getDoubleNumberMoneyFormatted(NumberType.getDouble(daily));
 	}
 	public String getFareStr(){
