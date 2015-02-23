@@ -9,9 +9,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.primefaces.event.FileUploadEvent;
@@ -41,7 +42,7 @@ import com.stream.it.ss.view.jsf.form.transaction.stock.StockProductForm;
 
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class ProductAction extends BaseAction{
 	private static final long serialVersionUID = 1L;
 
@@ -80,9 +81,21 @@ public class ProductAction extends BaseAction{
 	private List<Dropdown> itemDropdown;
 	private List<MItem>productItemGroupList;
 	
-	public ProductAction(){
-		
-	}
+	
+	@PostConstruct
+	public void init(){
+		try{
+			productForm = new ProductForm();
+			searchForm = new ProductSearchForm();
+			
+			supplierDropdown = supplierComboDropdownService.listAll();
+			transactionList = productService.listTransaction(searchForm);
+
+		}catch(Exception e){
+			DisplayMessages.showMessage("Product", searchForm);   	
+		}
+    }
+
 	
 	//**** ACTION *****//
 	public void doListTransaction() throws Exception{
@@ -259,23 +272,11 @@ public class ProductAction extends BaseAction{
 	
 	//**** PAGE NAVIGATOR ****//
 	public String listPage() throws Exception{
-		productForm = new ProductForm();
-		searchForm = new ProductSearchForm();
-		
-		supplierDropdown = supplierComboDropdownService.listAll();
-		
-		transactionList = productService.listTransaction(searchForm);
 		
 		return "product.list";
 	}
 	
 	public String listViewPage() throws Exception{
-		productForm = new ProductForm();
-		searchForm = new ProductSearchForm();
-		
-		supplierDropdown = supplierComboDropdownService.listAll();
-		
-		transactionList = productService.listTransaction(searchForm);
 		
 		return "product.list.view";
 	}

@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.DualListModel;
 
@@ -22,7 +23,7 @@ import com.stream.it.ss.view.jsf.form.setting.users.UserForm;
 import com.stream.it.ss.view.jsf.form.setting.users.UserSearchForm;
 
 
-@SessionScoped
+@ViewScoped
 @ManagedBean
 public class UserProfileAction extends BaseAction{
 	private static final long serialVersionUID = 1L;
@@ -42,11 +43,34 @@ public class UserProfileAction extends BaseAction{
 	private UserForm userFormBO;
 	private UserSearchForm searchFormBO;
 	private List<?> transactionList;
-	private DualListModel<?> functionsList = new DualListModel<Dropdown>(new ArrayList<Dropdown>(), new ArrayList<Dropdown>());
-	private DualListModel<?> menusList = new DualListModel<Dropdown>(new ArrayList<Dropdown>(), new ArrayList<Dropdown>());
+	private DualListModel<?> functionsList;
+	private DualListModel<?> menusList;
 	
+	@PostConstruct
+	public void init(){
+		System.out.println("INIT........");
+		System.out.println("functionsList : "+functionsList);
+		System.out.println("menusList       : "+menusList);
+		System.out.println("searchFormBO    : "+searchFormBO);
+		System.out.println("transactionList : "+transactionList);
+		
+		try{
+			functionsList = new DualListModel<Dropdown>(new ArrayList<Dropdown>(), new ArrayList<Dropdown>());
+			menusList = new DualListModel<Dropdown>(new ArrayList<Dropdown>(), new ArrayList<Dropdown>());
+			
+			searchFormBO = new UserSearchForm();
+			transactionList = userProfileService.listTransaction(searchFormBO);
+
+		}catch(Exception e){
+			DisplayMessages.showMessage("Userprofile", searchFormBO);   	
+		}
+    }
 	
 	public void doListUserProfile()throws Exception{
+		System.out.println("doListUserProfile................");
+		System.out.println("searchFormBO : "+searchFormBO);
+		System.out.println("transactionList : "+transactionList);
+		
 		transactionList = userProfileService.listTransaction(searchFormBO);
 		DisplayMessages.showMessage("Search", searchFormBO);   	
 	}
@@ -95,12 +119,11 @@ public class UserProfileAction extends BaseAction{
 	}
 	
 	//**** PAGE NAVIGATOR ****//
-	public String listPage() throws Exception{
-		searchFormBO = new UserSearchForm();
-		transactionList = userProfileService.listTransaction(searchFormBO);
-		
-		return "user-list";
-	}
+//	public String listPage() throws Exception{
+//		System.out.println("LIST PAGE ........");
+//		
+//		return "user-list";
+//	}
 	
 	public String addPage() throws Exception{
 		userFormBO = new UserForm();

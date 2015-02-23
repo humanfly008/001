@@ -8,9 +8,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
@@ -30,12 +32,14 @@ import com.stream.it.ss.view.jsf.base.BaseAction;
 import com.stream.it.ss.view.jsf.base.DisplayMessages;
 import com.stream.it.ss.view.jsf.form.setting.item.ItemForm;
 import com.stream.it.ss.view.jsf.form.setting.item.ItemSearchForm;
+import com.stream.it.ss.view.jsf.form.setting.product.ProductForm;
+import com.stream.it.ss.view.jsf.form.setting.product.ProductSearchForm;
 import com.stream.it.ss.view.jsf.form.transaction.stock.StockItemForm;
 
 
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class ItemAction extends BaseAction{
 	private static final long serialVersionUID = 1L;
 
@@ -67,9 +71,19 @@ public class ItemAction extends BaseAction{
 	
 	private StreamedContent fileTransactionsDataExport;
 
-	public ItemAction(){
-		
-	}
+	@PostConstruct
+	public void init(){
+		try{
+			itemForm = new ItemForm();
+			searchForm = new ItemSearchForm();
+			supplierDropdown = supplierComboDropdownService.listAll();
+			
+			transactionList = itemService.listTransaction(searchForm);
+
+		}catch(Exception e){
+			DisplayMessages.showMessage("Item", searchForm);   	
+		}
+    }
 	
 	//**** ACTION *****//
 	public void doListTransaction() throws Exception{
@@ -196,21 +210,11 @@ public class ItemAction extends BaseAction{
 	
 	//**** PAGE NAVIGATOR ****//
 	public String listPage() throws Exception{
-		itemForm = new ItemForm();
-		searchForm = new ItemSearchForm();
-		supplierDropdown = supplierComboDropdownService.listAll();
-		
-		transactionList = itemService.listTransaction(searchForm);
 		
 		return "item.list";
 	}
 	
 	public String listViewPage()throws Exception{
-		itemForm = new ItemForm();
-		searchForm = new ItemSearchForm();
-		supplierDropdown = supplierComboDropdownService.listAll();
-		
-		transactionList = itemService.listTransaction(searchForm);
 		
 		return "item.list.view";
 	}

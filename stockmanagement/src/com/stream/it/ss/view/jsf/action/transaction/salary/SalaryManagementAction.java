@@ -3,9 +3,10 @@ package com.stream.it.ss.view.jsf.action.transaction.salary;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.StreamedContent;
 
@@ -30,9 +31,11 @@ import com.stream.it.ss.view.jsf.form.transaction.salary.SalaryOTForm;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalarySearchForm;
 
 
-@SessionScoped
+@ViewScoped
 @ManagedBean
 public class SalaryManagementAction extends BaseAction{
+	private static final long serialVersionUID = 1L;
+
 	//**** SERVICE ****//
 	@ManagedProperty(value="#{salaryManagementService}")
     private SalaryManagementService salaryManagementService;
@@ -65,9 +68,28 @@ public class SalaryManagementAction extends BaseAction{
 	private List<?> yearDropdown;
 	private List<?> monthDropdown;
 	
+	@PostConstruct
+	public void init(){
+		try{
+			System.out.println("init.......");
+			yearDropdown = yearComboDropdownService.listCurrent10Year();
+			monthDropdown = monthComboDropdownService.listAllMonthTh();
+			
+			searchFormBO = new SalarySearchForm();
+			searchFormBO.setMonth(Integer.parseInt(DateUtil.getMonth()));
+			searchFormBO.setYear(Integer.parseInt(DateUtil.getCurrentYear()));
+			
+			transactionList = salaryManagementService.listTrasnaction(searchFormBO);
+			
+		}catch(Exception e){
+			DisplayMessages.showMessage("Salary", searchFormBO);   	
+		}
+    }
+	
 	
 	//**** ACTION ****//
 	public void doListTransaction()throws Exception{
+		System.out.println("doListTransaction.......");
 		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 	
 		DisplayMessages.showMessage("Search", searchFormBO);
@@ -165,14 +187,6 @@ public class SalaryManagementAction extends BaseAction{
 
 	//**** PAGENAVIGATOR ****//
 	public String listPage() throws Exception{
-		yearDropdown = yearComboDropdownService.listCurrent10Year();
-		monthDropdown = monthComboDropdownService.listAllMonthTh();
-		
-		searchFormBO = new SalarySearchForm();
-		searchFormBO.setMonth(Integer.parseInt(DateUtil.getMonth()));
-		searchFormBO.setYear(Integer.parseInt(DateUtil.getCurrentYear()));
-		
-		transactionList = salaryManagementService.listTrasnaction(searchFormBO);
 		
 		return "salary.list";
 	}

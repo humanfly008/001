@@ -128,7 +128,8 @@ public class AuthenficationAction extends BaseAction{
 						if(functions!=null){
 							MenuItem item = new MenuItem();  
 							item.setValue(functions.getFuncName());
-							item.setActionExpression(FacesAccessor.createMethodExpression("#{"+functions.getFuncUrl()+"}", String.class, new Class[] {}));
+							item.setActionExpression(FacesAccessor.createMethodExpression(functions.getFuncUrl(), String.class, new Class[] {}));
+//							item.setActionExpression(FacesAccessor.createMethodExpression("#{"+functions.getFuncUrl()+"}", String.class, new Class[] {}));
 							item.setAjax(false);
 							
 							submenu.getChildren().add(item);

@@ -2,9 +2,10 @@ package com.stream.it.ss.view.jsf.action.transaction.salary;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.StreamedContent;
 
@@ -24,9 +25,11 @@ import com.stream.it.ss.view.jsf.base.DisplayMessages;
 import com.stream.it.ss.view.jsf.form.transaction.salary.SalarySearchForm;
 
 
-@SessionScoped
+@ViewScoped
 @ManagedBean
 public class FinanceSummaryAction extends BaseAction{
+	private static final long serialVersionUID = 1L;
+
 	/**** SERVICE ****/
 	@ManagedProperty(value="#{financeTransactionService}")
 	private FinanceTransactionService financeTransactionService;
@@ -51,6 +54,27 @@ public class FinanceSummaryAction extends BaseAction{
 	private List<?> yearDropdown;
 	private List<?> monthDropdown;
 
+	@PostConstruct
+	public void init(){
+		try{
+			transactionFrom = "SALARY";
+
+			yearDropdown = yearComboDropdownService.listCurrent10Year();
+			monthDropdown = monthComboDropdownService.listAllMonthTh();
+			
+			searchFormBO = new SalarySearchForm();
+			searchFormBO.setMonth(Integer.parseInt(DateUtil.getMonth()));
+			searchFormBO.setYear(Integer.parseInt(DateUtil.getCurrentYear()));
+			
+			transactionList = financeTransactionService.listTrasnaction(searchFormBO);
+			if(transactionList.size()>0)
+				transactionFrom = "FINANCE";
+			
+		}catch(Exception e){
+			DisplayMessages.showMessage("Salary", searchFormBO);   	
+		}
+    }
+	
 	
 	//**** ACTION ****//
 	public void doListTransaction()throws Exception{
@@ -231,18 +255,6 @@ public class FinanceSummaryAction extends BaseAction{
 	
 	//**** PAGENAVIGATOR ****//
 	public String listPage() throws Exception{
-		transactionFrom = "SALARY";
-
-		yearDropdown = yearComboDropdownService.listCurrent10Year();
-		monthDropdown = monthComboDropdownService.listAllMonthTh();
-		
-		searchFormBO = new SalarySearchForm();
-		searchFormBO.setMonth(Integer.parseInt(DateUtil.getMonth()));
-		searchFormBO.setYear(Integer.parseInt(DateUtil.getCurrentYear()));
-		
-		transactionList = financeTransactionService.listTrasnaction(searchFormBO);
-		if(transactionList.size()>0)
-			transactionFrom = "FINANCE";
 		
 		return "finance.list";
 	}

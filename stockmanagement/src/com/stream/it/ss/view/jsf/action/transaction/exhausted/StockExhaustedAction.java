@@ -3,14 +3,15 @@ package com.stream.it.ss.view.jsf.action.transaction.exhausted;
 import java.util.List;
 
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.StreamedContent;
 
 import com.lowagie.text.Cell;
-import com.stream.it.ss.hibernate.domain.MItem;
 import com.stream.it.ss.hibernate.inquiry.Dropdown;
 import com.stream.it.ss.service.combo.ItemComboDropdownService;
 import com.stream.it.ss.service.combo.ProductComboDropdownService;
@@ -25,9 +26,8 @@ import com.stream.it.ss.view.jsf.base.DisplayMessages;
 import com.stream.it.ss.view.jsf.form.transaction.exhausted.StockExhaustedSearchForm;
 
 
-
+@ViewScoped
 @ManagedBean(name="stockExhaustedAction")
-@SessionScoped
 public class StockExhaustedAction extends BaseAction{
 	private static final long serialVersionUID = 1L;
 
@@ -62,10 +62,20 @@ public class StockExhaustedAction extends BaseAction{
 	
 	private StockExhaustedSearchForm searchForm;
 	
-	
-	public StockExhaustedAction(){
-		
-	}
+	@PostConstruct
+	public void init(){
+		try{
+			itemDropdown = itemComboDropdownService.listAll();
+			productDropdown = productComboDropdownService.listAll();
+			supplierDropdown = supplierComboDropdownService.listAll();
+			
+			searchForm = new StockExhaustedSearchForm();
+			transactionList = stockExhaustedInquiryService.listTransaction(searchForm);
+
+		}catch(Exception e){
+			DisplayMessages.showMessage("Stock Exhausted", searchForm);   	
+		}
+    }
 	
 	//**** ACTION *****//
 	public void doListTransaction() throws Exception{
@@ -101,12 +111,6 @@ public class StockExhaustedAction extends BaseAction{
 	
 	//**** PAGE NAVIGATOR ****//
 	public String listPage() throws Exception{
-		itemDropdown = itemComboDropdownService.listAll();
-		productDropdown = productComboDropdownService.listAll();
-		supplierDropdown = supplierComboDropdownService.listAll();
-		
-		searchForm = new StockExhaustedSearchForm();
-		transactionList = stockExhaustedInquiryService.listTransaction(searchForm);
 		
 		return "stock.exhausted.list";
 	}

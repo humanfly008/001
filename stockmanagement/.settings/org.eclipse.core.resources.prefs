@@ -8,5 +8,7 @@ encoding//src/com/stream/it/ss/view/jsf/action/setting/product/ProductAction.jav
 encoding//src/com/stream/it/ss/view/jsf/action/transaction/exhausted/StockExhaustedAction.java=UTF-8
 encoding//src/com/stream/it/ss/view/jsf/action/transaction/salary/FinanceSummaryAction.java=UTF-8
 encoding//src/com/stream/it/ss/view/jsf/action/transaction/salary/SalaryManagementAction.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/transaction/stock/StockItemInquiryAction.java=UTF-8
 encoding//src/com/stream/it/ss/view/jsf/action/transaction/stock/StockItemManageAction.java=UTF-8
+encoding//src/com/stream/it/ss/view/jsf/action/transaction/stock/StockProductInquiryAction.java=UTF-8
 encoding//src/com/stream/it/ss/view/jsf/action/transaction/stock/StockProductManageAction.java=UTF-8

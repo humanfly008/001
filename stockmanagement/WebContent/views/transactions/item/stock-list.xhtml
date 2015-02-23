@@ -13,8 +13,8 @@
 				<h:form id="listForm">
 					
 					    <h:outputLabel id="displayMessage">
-							<p:growl life="1500" rendered="#{stockItemAction.searchForm.resultBO.errorMessage==''}"/> 
-							<p:messages rendered="#{stockItemAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
+							<p:growl life="1500" rendered="#{stockItemInquiryAction.searchForm.resultBO.errorMessage==''}"/> 
+							<p:messages rendered="#{stockItemInquiryAction.searchForm.resultBO.errorMessage!=''}" closable="true"/>
 						</h:outputLabel>
 					    
 					    <table width="100%">
@@ -23,22 +23,22 @@
 									<h:outputText value="ตัวแทนจำหน่าย"/>
 							   	</td>
 								<td width="20%">	
-							   		<p:selectOneMenu id="supplier" value="#{stockItemAction.searchForm.supplierId}" filter="true" filterMatchMode="contains">
+							   		<p:selectOneMenu id="supplier" value="#{stockItemInquiryAction.searchForm.supplierId}" filter="true" filterMatchMode="contains">
 										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
-										<f:selectItems value="#{stockItemAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
-										<p:ajax event="change" update="item" listener="#{stockItemAction.doSelectSupplier}"/>
-										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+										<f:selectItems value="#{stockItemInquiryAction.supplierDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="item" listener="#{stockItemInquiryAction.doSelectSupplier}"/>
+										<p:ajax event="change" update="listForm" listener="#{stockItemInquiryAction.doListTransaction}"/>							
 									</p:selectOneMenu>
 						   	   	</td>
 								<td align="right">
 									<h:outputText value="วัตถุดิบ"/>
 							   	</td>
 								<td colspan="3">
-							   		<p:selectOneMenu id="item" value="#{stockItemAction.searchForm.itemId}" filter="true" filterMatchMode="contains">
+							   		<p:selectOneMenu id="item" value="#{stockItemInquiryAction.searchForm.itemId}" filter="true" filterMatchMode="contains">
 										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
-										<f:selectItems value="#{stockItemAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
-										<p:ajax event="change" update="supplier" listener="#{stockItemAction.doSelectItem}"/>
-										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+										<f:selectItems value="#{stockItemInquiryAction.itemDropdown}" var="dropdown" itemLabel="#{dropdown.label}" itemValue="#{dropdown.value}" itemLabelEscaped="true"/>
+										<p:ajax event="change" update="supplier" listener="#{stockItemInquiryAction.doSelectItem}"/>
+										<p:ajax event="change" update="listForm" listener="#{stockItemInquiryAction.doListTransaction}"/>							
 									</p:selectOneMenu>
 						   		</td>
 						   	</tr>
@@ -47,22 +47,22 @@
 							    	<h:outputText value="ประเภทรายการ"/>
 								</td>
 					            <td width="15%">	
-									<p:selectOneMenu id="stockType" value="#{stockItemAction.searchForm.stockType}" filter="true" filterMatchMode="contains">
+									<p:selectOneMenu id="stockType" value="#{stockItemInquiryAction.searchForm.stockType}" filter="true" filterMatchMode="contains">
 										<f:selectItem itemValue="" itemLabel="ทั่งหมด" />
 										<f:selectItem itemValue="In" itemLabel="เข้า" />
 										<f:selectItem itemValue="Out" itemLabel="ออก" />							
-										<p:ajax event="change" update="listForm" listener="#{stockItemAction.doListTransaction}"/>							
+										<p:ajax event="change" update="listForm" listener="#{stockItemInquiryAction.doListTransaction}"/>							
 									</p:selectOneMenu>
 							    </td>
 						    	<td align="right">		
 								   	<h:outputText value="วันที่ทำรายการ"/>
 								</td>
 					            <td>	
-					            	<p:calendar id="fromTransactionDate" value="#{stockItemAction.searchForm.stockFromDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
+					            	<p:calendar id="fromTransactionDate" value="#{stockItemInquiryAction.searchForm.stockFromDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
 									    <f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
 									</p:calendar>
 									<h:outputText value="-"/>
-							       	<p:calendar id="toTransactionDate" value="#{stockItemAction.searchForm.stockToDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
+							       	<p:calendar id="toTransactionDate" value="#{stockItemInquiryAction.searchForm.stockToDate}" pattern="dd/MM/yyyy" showOn="button" size="9" maxlength="10">
 							           	<f:convertDateTime type="date" dateStyle="short" pattern="dd/MM/yyyy" />
 							      	</p:calendar>
 								</td>
@@ -70,7 +70,7 @@
 						   	<tr>
 								<td colspan="6" align="right">
 									<h:panelGrid columns="1">
-								   		<p:commandButton id="saveBtn" value="ค้นหา" update="listForm" actionListener="#{stockItemAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
+								   		<p:commandButton id="saveBtn" value="ค้นหา" update="listForm" actionListener="#{stockItemInquiryAction.doListTransaction}" icon="ui-icon-search" style="margin:0" />
 									</h:panelGrid>
 								</td>
 							</tr>
@@ -78,7 +78,7 @@
 					    
 						<br></br>
 				   		
-						<p:dataTable id="dataList" var="dataList" value="#{stockItemAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
+						<p:dataTable id="dataList" var="dataList" value="#{stockItemInquiryAction.transactionList}" styleClass="dataTable" emptyMessage="No Data" stickyHeader="true">
 							<p:column>
 					            <f:facet name="header">
 					                <h:outputText value="No." />
@@ -154,22 +154,22 @@
 						<h:panelGrid columns="2">
 					        <h:outputLabel id="pagnavigator" for="listForm">
 								<ui:include src="/resources/component/pagnavigator.xhtml">
-									<ui:param name="action" 		value="#{stockItemAction}"></ui:param>
-						 			<ui:param name="searchBean"		value="#{stockItemAction.searchForm}" />
+									<ui:param name="action" 		value="#{stockItemInquiryAction}"></ui:param>
+						 			<ui:param name="searchBean"		value="#{stockItemInquiryAction.searchForm}" />
 						 			<ui:param name="method" 		value="doListTransaction"></ui:param>		 					
-						 			<ui:param name="dataList"		value="#{stockItemAction.transactionList}" />
+						 			<ui:param name="dataList"		value="#{stockItemInquiryAction.transactionList}" />
 						 			<ui:param name="update" 		value="dataList,pagnavigator"></ui:param>
 								</ui:include>
 							</h:outputLabel>
 									
-							<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{not empty stockItemAction.transactionList}">
+							<h:panelGrid columnClasses="className" columns="4" id="experReportDisp" rendered="#{not empty stockItemInquiryAction.transactionList}">
 			                    <p:selectOneMenu id="reportType" style="text-align: left;">
 									<f:selectItem itemValue="PDF" itemLabel="PDF" />
 									<f:selectItem itemValue="XLS" itemLabel="XLS" />
 								</p:selectOneMenu>
 			
-				              	<p:commandButton value="Print" icon="ui-icon-print" ajax="none" actionListener="#{stockItemAction.doExportReport}" onclick="PrimeFaces.monitorDownload(showLoadingDialog, hideLoadingDialog); return validateSubmit();" style="vertical-align: top;">
-				                	<p:fileDownload value="#{stockItemAction.fileTransactionsDataExport}" contentDisposition="attachment" />
+				              	<p:commandButton value="Print" icon="ui-icon-print" ajax="none" actionListener="#{stockItemInquiryAction.doExportReport}" onclick="PrimeFaces.monitorDownload(showLoadingDialog, hideLoadingDialog); return validateSubmit();" style="vertical-align: top;">
+				                	<p:fileDownload value="#{stockItemInquiryAction.fileTransactionsDataExport}" contentDisposition="attachment" />
 				               	</p:commandButton>      
 			            	</h:panelGrid>					
 			          	</h:panelGrid>			

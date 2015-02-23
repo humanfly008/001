@@ -64,14 +64,6 @@
 		<pattern value="/supplier" />
 		<view-id value="/views/setting/supplier/supplier-list.xhtml" />
 	</url-mapping>
-	<url-mapping id="supplier.add">
-		<pattern value="/supplier.add" />
-		<view-id value="/views/setting/supplier/supplier-add.xhtml" />
-	</url-mapping>
-	<url-mapping id="supplier.edit">
-		<pattern value="/supplier.edit" />
-		<view-id value="/views/setting/supplier/supplier-edit.xhtml" />
-	</url-mapping>
 	
 	<!-- ITEM -->
 	<url-mapping id="item.list">

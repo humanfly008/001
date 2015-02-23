@@ -111,17 +111,6 @@
 	    <url-pattern>/DownloadFileServlet</url-pattern>
   	</servlet-mapping>
   	
-  	<servlet>
-    	<description></description>
-	    <display-name>ExportReportServlet</display-name>
-	    <servlet-name>ExportReportServlet</servlet-name>
-	    <servlet-class>com.stream.it.ss.utils.ExportReportServlet</servlet-class>
-  	</servlet>
-  	<servlet-mapping>
-	    <servlet-name>ExportReportServlet</servlet-name>
-	    <url-pattern>/ExportReportServlet</url-pattern>
-  	</servlet-mapping>
-  	
   	<!-- Enable Spring Security 
 	<filter>
  		<filter-name>springSecurityFilterChain</filter-name>

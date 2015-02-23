@@ -32,12 +32,12 @@
 		<property name="username" value="${jdbc.username}"/>
 		<property name="password" value="${jdbc.password}"/>
     </bean>
-	
+	 
 	<!-- 
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-    	<property name="jndiName" value="jdbc/some-name"/>
+    	<property name="jndiName" value="java:jboss/datasources/stockdbDS"/>
 	</bean>
-	 -->
+	 --> 
  
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource">

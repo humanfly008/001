@@ -1,6 +1,8 @@
 package com.stream.it.ss.view.jsf.action.transaction.stock;
 
+import java.util.Date;
 import java.util.List;
+
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -9,14 +11,18 @@ import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.StreamedContent;
 
-import com.stream.it.ss.base.databo.ResultBO;
+import com.lowagie.text.Cell;
 import com.stream.it.ss.hibernate.inquiry.Dropdown;
 import com.stream.it.ss.hibernate.inquiry.MenuInquery;
 import com.stream.it.ss.service.combo.ProductComboDropdownService;
 import com.stream.it.ss.service.combo.SupplierComboDropdownService;
 import com.stream.it.ss.service.findservice.ProductFindService;
+import com.stream.it.ss.service.webcustom.report.StockProductReportService;
 import com.stream.it.ss.service.webcustom.setting.ProductService;
 import com.stream.it.ss.service.webcustom.transaction.stock.StockProductService;
+import com.stream.it.ss.utils.format.DateUtil;
+import com.stream.it.ss.utils.primefaces.report.Report2PDF;
+import com.stream.it.ss.utils.primefaces.report.Report2PDFExporter;
 import com.stream.it.ss.utils.primefaces.report.ReportExporter;
 import com.stream.it.ss.view.jsf.base.BaseAction;
 import com.stream.it.ss.view.jsf.base.DisplayMessages;
@@ -26,13 +32,16 @@ import com.stream.it.ss.view.jsf.form.transaction.stock.StockProductSearchForm;
 
 
 @ViewScoped
-@ManagedBean(name="stockProductAction")
-public class StockProductManageAction extends BaseAction{
+@ManagedBean(name="stockProductInquiryAction")
+public class StockProductInquiryAction extends BaseAction{
 	private static final long serialVersionUID = 1L;
 
 	//****** SERVICE *********//
 	@ManagedProperty(value="#{stockProductService}")
     private StockProductService stockService;
+	
+	@ManagedProperty(value="#{stockProductReportService}")
+    private StockProductReportService stockProductReportService;
 	
 	@ManagedProperty(value="#{productService}")
     private ProductService productService;
@@ -59,13 +68,18 @@ public class StockProductManageAction extends BaseAction{
 	private StockProductForm dataFormBO;
 	private ProductForm productDataFormBO;
 	
+	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public void init(){
 		try{
-			dataFormBO = new StockProductForm();
-			productDataFormBO = new ProductForm();
 			productDropdown = productComboDropdownService.listAll();
 			supplierDropdown = supplierComboDropdownService.listAll();
+			
+			searchForm = new StockProductSearchForm();
+			searchForm.setStockFromDate(DateUtil.getDateBeforeByMonth(3));
+			searchForm.setStockToDate(new Date());
+			
+			transactionList = stockService.listTransaction(searchForm);
 			
 		}catch(Exception e){
 			DisplayMessages.showMessage("Stock Product", searchForm);   	
@@ -73,16 +87,12 @@ public class StockProductManageAction extends BaseAction{
     }
 	
 	//**** ACTION *****//
-	public String doCreateStock() throws Exception{
-		ResultBO resultBO = stockService.createStockTransaction(dataFormBO);
+	@SuppressWarnings("unchecked")
+	public void doListTransaction() throws Exception{
+		transactionList = stockService.listTransaction(searchForm);
+		DisplayMessages.showMessage("Search", searchForm);   		
 		
-		DisplayMessages.showInfoMessage("สินค้า "+productDataFormBO.getProductSupplierCode()+" "+productDataFormBO.getProductName()+" จำนวน "+dataFormBO.getStockQty()+" ถูกสร้างรายการเรียบร้อย");
-
-		dataFormBO.setResultBO(resultBO);
-		dataFormBO.setStockQty(null);		
-		
-		return null;
-	}
+	}	
 	
 	//**** AJAX *****//
 	public void doSelectProduct() throws NumberFormatException, Exception{
@@ -91,39 +101,42 @@ public class StockProductManageAction extends BaseAction{
 		
 		searchForm.setSupplierId(supplierId.toString());
 	}
-
-	public void doSelectSupplierAddForm() throws NumberFormatException, Exception{
-		productDataFormBO = new ProductForm();
-		dataFormBO.setProductId(null);
-
-		
-		String supplierId = dataFormBO.getSupplierId();
+	
+	public void doSelectSupplier() throws NumberFormatException, Exception{
+		String supplierId = searchForm.getSupplierId();
 		if(supplierId.equals(""))
 			productDropdown = productComboDropdownService.listAll();
 		else
 			productDropdown = productComboDropdownService.listBySupplierId(Integer.parseInt(supplierId));
-		
 	}
 	
-	public void doFindProductDetail() throws NumberFormatException, Exception{
-		productDataFormBO = new ProductForm();
-		dataFormBO.setSupplierId(null);
+	@SuppressWarnings("unchecked")
+	public void doExportReport() throws Exception{
+		transactionList = stockProductReportService.listTransaction(searchForm);
+		String reportType = getHttpServletRequest().getParameter("listForm:reportType_input");
+
+		Report2PDF report2pdfExporter = new Report2PDFExporter();
+		report2pdfExporter.setColumnWidths(new float[]{0.3f, 0.5f, 1f, 0.5f, 1f, 3.5f, 3f, 1f});
+		report2pdfExporter.setCellValueAlign(new int[]{Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_RIGHT, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER, Cell.ALIGN_CENTER});
+		 
+		reportExporter.setReportName("stock product report");
+		reportExporter.setReport2pdfExporter(report2pdfExporter);
 		
-		String productId = dataFormBO.getProductId();
-		
-		if(!productId.equals("")){
-			productDataFormBO = (ProductForm) productService.findProduct(Integer.parseInt(productId));
-			
-			Integer supplierId = productFindService.findSupplierIdByProduct(Integer.parseInt(productId));
-			dataFormBO.setSupplierId(supplierId.toString());
-		}
+		fileTransactionsDataExport = reportExporter.genReportData(reportType, "สรุป รายการเข้า/ออก สินค้า", transactionList, 
+				new String[]{"no",	"stockTypeDesc",	"stockDateStr",	"stockQtyStr",	"productCode",	"productName",	"supplierName", "createBy"}, 
+				new String[]{"No.",	"ประเภทรายการ",			"วันที่บันทึกข้อมูล",		"จำนวน",			"รหัสสินค้า",			"ชื่อสินค้า",			"ตัวแทนจำหน่าย",		"คนสร้างรายการ"},
+				null,
+				null,
+				searchForm.getSecuriyBO().getUserAuthentication().getUserLogin());
 	}
-		
+	
+	
 	//**** PAGE NAVIGATOR ****//
-	public String addPage() throws Exception{
+	public String listPage() throws Exception{
 		
-		return "stock.product.add";
+		return "stock.product.list";
 	}
+
 
 	//****** SETTER, GETTER *******//
 	public List<MenuInquery> getTransactionList() {
@@ -182,6 +195,9 @@ public class StockProductManageAction extends BaseAction{
 	}
 	public void setFileTransactionsDataExport(StreamedContent fileTransactionsDataExport) {
 		this.fileTransactionsDataExport = fileTransactionsDataExport;
+	}
+	public void setStockProductReportService(StockProductReportService stockProductReportService) {
+		this.stockProductReportService = stockProductReportService;
 	}
 	public void setReportExporter(ReportExporter reportExporter) {
 		this.reportExporter = reportExporter;
